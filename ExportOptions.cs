@@ -13,6 +13,8 @@ namespace DynamicsDataTools
         [Option("connection", Required = true)]
         public string ConnectionName { get; set; }
 
+        [Option("entity", Required = true)]
+        public string EntityName { get; set; }
 
         [Usage(ApplicationAlias = "dynamicsdatatools")]
         public static IEnumerable<Example> Examples

@@ -8,22 +8,29 @@ namespace DynamicsDataTools
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<ExportOptions>(args)
-                .MapResult(
-                    RunExportAndReturnExitCode,
-                    HandleErrors);
+            System.Diagnostics.Debugger.Launch();
 
+            Parser.Default.ParseArguments<DefaultVerb, ExportOptions>(args)
+                .MapResult(
+                    (DefaultVerb opts) => RunNoVerb(opts),
+                    (ExportOptions opts) => RunExportAndReturnExitCode(opts),
+                    HandleErrors);
+        }
+
+        private static int RunNoVerb(DefaultVerb arg)
+        {
+            return 0;
+        }
+
+        private static int RunExportAndReturnExitCode(ExportOptions opts)
+        {
+            new ExportTool().Run(opts);
+            return 0;
         }
 
         private static int HandleErrors(IEnumerable<Error> errors)
         {
             return -1;
-        }
-
-        private static int RunExportAndReturnExitCode(ExportOptions opts)
-        {
-            Console.WriteLine("Running Export...");
-            return 0;
         }
     }
 }
