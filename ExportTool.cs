@@ -4,6 +4,7 @@ using System.Web.Compilation;
 using System.Web.UI;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml.Serialization;
+using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -11,8 +12,16 @@ namespace DynamicsDataTools
 {
     class ExportTool
     {
+        private ILog log;
+
+        public ExportTool(ILog log)
+        {
+            this.log = log;
+        }
+
         public void Run(ExportOptions options)
         {
+            this.log.Debug("Starting Export tool...");
             IOrganizationService crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
             var foundRecords = crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
             if (foundRecords != null)
