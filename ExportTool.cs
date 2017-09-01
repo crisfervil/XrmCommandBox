@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Web.Compilation;
-using System.Web.UI;
-using System.Web.UI.WebControls.WebParts;
+﻿using System.Security.Cryptography;
+using System.Xml;
 using System.Xml.Serialization;
 using log4net;
 using Microsoft.Xrm.Sdk;
@@ -12,33 +9,78 @@ namespace DynamicsDataTools
 {
     class ExportTool
     {
-        private ILog log;
+        private readonly ILog _log;
 
         public ExportTool(ILog log)
         {
-            this.log = log;
+            _log = log;
         }
 
         public void Run(ExportOptions options)
         {
-            this.log.Debug("Starting Export tool...");
-            IOrganizationService crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
+            _log.Debug("Running Export tool...");
+
+            _log.Debug("Creating connection...");
+            var crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
+
+            _log.Debug("Executing query...");
             var foundRecords = crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
-            if (foundRecords != null)
-            {
-                // Save records to an Xml file
-                Save(foundRecords.Entities, options.File);
-            }
+            _log.Debug($"{foundRecords.Entities.Count} records found");
+
+            // Save records to an Xml file
+            _log.Debug("Peparing file...");
+            Save(foundRecords.Entities, options.File);
+
+            _log.Debug("Completed");
         }
 
         private void Save(DataCollection<Entity> data, string fileName)
         {
-            System.Xml.Serialization.XmlSerializer ser = new XmlSerializer(typeof(DataCollection<Entity>));
-            using (var sw = new System.IO.StreamWriter(fileName))
+            using (var docWriter = new XmlTextWriter(fileName, null))
             {
-                ser.Serialize(sw,data);
-                sw.Close();
+                docWriter.Formatting = Formatting.Indented;
+
+                docWriter.WriteStartElement("Data");
+
+                foreach (var entityRecord in data)
+                {
+                    docWriter.WriteStartElement(entityRecord.LogicalName);
+                    WriteAttributeValues(entityRecord, docWriter);
+                    docWriter.WriteEndElement();                    
+                }
+
+                docWriter.Flush();
             }
+        }
+
+        private void WriteAttributeValues(Entity entityRecord, XmlTextWriter docWriter)
+        {
+            foreach (var attribute in entityRecord.Attributes)
+            {
+                docWriter.WriteStartElement(attribute.Key);
+                docWriter.WriteValue(GetAttributeValue(attribute.Value));
+                docWriter.WriteEndElement();
+            }
+        }
+
+        private object GetAttributeValue(object attributeValue)
+        {
+            object value = null;
+
+            if (attributeValue is OptionSetValue)
+            {
+                value = ((OptionSetValue)attributeValue).Value;
+            }
+            else if (attributeValue is EntityReference)
+            {
+                value = ((EntityReference)attributeValue).Id.ToString();
+            }
+            else
+            {
+                value = attributeValue.ToString();
+            }
+
+            return value;
         }
 
         private QueryBase GetAllRecordsQuery(string entityName)
