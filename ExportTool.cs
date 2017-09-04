@@ -1,14 +1,9 @@
-﻿using System.Collections;
-using System.Security.Cryptography;
-using System.Xml;
-using System.Xml.Serialization;
-using log4net;
-using Microsoft.Xrm.Sdk;
+﻿using log4net;
 using Microsoft.Xrm.Sdk.Query;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace DynamicsDataTools
 {
@@ -23,14 +18,14 @@ namespace DynamicsDataTools
 
         public void Run(ExportOptions options)
         {
-            _log.Debug("Running Export tool...");
+            _log.Info("Running Export tool...");
 
             _log.Debug("Creating connection...");
             var crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
 
             _log.Debug("Executing query...");
             var foundRecords = crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
-            _log.Debug($"{foundRecords.Entities.Count} records found");
+            _log.Info($"{foundRecords.Entities.Count} records found");
 
             // Save records to an Xml file
             _log.Debug("Peparing file...");
@@ -38,7 +33,7 @@ namespace DynamicsDataTools
             IExporter exporter = GetExporter(extension);
             exporter.Export(foundRecords.Entities, options.File);
 
-            _log.Debug("Completed");
+            _log.Info("Completed");
         }
 
         private QueryBase GetAllRecordsQuery(string entityName)
@@ -92,6 +87,5 @@ namespace DynamicsDataTools
 
             return found;
         }
-
     }
 }

@@ -9,9 +9,7 @@ namespace DynamicsDataTools
 {
     public class JsonExporter : IExporter
     {
-        private string _extension = ".json";
-
-        public string Extension { get { return _extension;  } }
+        public string Extension { get; } = ".json";
 
         public void Export(DataCollection<Entity> data, string fileName)
         {

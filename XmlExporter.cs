@@ -8,14 +8,13 @@ namespace DynamicsDataTools
     public class XmlExporter : IExporter
     {
         private readonly ILog _log;
-        private string _extension = ".xml";
+        public string Extension { get; } = ".xml";
 
         public XmlExporter(ILog log)
         {
             _log = log;
         }
 
-        public string Extension => _extension;
 
         public void Export(DataCollection<Entity> data, string fileName)
         {
