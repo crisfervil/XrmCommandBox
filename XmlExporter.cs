@@ -5,15 +5,17 @@ using log4net;
 
 namespace DynamicsDataTools
 {
-    public class XmlExporter
+    public class XmlExporter : IExporter
     {
         private readonly ILog _log;
-        public string Extension = "xml";
+        private string _extension = ".xml";
 
         public XmlExporter(ILog log)
         {
             _log = log;
         }
+
+        public string Extension => _extension;
 
         public void Export(DataCollection<Entity> data, string fileName)
         {

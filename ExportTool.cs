@@ -1,9 +1,14 @@
-﻿using System.Security.Cryptography;
+﻿using System.Collections;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Serialization;
 using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System;
 
 namespace DynamicsDataTools
 {
@@ -29,7 +34,8 @@ namespace DynamicsDataTools
 
             // Save records to an Xml file
             _log.Debug("Peparing file...");
-            var exporter = new XmlExporter(_log);
+            var extension = System.IO.Path.GetExtension(options.File);
+            IExporter exporter = GetExporter(extension);
             exporter.Export(foundRecords.Entities, options.File);
 
             _log.Debug("Completed");
@@ -42,5 +48,50 @@ namespace DynamicsDataTools
                 ColumnSet = new ColumnSet(true), // retrieve all columns
             };
         }
+
+        private IExporter GetExporter(string extension)
+        {
+            var exporters = GetAvailableExporters();
+            var found=exporters.Where(x=> x.Extension==extension).ToList();
+            if (!found.Any()) throw new Exception($"No exporter found for extension {extension}");
+            if (found.Count > 1) throw new Exception($"Too many exporters found for extension {extension}");
+            return found[0];
+        }
+
+
+        private IList<IExporter> GetAvailableExporters()
+        {
+            var found = new List<IExporter>();
+            var existingAssemblies = Assembly.GetExecutingAssembly().GetExportedTypes();
+            var exporters = existingAssemblies.Where(x => x.GetInterfaces().Contains(typeof(IExporter)));
+
+            foreach (var exporter in exporters)
+            {
+                _log.Debug($"Exporter: {exporter.Name}");
+
+                var logConstructor = exporter.GetConstructor(new[] { typeof(ILog) });
+                var noParamsConstructor = exporter.GetConstructor(new Type[] {});
+                IExporter instance = null;
+                if ( logConstructor != null)
+                {
+                    _log.Debug("ILog constructor");
+                    instance = (IExporter)logConstructor.Invoke(new object[] {_log});
+                } 
+                else if (noParamsConstructor != null)
+                {
+                    _log.Debug("No param constructor");
+                    instance = (IExporter)noParamsConstructor.Invoke(new object[] { });
+                }
+
+                if (instance != null)
+                {
+                    found.Add(instance);
+                }
+
+            }
+
+            return found;
+        }
+
     }
 }
