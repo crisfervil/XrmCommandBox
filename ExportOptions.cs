@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DynamicsDataTools
 {
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
-    class ExportOptions
+    class ExportOptions : CommonOptions
     {
         [Option("file", Required = true)]
         public string File { get; set; }

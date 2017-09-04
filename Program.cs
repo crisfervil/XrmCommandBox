@@ -12,17 +12,15 @@ namespace DynamicsDataTools
 
         static void Main(string[] args)
         {
-            //System.Diagnostics.Debugger.Launch();
-
+            // Log configuration
             BasicConfigurator.Configure();
 
             try
             {
                 Parser.Default.ParseArguments<DefaultVerb, ExportOptions>(args)
-            .MapResult(
-                (DefaultVerb opts) => RunNoVerb(opts),
-                (ExportOptions opts) => RunExportAndReturnExitCode(opts),
-                HandleErrors);
+                    .MapResult((DefaultVerb opts) => RunNoVerb(opts),
+                                (ExportOptions opts) => RunExportAndReturnExitCode(opts),
+                                HandleErrors);
 
             }
             catch (Exception ex)

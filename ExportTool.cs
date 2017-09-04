@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace DynamicsDataTools
 {
-    class ExportTool
+    class ExportTool : ToolBase
     {
         private readonly ILog _log;
 
@@ -18,6 +18,8 @@ namespace DynamicsDataTools
 
         public void Run(ExportOptions options)
         {
+            base.Run(options);
+
             _log.Info("Running Export tool...");
 
             _log.Debug("Creating connection...");
@@ -82,7 +84,6 @@ namespace DynamicsDataTools
                 {
                     found.Add(instance);
                 }
-
             }
 
             return found;
