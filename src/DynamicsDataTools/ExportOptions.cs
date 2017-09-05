@@ -10,9 +10,6 @@ namespace DynamicsDataTools
         [Option("file")]
         public string File { get; set; }
 
-        [Option("connection", Required = true)]
-        public string ConnectionName { get; set; }
-
         [Option("entity")]
         public string EntityName { get; set; }
 

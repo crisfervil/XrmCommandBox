@@ -13,10 +13,12 @@ namespace DynamicsDataTools
     class ExportTool : ToolBase
     {
         private readonly ILog _log;
+        private readonly IOrganizationService _crmService;
 
-        public ExportTool(ILog log)
+        public ExportTool(ILog log, IOrganizationService service)
         {
             _log = log;
+            _crmService = service;
         }
 
         public void Run(ExportOptions options)
@@ -27,11 +29,8 @@ namespace DynamicsDataTools
 
             ValidateOptions(options);
 
-            _log.Debug("Creating connection...");
-            var crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
-
             _log.Debug("Executing query...");
-            var foundRecords = GetRecords(options, crmService);
+            var foundRecords = GetRecords(options);
             _log.Info($"{foundRecords.Entities.Count} records found");
 
             // Save records to a file
@@ -40,23 +39,23 @@ namespace DynamicsDataTools
             {
                 options.File = !string.IsNullOrEmpty(options.FetchFile) ? $"{Path.GetFileNameWithoutExtension(options.FetchFile)}_data.xml" : $"{options.EntityName}.xml";
             }
-            var extension = System.IO.Path.GetExtension(options.File);
+            var extension = Path.GetExtension(options.File);
             IExporter exporter = GetExporter(extension);
             exporter.Export(foundRecords.Entities, options.File);
 
             _log.Info("Completed");
         }
 
-        private EntityCollection GetRecords(ExportOptions options, IOrganizationService service)
+        private EntityCollection GetRecords(ExportOptions options)
         {
             EntityCollection foundRecords = null;
             if (!string.IsNullOrEmpty(options.EntityName))
             {
-                foundRecords = service.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
+                foundRecords = _crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
             }
             else if (!string.IsNullOrEmpty(options.FetchFile))
             {
-                foundRecords = service.RetrieveMultiple(GetFetchQuery(options.FetchFile));
+                foundRecords = _crmService.RetrieveMultiple(GetFetchQuery(options.FetchFile));
             }
             return foundRecords;
         }
