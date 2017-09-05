@@ -13,8 +13,11 @@ namespace DynamicsDataTools
         [Option("connection", Required = true)]
         public string ConnectionName { get; set; }
 
-        [Option("entity", Required = true)]
+        [Option("entity")]
         public string EntityName { get; set; }
+
+        [Option("fetchfile")]
+        public string FetchFile { get; set; }
 
         [Usage(ApplicationAlias = "dynamicsdatatools")]
         public static IEnumerable<Example> Examples

@@ -2,8 +2,11 @@
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
+using Microsoft.Xrm.Sdk;
 
 namespace DynamicsDataTools
 {
@@ -22,21 +25,62 @@ namespace DynamicsDataTools
 
             _log.Info("Running Export tool...");
 
+            ValidateOptions(options);
+
             _log.Debug("Creating connection...");
             var crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
 
             _log.Debug("Executing query...");
-            var foundRecords = crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
+            var foundRecords = GetRecords(options, crmService);
             _log.Info($"{foundRecords.Entities.Count} records found");
 
-            // Save records to an Xml file
+            // Save records to a file
             _log.Debug("Peparing file...");
-            options.File = string.IsNullOrEmpty(options.File) ? $"{options.EntityName}.xml" : options.File;
+            if (string.IsNullOrEmpty(options.File))
+            {
+                options.File = !string.IsNullOrEmpty(options.FetchFile) ? $"{Path.GetFileNameWithoutExtension(options.FetchFile)}_data.xml" : $"{options.EntityName}.xml";
+            }
             var extension = System.IO.Path.GetExtension(options.File);
             IExporter exporter = GetExporter(extension);
             exporter.Export(foundRecords.Entities, options.File);
 
             _log.Info("Completed");
+        }
+
+        private EntityCollection GetRecords(ExportOptions options, IOrganizationService service)
+        {
+            EntityCollection foundRecords = null;
+            if (!string.IsNullOrEmpty(options.EntityName))
+            {
+                foundRecords = service.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
+            }
+            else if (!string.IsNullOrEmpty(options.FetchFile))
+            {
+                foundRecords = service.RetrieveMultiple(GetFetchQuery(options.FetchFile));
+            }
+            return foundRecords;
+        }
+
+        private void ValidateOptions(ExportOptions options)
+        {
+            if (string.IsNullOrEmpty(options.FetchFile) && string.IsNullOrEmpty(options.EntityName))
+            {
+                throw new Exception("Either the entityname or the fetchfile options are required");
+            }
+        }
+
+        private QueryBase GetFetchQuery(string fileName)
+        {
+            // read xml file
+            var xml = new XmlDocument();
+            xml.Load(fileName);
+
+            if (xml.DocumentElement == null || xml.DocumentElement.Name != "fetch")
+            {
+                throw new Exception("Invalid xml document. The first node in the document must be a fetch");
+            }
+
+            return new FetchExpression(xml.DocumentElement.OuterXml);
         }
 
         private QueryBase GetAllRecordsQuery(string entityName)
