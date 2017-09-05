@@ -7,7 +7,7 @@ namespace DynamicsDataTools
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
     class ExportOptions : CommonOptions
     {
-        [Option("file", Required = true)]
+        [Option("file")]
         public string File { get; set; }
 
         [Option("connection", Required = true)]
@@ -21,7 +21,7 @@ namespace DynamicsDataTools
         {
             get
             {
-                yield return new Example("Simple Export", new ExportOptions() { File="Accounts.xml", ConnectionName = "DEV"});
+                yield return new Example("Simple Export", new ExportOptions() { File="Accounts.xml", ConnectionName = "DEV", EntityName = "account"});
             }
         }
     }

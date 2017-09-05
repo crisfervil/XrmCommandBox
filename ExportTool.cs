@@ -31,6 +31,7 @@ namespace DynamicsDataTools
 
             // Save records to an Xml file
             _log.Debug("Peparing file...");
+            options.File = string.IsNullOrEmpty(options.File) ? $"{options.EntityName}.xml" : options.File;
             var extension = System.IO.Path.GetExtension(options.File);
             IExporter exporter = GetExporter(extension);
             exporter.Export(foundRecords.Entities, options.File);
