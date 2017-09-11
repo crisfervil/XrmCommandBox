@@ -49,7 +49,29 @@ namespace DynamicsDataTools.Tests
 
             // check the contents of the exported file
             Assert.AreEqual(accounts.Count, xml.SelectNodes("Data/account")?.Count);
+        }
 
+        [TestMethod]
+        public void Exports_Fails_If_Not_Exporter_Available()
+        {
+            var log = new FakeLog();
+            var context = new XrmFakedContext();
+            var service = context.GetOrganizationService();
+
+            // The file name is not provided, so the default path should be used
+            var options = new ExportOptions() { ConnectionName = "Test", EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
+
+            // run the tool
+            var exportTool = new ExportTool(log, service);
+            try
+            {
+                exportTool.Run(options);
+                Assert.Fail("Exeption not thrown");
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual("No exporter found for extension .xyz", ex.Message);
+            }
         }
     }
 }
