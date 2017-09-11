@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Xml;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,7 +35,7 @@ namespace DynamicsDataTools.Tests
             if(System.IO.File.Exists(fileName)) System.IO.File.Delete(fileName);
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { ConnectionName = "Test", EntityName = "account"};
+            var options = new ExportOptions() { EntityName = "account"};
 
             // run the tool
             var exportTool = new ExportTool(log,service);
@@ -43,7 +44,7 @@ namespace DynamicsDataTools.Tests
             // Checks the file exists
             Assert.IsTrue(System.IO.File.Exists(fileName));
 
-            // Make sure the file is not empty
+            // Make sure the file is not empty and is a valid xml file
             var xml = new XmlDocument();
             xml.Load(fileName);
 
@@ -59,7 +60,7 @@ namespace DynamicsDataTools.Tests
             var service = context.GetOrganizationService();
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { ConnectionName = "Test", EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
+            var options = new ExportOptions() { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
 
             // run the tool
             var exportTool = new ExportTool(log, service);
@@ -73,5 +74,60 @@ namespace DynamicsDataTools.Tests
                 Assert.AreEqual("No exporter found for extension .xyz", ex.Message);
             }
         }
+
+        [TestMethod]
+        public void Export_Fails_With_Wrong_Options()
+        {
+            var log = new FakeLog();
+            var context = new XrmFakedContext();
+            var service = context.GetOrganizationService();
+
+            // The file name is not provided, so the default path should be used
+            var options = new ExportOptions();
+
+            // run the tool
+            var exportTool = new ExportTool(log, service);
+            try
+            {
+                exportTool.Run(options);
+                Assert.Fail("Exeption not thrown");
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual("Either the entityname or the fetchfile options are required", ex.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Exports_From_Fetch_Query()
+        {
+            var log = new FakeLog();
+            var context = new XrmFakedContext();
+            var service = context.GetOrganizationService();
+            var fileName = "exported.xml";
+            var fetchFile = "fetch.xml";
+            var fetchQuery = @"<fetch top='50' >
+                                <entity name='account' />
+                               </fetch>";
+
+            // save query to a file
+            System.IO.File.WriteAllBytes(fetchFile,Encoding.Default.GetBytes(fetchQuery));
+
+            // The file name is not provided, so the default path should be used
+            var options = new ExportOptions() { FetchFile = fetchFile, File = fileName};
+
+            // run the tool
+            var exportTool = new ExportTool(log, service);
+            exportTool.Run(options);
+
+            // Checks the file exists
+            Assert.IsTrue(System.IO.File.Exists(fileName));
+
+            // Make sure the file is not empty and is a valid xml file
+            var xml = new XmlDocument();
+            xml.Load(fileName);
+        }
+
+
     }
 }
