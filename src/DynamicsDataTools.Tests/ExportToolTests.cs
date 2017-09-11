@@ -129,5 +129,36 @@ namespace DynamicsDataTools.Tests
         }
 
 
+        [TestMethod]
+        public void Exports_From_Fetch_With_Wrong_Fetch()
+        {
+            var log = new FakeLog();
+            var context = new XrmFakedContext();
+            var service = context.GetOrganizationService();
+            var fetchFile = "fetch.xml";
+            var fetchQuery = @"<data><fetch top='50' >
+                                <entity name='account' />
+                               </fetch></data>";
+
+            // save query to a file
+            System.IO.File.WriteAllBytes(fetchFile, Encoding.Default.GetBytes(fetchQuery));
+
+            // The file name is not provided, so the default path should be used
+            var options = new ExportOptions() { FetchFile = fetchFile };
+
+            // run the tool
+            var exportTool = new ExportTool(log, service);
+            try
+            {
+                exportTool.Run(options);
+                Assert.Fail("Exeption not thrown");
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual("Invalid xml document. The first node in the document must be a fetch", ex.Message);
+            }
+        }
+
+
     }
 }

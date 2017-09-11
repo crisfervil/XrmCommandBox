@@ -10,7 +10,7 @@ namespace DynamicsDataTools
     class Program
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
-        private static IOrganizationService CrmService = null;
+        private static IOrganizationService _crmService = null;
 
         static void Main(string[] args)
         {
@@ -37,7 +37,7 @@ namespace DynamicsDataTools
         private static void InitConnection(CommonOptions options)
         {
             Log.Debug("Connecting to CRM...");
-            CrmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
+            _crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
         }
 
         private static int RunNoVerb(DefaultVerb arg)
@@ -48,7 +48,7 @@ namespace DynamicsDataTools
         private static int RunExportAndReturnExitCode(ExportOptions opts)
         {
             InitConnection(opts);
-            new ExportTool(Log,CrmService).Run(opts);
+            new ExportTool(Log,_crmService).Run(opts);
             return 0;
         }
 
