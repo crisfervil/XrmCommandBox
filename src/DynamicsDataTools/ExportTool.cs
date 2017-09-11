@@ -10,7 +10,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace DynamicsDataTools
 {
-    class ExportTool : ToolBase
+    public class ExportTool : ToolBase
     {
         private readonly ILog _log;
         private readonly IOrganizationService _crmService;

@@ -2,7 +2,7 @@
 
 namespace DynamicsDataTools
 {
-    class CommonOptions
+    public class CommonOptions
     {
         [Option("connection", Required = true)]
         public string ConnectionName { get; set; }

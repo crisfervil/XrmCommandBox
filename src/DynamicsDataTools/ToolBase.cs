@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DynamicsDataTools
 {
-    class ToolBase
+    public class ToolBase
     {
 
         public void Run(CommonOptions options)
