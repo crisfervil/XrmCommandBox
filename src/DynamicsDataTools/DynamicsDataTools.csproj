@@ -47,39 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="bin\Debug\DynamicsDataTools.exe.config" />
-    <None Include="bin\Debug\DynamicsDataTools.exe.lastcodeanalysissucceeded" />
-    <None Include="bin\Debug\DynamicsDataTools.vshost.exe.config" />
-    <None Include="bin\Debug\DynamicsDataTools.vshost.exe.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JsonExporter.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\account.xml" />
-    <Content Include="bin\Debug\CommandLine.dll" />
-    <Content Include="bin\Debug\contacts.xml" />
-    <Content Include="bin\Debug\DynamicsDataTools.exe" />
-    <Content Include="bin\Debug\DynamicsDataTools.exe.CodeAnalysisLog.xml" />
-    <Content Include="bin\Debug\DynamicsDataTools.pdb" />
-    <Content Include="bin\Debug\DynamicsDataTools.vshost.exe" />
-    <Content Include="bin\Debug\log4net.dll" />
-    <Content Include="bin\Debug\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\Debug\Microsoft.IdentityModel.Clients.ActiveDirectory.dll" />
-    <Content Include="bin\Debug\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll" />
-    <Content Include="bin\Debug\Microsoft.IdentityModel.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Workflow.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Tooling.Connector.dll" />
-    <Content Include="bin\Debug\query.xml" />
-    <Content Include="bin\Debug\query_data.xml" />
-    <Content Include="bin\Debug\users.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Release\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
       <HintPath>..\packages\CommandLineParser.2.1.1-beta\lib\net45\CommandLine.dll</HintPath>
