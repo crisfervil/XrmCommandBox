@@ -20,6 +20,7 @@ namespace DynamicsDataTools
         {
             using (var docWriter = new XmlTextWriter(fileName, null))
             {
+                docWriter.WriteStartDocument();
                 docWriter.Formatting = Formatting.Indented;
 
                 docWriter.WriteStartElement("Data");
