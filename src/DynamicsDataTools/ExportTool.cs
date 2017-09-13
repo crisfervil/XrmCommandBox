@@ -10,7 +10,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace DynamicsDataTools
 {
-    public class ExportTool : ToolBase
+    public class ExportTool
     {
         private readonly ILog _log;
         private readonly IOrganizationService _crmService;
@@ -23,8 +23,6 @@ namespace DynamicsDataTools
 
         public void Run(ExportOptions options)
         {
-            base.Run(options);
-
             _log.Info("Running Export tool...");
 
             ValidateOptions(options);
