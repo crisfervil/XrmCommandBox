@@ -1,22 +1,45 @@
 ﻿using System;
+using System.Net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Tooling.Connector;
+using log4net;
 
 namespace DynamicsDataTools
 {
     class ConnectionBuilder
     {
+        private readonly ILog _log;
+
+        public ConnectionBuilder(ILog log)
+        {
+            _log = log;
+        }
+
         public IOrganizationService GetConnection(string connection)
         {
+
+            _log.Info("Connecting to CRM...");
+ 
             // The connection can be a connection name in the app.config file or a connection string
             var connStr = System.Configuration.ConfigurationManager.ConnectionStrings[connection];
             var connStrValue = connection;
             if (connStr != null)
             {
+                _log.Debug($"ConnectionString named {connection} found");
                 connStrValue = connStr.ConnectionString;
             }
 
-            return new CrmServiceClient(connStrValue);
+            var client = new CrmServiceClient(connStrValue);
+
+            if (!client.IsReady || client.LastCrmException!=null || !string.IsNullOrEmpty(client.LastCrmError))
+            {
+                var url = client.CrmConnectOrgUriActual != null ? client.CrmConnectOrgUriActual.ToString() : "CRM";
+                throw new Exception($"Error when connecting to {url} - {client.LastCrmError}", client.LastCrmException);
+            }
+
+            _log.Info($"Connected to: {client.CrmConnectOrgUriActual}");
+
+            return client.OrganizationWebProxyClient ?? (IOrganizationService)client.OrganizationServiceProxy;
 
         }
     }

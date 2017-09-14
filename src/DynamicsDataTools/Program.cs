@@ -29,6 +29,7 @@ namespace DynamicsDataTools
             }
             catch (Exception ex)
             {
+                if(ex.InnerException!= null) Log.Error(ex.InnerException);
                 Log.Error(ex.ToString());
                 Log.Info($"Unexpected error: {ex.Message}");
                 Environment.Exit(-1);
@@ -37,18 +38,7 @@ namespace DynamicsDataTools
 
         private static void InitConnection(CommonOptions options)
         {
-            Log.Debug("Connecting to CRM...");
-            _crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
-            var client = _crmService as CrmServiceClient;
-            if (client != null)
-            {
-                if (!string.IsNullOrEmpty(client.LastCrmError))
-                {
-                    var url = client.CrmConnectOrgUriActual != null ? client.CrmConnectOrgUriActual.ToString() : "CRM";
-                    throw new Exception($"Error when connecting to {url} - {client.LastCrmError}");
-                }
-                Log.Info($"Connected to: {client.CrmConnectOrgUriActual}");
-            }
+            _crmService = new ConnectionBuilder(Log).GetConnection(options.ConnectionName);
         }
 
         private static void Init(CommonOptions options)
