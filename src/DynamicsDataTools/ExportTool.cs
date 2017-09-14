@@ -39,7 +39,7 @@ namespace DynamicsDataTools
             }
             var extension = Path.GetExtension(options.File);
             IExporter exporter = GetExporter(extension);
-            exporter.Export(foundRecords.Entities, options.File);
+            exporter.Export(foundRecords.Entities, options.File, options.RecordNumber);
 
             _log.Info("Completed");
         }

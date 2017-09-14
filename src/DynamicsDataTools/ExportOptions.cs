@@ -7,6 +7,9 @@ namespace DynamicsDataTools
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
     public class ExportOptions : CommonOptions
     {
+        [Option("recordNumber", HelpText = "Adds the record number next to each record")]
+        public bool RecordNumber { get; set; }
+
         [Option("file")]
         public string File { get; set; }
 

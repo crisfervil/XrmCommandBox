@@ -11,7 +11,7 @@ namespace DynamicsDataTools
     {
         public string Extension { get; } = ".json";
 
-        public void Export(DataCollection<Entity> data, string fileName)
+        public void Export(DataCollection<Entity> data, string fileName, bool addRecordNumber)
         {
             throw new NotImplementedException();
         }

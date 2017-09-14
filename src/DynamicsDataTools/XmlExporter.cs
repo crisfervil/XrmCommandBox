@@ -16,8 +16,9 @@ namespace DynamicsDataTools
         }
 
 
-        public void Export(DataCollection<Entity> data, string fileName)
+        public void Export(DataCollection<Entity> data, string fileName, bool addRecordNumber)
         {
+            int recordNumber = 1;
             using (var docWriter = new XmlTextWriter(fileName, null))
             {
                 docWriter.WriteStartDocument();
@@ -28,13 +29,16 @@ namespace DynamicsDataTools
                 foreach (var entityRecord in data)
                 {
                     docWriter.WriteStartElement(entityRecord.LogicalName);
+                    if(addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString()); ;
                     WriteAttributeValues(entityRecord, docWriter);
                     docWriter.WriteEndElement();
+                    recordNumber++;
                 }
 
                 docWriter.Flush();
             }
         }
+
 
         private void WriteAttributeValues(Entity entityRecord, XmlTextWriter docWriter)
         {
