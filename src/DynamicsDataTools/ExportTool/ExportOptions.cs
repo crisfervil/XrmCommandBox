@@ -7,16 +7,16 @@ namespace DynamicsDataTools.ExportTools
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
     public class ExportOptions : CommonOptions
     {
-        [Option("recordNumber", HelpText = "Adds the record number next to each record")]
+        [Option("recordNumber", HelpText = "Adds the record number to each exported record")]
         public bool RecordNumber { get; set; }
 
-        [Option("file")]
+        [Option("file", HelpText="Path of the file where to save the exported data")]
         public string File { get; set; }
 
-        [Option("entity")]
+        [Option("entity", HelpText = "Name of the entity you want to export")]
         public string EntityName { get; set; }
 
-        [Option("fetchfile")]
+        [Option("fetchfile", HelpText = "Name of the file containing que FetchXml query to retrieve the data")]
         public string FetchFile { get; set; }
 
         [Usage(ApplicationAlias = "dynamicsdatatools")]
