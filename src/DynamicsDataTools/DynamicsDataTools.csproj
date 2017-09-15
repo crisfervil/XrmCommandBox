@@ -40,6 +40,10 @@
     <Compile Include="ExportTool\ExportOptions.cs" />
     <Compile Include="ExportTool\ExportTool.cs" />
     <Compile Include="ExportTool\IExporter.cs" />
+    <Compile Include="ImportTool\IDataReader.cs" />
+    <Compile Include="ImportTool\ImportOptions.cs" />
+    <Compile Include="ImportTool\ImportTool.cs" />
+    <Compile Include="ImportTool\XmlDataReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExportTool\XmlExporter.cs" />

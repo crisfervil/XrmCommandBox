@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="ExportToolTests.cs" />
     <Compile Include="FakeLog.cs" />
+    <Compile Include="ImportToolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
