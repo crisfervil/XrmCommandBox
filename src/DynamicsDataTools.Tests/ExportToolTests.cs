@@ -13,7 +13,7 @@ namespace DynamicsDataTools.Tests
     public class ExportToolTests
     {
         [TestMethod]
-        public void Exports_Accounts()
+        public void Exports_Accounts_Xml()
         {
             const string fileName = "account.xml";
             var log = new FakeLog();
@@ -35,7 +35,7 @@ namespace DynamicsDataTools.Tests
             if(System.IO.File.Exists(fileName)) System.IO.File.Delete(fileName);
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { EntityName = "account"};
+            var options = new ExportOptions() { EntityName = "account", RecordNumber=true };
 
             // run the tool
             var exportTool = new ExportTool(log,service);
@@ -49,8 +49,13 @@ namespace DynamicsDataTools.Tests
             xml.Load(fileName);
 
             // check the contents of the exported file
-            Assert.AreEqual(accounts.Count, xml.SelectNodes("Data/account")?.Count);
-        }
+            Assert.AreEqual(account1["name"].ToString(), xml.SelectSingleNode("Data/account[1]/name/text()").Value);
+            Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/account[2]/name/text()").Value);
+
+            // Check the record numbers are there
+            Assert.AreEqual("1", xml.SelectSingleNode("Data/account[1]/@i").Value);
+            Assert.AreEqual("2", xml.SelectSingleNode("Data/account[2]/@i").Value);
+       }
 
         [TestMethod]
         public void Exports_Fails_If_Not_Exporter_Available()
