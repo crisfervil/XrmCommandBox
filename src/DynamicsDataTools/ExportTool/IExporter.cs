@@ -1,7 +1,7 @@
 using log4net;
 using Microsoft.Xrm.Sdk;
 
-namespace DynamicsDataTools
+namespace DynamicsDataTools.ExportTools
 {
     public interface IExporter
     {

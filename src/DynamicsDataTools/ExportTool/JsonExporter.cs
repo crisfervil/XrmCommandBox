@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
 
-namespace DynamicsDataTools
+namespace DynamicsDataTools.ExportTools
 {
     public class JsonExporter : IExporter
     {

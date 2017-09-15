@@ -4,8 +4,8 @@ using System.Text;
 using System.Xml;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DynamicsDataTools;
 using Microsoft.Xrm.Sdk;
+using DynamicsDataTools.ExportTools;
 
 namespace DynamicsDataTools.Tests
 {

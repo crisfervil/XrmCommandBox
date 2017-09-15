@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk;
 using System.Xml;
 using log4net;
 
-namespace DynamicsDataTools
+namespace DynamicsDataTools.ExportTools
 {
     public class XmlExporter : IExporter
     {

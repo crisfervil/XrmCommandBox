@@ -4,7 +4,7 @@ using log4net;
 using log4net.Config;
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Tooling.Connector;
+using DynamicsDataTools.ExportTools;
 
 namespace DynamicsDataTools
 {

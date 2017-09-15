@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
 
-namespace DynamicsDataTools
+namespace DynamicsDataTools.ExportTools
 {
     public class ExportTool
     {
