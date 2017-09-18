@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DynamicsDataTools.ImportTool;
 using FakeXrmEasy;
 
@@ -13,7 +9,6 @@ namespace DynamicsDataTools.Tests
     [TestClass]
     public class ImportToolTests
     {
-
         [TestMethod]
         public void Import_Simple_Xml_File()
         {
@@ -32,7 +27,7 @@ namespace DynamicsDataTools.Tests
             // rename the temp file
             File.Move(fileName, xmlFile);
             // save the contents
-            File.WriteAllBytes(xmlFile, UTF8Encoding.Default.GetBytes(xmlContent));
+            File.WriteAllBytes(xmlFile, Encoding.Default.GetBytes(xmlContent));
 
             var log = new FakeLog();
             var context = new XrmFakedContext();
