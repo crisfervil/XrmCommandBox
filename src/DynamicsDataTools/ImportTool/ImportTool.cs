@@ -24,6 +24,12 @@ namespace DynamicsDataTools.ImportTool
 
             // Read the file and get the records to import
             var records = reader.Read(options.File);
+
+
+            foreach (var record in records)
+            {
+                var recordId = _crmService.Create(record);
+            }
         }
 
         private IDataReader GetReader(string extension)
