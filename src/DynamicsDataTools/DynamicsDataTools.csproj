@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="CommonOptions.cs" />
     <Compile Include="ConnectionBuilder.cs" />
+    <Compile Include="Data\DataTable.cs" />
     <Compile Include="DefaultVerb.cs" />
     <Compile Include="ExportTool\ExportOptions.cs" />
     <Compile Include="ExportTool\ExportTool.cs" />

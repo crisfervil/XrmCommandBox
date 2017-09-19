@@ -1,4 +1,4 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using DynamicsDataTools.Data;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -9,15 +9,24 @@ namespace DynamicsDataTools.ImportTool
     {
         public string Extension { get; } = ".xml";
 
-        public IList<Entity> Read(string fileName)
+        public DataTable Read(string fileName)
         {
-
-            var records = new List<Entity>();
+            var dataTable = new DataTable();
 
             // read the xml file
             using (var reader = XmlReader.Create(fileName))
             {
-                reader.ReadStartElement("Data");
+                // read the first element
+                reader.Read();
+
+                // read table attributes
+                while (reader.MoveToNextAttribute())
+                {
+                    if (reader.Name=="name")
+                    {
+                        dataTable.Name = reader.Value;
+                    }
+                }
 
                 // read all the child elements
                 while (reader.Read())
@@ -25,27 +34,24 @@ namespace DynamicsDataTools.ImportTool
                     // Ignore anything that is not an element
                     if (!reader.IsStartElement()) continue;
 
-                    // the element name at this level should match the entity name
-                    var entityName = reader.Name;
-
-                    var entity = new Entity(entityName);
-
                     // read attributes
                     var content = reader.ReadSubtree();
-                    ReadAttributes(content, entity);
+                    var record = ReadAttributes(content);
 
-                    records.Add(entity);
+                    dataTable.Add(record);
 
                     // Move the reader to the next sibling
                     reader.Skip();
                 }
             }
 
-            return records;
+            return dataTable;
         }
 
-        private void ReadAttributes(XmlReader reader, Entity entity)
+        private Dictionary<string, object> ReadAttributes(XmlReader reader)
         {
+            var row = new Dictionary<string, object>();
+
             reader.MoveToContent();
             while (reader.Read())
             {
@@ -57,8 +63,10 @@ namespace DynamicsDataTools.ImportTool
                 var attrValue = reader.ReadElementContentAsString();
 
                 // add the attribute value
-                entity.Attributes.Add(attrName, attrValue);
+                row[attrName] = attrValue;
             }
+
+            return row;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -23,13 +24,26 @@ namespace DynamicsDataTools.ImportTool
             IDataReader reader = GetReader(extension);
 
             // Read the file and get the records to import
-            var records = reader.Read(options.File);
+            var dataTable = reader.Read(options.File);
 
-
-            foreach (var record in records)
+            foreach (var row in dataTable)
             {
-                var recordId = _crmService.Create(record);
+                var entity = GetEntity(row, dataTable.Name);
+                var recordId = _crmService.Create(entity);
             }
+        }
+
+        private Entity GetEntity(Dictionary<string,object> record, string entityName)
+        {
+            var entity = new Entity(entityName);
+
+            foreach (var attrName in record.Keys)
+            {
+                // Convert this to the type specified in the metadata for the attribute in the entity
+                entity[attrName] = record[attrName];
+            }
+
+            return entity;
         }
 
         private IDataReader GetReader(string extension)

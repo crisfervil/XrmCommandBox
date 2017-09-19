@@ -1,11 +1,10 @@
-using Microsoft.Xrm.Sdk;
-using System.Collections.Generic;
+using DynamicsDataTools.Data;
 
 namespace DynamicsDataTools.ImportTool
 {
     public interface IDataReader
     {
         string Extension { get; }
-        IList<Entity> Read(string fileName);
+        DataTable Read(string fileName);
     }
 }

@@ -15,18 +15,17 @@ namespace DynamicsDataTools.Tests
         [TestMethod]
         public void Import_Simple_Xml_File()
         {
-
-            string xmlContent = @"<Data attr='value'>
-                                <account attr1='value1'>
-                                    <attr1>Value1</attr1>
-                                    <attr2>Value2</attr2>
-                                </account>
-                                <account i='2'>
-                                    <attr1>Value3</attr1>
-                                    <attr2>Value4</attr2>
-                                    <attr3>Value5</attr3>
-                                </account>
-                               </Data>";
+            string xmlContent = @"<DataTable name='account'>
+                                    <row n='1'>
+                                        <attr1>Value1</attr1>
+                                        <attr2>Value2</attr2>
+                                    </row>
+                                    <row n='2'>
+                                        <attr1>Value3</attr1>
+                                        <attr2>Value4</attr2>
+                                        <attr3>Value5</attr3>
+                                    </row>
+                               </DataTable>";
 
             // Save the content to a file
             var fileName = Path.GetTempFileName();
