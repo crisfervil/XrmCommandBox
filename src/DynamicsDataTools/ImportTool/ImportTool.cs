@@ -33,7 +33,7 @@ namespace DynamicsDataTools.ImportTool
             }
         }
 
-        private Entity GetEntity(Dictionary<string,object> record, string entityName)
+        private Entity GetEntity(Dictionary<string,string> record, string entityName)
         {
             var entity = new Entity(entityName);
 
