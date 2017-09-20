@@ -16,12 +16,19 @@ namespace DynamicsDataTools.Tests.Data
         public void Serialize_Simple_Data()
         {
 
+            var dataTable = new DataTable();
+            var serializer = new XmlSerializer();
+            var sb = new StringBuilder();
+            serializer.Serialize(dataTable,new StringWriter(sb));
+
+            // TODO: Check the results in sb
+
         }
 
         [TestMethod]
         public void Deserialize_Simple_Data()
         {
-            var xmlData = @"<DataTable>
+            var xmlData = @"<DataTable name='MyDataTable'>
                                 <row>
                                     <attr1>Value1</attr1>
                                     <attr2>Value2</attr2>
@@ -38,6 +45,7 @@ namespace DynamicsDataTools.Tests.Data
             var dataTable = serializer.Deserialize(ms);
 
             Assert.AreEqual(2, dataTable.Count);
+            Assert.AreEqual("MyDataTable", dataTable.Name);
             Assert.AreEqual("Value1", dataTable[0]["attr1"]);
             Assert.AreEqual("Value2", dataTable[0]["attr2"]);
             Assert.AreEqual("Value3", dataTable[0]["attr3"]);

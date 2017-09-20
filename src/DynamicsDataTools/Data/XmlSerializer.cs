@@ -10,9 +10,17 @@ namespace DynamicsDataTools.Data
     {
         public string Extension { get; } = ".xml";
 
+
+        public void Serialize(DataTable data, TextWriter writer)
+        {
+        }
+
         public void Serialize(DataTable data, string fileName)
         {
-
+            using (var ts = File.CreateText(fileName))
+            {
+                Serialize(data, ts);
+            }
         }
 
         public DataTable Deserialize(string fileName)
