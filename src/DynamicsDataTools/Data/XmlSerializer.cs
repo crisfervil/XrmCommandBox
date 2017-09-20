@@ -1,6 +1,7 @@
 ﻿using DynamicsDataTools.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace DynamicsDataTools.Data
@@ -19,7 +20,19 @@ namespace DynamicsDataTools.Data
             var dataTable = new DataTable();
 
             // read the xml file
-            using (var reader = XmlReader.Create(fileName))
+            using(var fs = File.OpenRead(fileName))
+            {
+                dataTable = Deserialize(fs);
+            }
+
+            return dataTable;
+        }
+
+        public DataTable Deserialize(Stream data)
+        {
+            var dataTable = new DataTable();
+
+            using (var reader = XmlReader.Create(data))
             {
                 // read the first element
                 reader.Read();
@@ -27,7 +40,7 @@ namespace DynamicsDataTools.Data
                 // read table attributes
                 while (reader.MoveToNextAttribute())
                 {
-                    if (reader.Name=="name")
+                    if (reader.Name == "name")
                     {
                         dataTable.Name = reader.Value;
                     }

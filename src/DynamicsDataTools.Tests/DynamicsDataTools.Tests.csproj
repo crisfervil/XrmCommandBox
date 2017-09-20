@@ -112,6 +112,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Data\XmlSerializerTests.cs" />
     <Compile Include="ExportToolTests.cs" />
     <Compile Include="FakeLog.cs" />
     <Compile Include="ImportToolTests.cs" />
