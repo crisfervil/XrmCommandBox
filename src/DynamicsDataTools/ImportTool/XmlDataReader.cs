@@ -48,9 +48,9 @@ namespace DynamicsDataTools.ImportTool
             return dataTable;
         }
 
-        private Dictionary<string, string> ReadAttributes(XmlReader reader)
+        private Dictionary<string, object> ReadAttributes(XmlReader reader)
         {
-            var row = new Dictionary<string, string>();
+            var row = new Dictionary<string, object>();
 
             reader.MoveToContent();
             while (reader.Read())

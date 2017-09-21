@@ -10,9 +10,27 @@ namespace DynamicsDataTools.Data
     {
         public string Extension { get; } = ".xml";
 
-
-        public void Serialize(DataTable data, TextWriter writer)
+        public void Serialize(DataTable data, TextWriter writer, bool addRecordNumber = false)
         {
+            int recordNumber = 1;
+            using (var docWriter = new XmlTextWriter(writer))
+            {
+                docWriter.WriteStartDocument();
+                docWriter.Formatting = Formatting.Indented;
+
+                docWriter.WriteStartElement("Data");
+
+                foreach (var entityRecord in data)
+                {
+                    docWriter.WriteStartElement(data.Name);
+                    if (addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString()); ;
+                    WriteAttributeValues(entityRecord, docWriter);
+                    docWriter.WriteEndElement();
+                    recordNumber++;
+                }
+
+                docWriter.Flush();
+            }
         }
 
         public void Serialize(DataTable data, string fileName)
@@ -74,9 +92,9 @@ namespace DynamicsDataTools.Data
             return dataTable;
         }
 
-        private Dictionary<string, string> ReadAttributes(XmlReader reader)
+        private Dictionary<string, object> ReadAttributes(XmlReader reader)
         {
-            var row = new Dictionary<string, string>();
+            var row = new Dictionary<string, object>();
 
             reader.MoveToContent();
             while (reader.Read())
@@ -94,5 +112,44 @@ namespace DynamicsDataTools.Data
 
             return row;
         }
+
+        private void WriteAttributeValues(Dictionary<string,object> entityRecord, XmlTextWriter docWriter)
+        {
+            foreach (var attributeKey in entityRecord.Keys)
+            {
+                docWriter.WriteStartElement(attributeKey);
+                if(entityRecord[attributeKey] != null)
+                {
+                    if (entityRecord[attributeKey] is EntityReferenceValue) WriteXmlAttributes(docWriter, (EntityReferenceValue) entityRecord[attributeKey]);
+                    var attrValue = GetAttributeValue(entityRecord[attributeKey]);
+                    var strAttrValue = attrValue != null ? attrValue.ToString() : null;
+                    docWriter.WriteValue(strAttrValue);
+                }
+                docWriter.WriteEndElement();
+            }
+        }
+
+        private void WriteXmlAttributes(XmlTextWriter docWriter, EntityReferenceValue attribute)
+        {
+                docWriter.WriteAttributeString("Name", attribute.Name);
+                docWriter.WriteAttributeString("LogicalName", attribute.LogicalName);
+        }
+
+        private object GetAttributeValue(object attributeValue)
+        {
+            object value = null;
+
+            if (attributeValue is EntityReferenceValue)
+            {
+                value = ((EntityReferenceValue)attributeValue).Value;
+            }
+            else
+            {
+                value = attributeValue;
+            }
+
+            return value;
+        }
+
     }
 }
