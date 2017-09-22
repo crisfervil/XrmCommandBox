@@ -20,9 +20,14 @@ namespace DynamicsDataTools.Data
 
                 docWriter.WriteStartElement("Data");
 
+                if (!string.IsNullOrEmpty(data.Name))
+                {
+                    docWriter.WriteAttributeString("name",data.Name);
+                }
+
                 foreach (var entityRecord in data)
                 {
-                    docWriter.WriteStartElement(data.Name);
+                    docWriter.WriteStartElement("row");
                     if (addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString()); ;
                     WriteAttributeValues(entityRecord, docWriter);
                     docWriter.WriteEndElement();

@@ -15,14 +15,33 @@ namespace DynamicsDataTools.Tests.Data
         [TestMethod]
         public void Serialize_Simple_Data()
         {
+            // Prepare the data to serialize
+            var dataTable = new DataTable() { Name="MyTable" };
 
-            var dataTable = new DataTable();
+            // add row
+            var numberValue = 2.3;
+            var dateValue = DateTime.Now;
+            var referenceValue = new EntityReferenceValue() { LogicalName="MyEntity", Name="EntityText", Value=Guid.NewGuid() };
+            var row1 = new Dictionary<string, object>() { { "Attr1", "Value1" }, { "Attr2", numberValue } };
+            var row2 = new Dictionary<string, object>() { { "Attr2", dateValue }, { "Attr4", referenceValue } };
+            dataTable.Add(row1);
+            dataTable.Add(row2);
+
             var serializer = new XmlSerializer();
             var sb = new StringBuilder();
             serializer.Serialize(dataTable,new StringWriter(sb));
+            var serializedXml = sb.ToString();
 
-            // TODO: Check the results in sb
-
+            // Check the results in sb
+            var xml = new System.Xml.XmlDocument();
+            xml.LoadXml(serializedXml);
+            Assert.AreEqual("MyTable", xml.SelectSingleNode("/Data/@name").Value);
+            Assert.AreEqual("Value1", xml.SelectSingleNode("/Data/row[1]/Attr1").InnerText);
+            Assert.AreEqual("2.3", xml.SelectSingleNode("/Data/row[1]/Attr2").InnerText);
+            Assert.AreEqual(dateValue.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr2").InnerText);
+            Assert.AreEqual(referenceValue.Value.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr4").InnerText);
+            Assert.AreEqual(referenceValue.Name, xml.SelectSingleNode("/Data/row[2]/Attr4/@Name").Value);
+            Assert.AreEqual(referenceValue.LogicalName, xml.SelectSingleNode("/Data/row[2]/Attr4/@LogicalName").Value);
         }
 
         [TestMethod]
