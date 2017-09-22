@@ -1,10 +1,7 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DynamicsDataTools.Data
 {
@@ -17,9 +14,11 @@ namespace DynamicsDataTools.Data
             this._log = log;
         }
 
-        public static void Serialize(DataTable data, string fileName)
+        public void Serialize(DataTable data, string fileName)
         {
-
+            var extension = Path.GetExtension(fileName);
+            var serializer = GetSerializer(extension);
+            serializer.Serialize(data,fileName);
         }
 
         public DataTable Deserialize(string fileName)
@@ -35,7 +34,7 @@ namespace DynamicsDataTools.Data
             var emptyObjectArray = new object[] { };
             var arrayWithLogOnly = new object[] { _log };
 
-            var serializers = Extensions.GetObjectInstances<ISerializer>(new object[][] { emptyObjectArray, arrayWithLogOnly });
+            var serializers = Helper.GetObjectInstances<ISerializer>(new object[][] { emptyObjectArray, arrayWithLogOnly });
 
             var found = serializers.Where(x => x.Extension == extension).ToList();
             if (!found.Any()) throw new Exception($"No exporter found for extension {extension}");

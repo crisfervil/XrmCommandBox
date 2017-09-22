@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DynamicsDataTools
 {
-    public static class Extensions
+    public static class Helper
     {
         public static IList<T> GetObjectInstances<T>(Object[][] parameterValues)
         {

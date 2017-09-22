@@ -40,13 +40,14 @@
     <Compile Include="Data\DataTable.cs" />
     <Compile Include="Data\DataTableSerializer.cs" />
     <Compile Include="Data\EntityReferenceValue.cs" />
+    <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="DefaultVerb.cs" />
     <Compile Include="ExportTool\ExportOptions.cs" />
     <Compile Include="ExportTool\ExportTool.cs" />
     <Compile Include="ExportTool\IExporter.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="ImportTool\IDataReader.cs" />
     <Compile Include="ImportTool\ImportOptions.cs" />
     <Compile Include="ImportTool\ImportTool.cs" />

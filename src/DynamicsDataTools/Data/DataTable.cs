@@ -12,5 +12,5 @@ namespace DynamicsDataTools.Data
     public class DataTable : List<Dictionary<string,object>>
     {
         public string Name { get; set; }
-    }
+        }
 }

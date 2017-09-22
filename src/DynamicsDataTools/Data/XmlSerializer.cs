@@ -43,6 +43,7 @@ namespace DynamicsDataTools.Data
             using (var ts = File.CreateText(fileName))
             {
                 Serialize(data, ts);
+                ts.Close();
             }
         }
 

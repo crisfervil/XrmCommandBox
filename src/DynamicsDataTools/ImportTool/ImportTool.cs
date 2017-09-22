@@ -51,7 +51,7 @@ namespace DynamicsDataTools.ImportTool
             var emptyObjectArray = new object[] { };
             var arrayWithLogOnly = new object[] { _log };
 
-            var readers = Extensions.GetObjectInstances<IDataReader>(new object[][] { emptyObjectArray, arrayWithLogOnly });
+            var readers = Helper.GetObjectInstances<IDataReader>(new object[][] { emptyObjectArray, arrayWithLogOnly });
 
             var found = readers.Where(x => x.Extension == extension).ToList();
             if (!found.Any()) throw new Exception($"No exporter found for extension {extension}");

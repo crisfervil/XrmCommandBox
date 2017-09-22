@@ -32,7 +32,10 @@ namespace DynamicsDataTools.Tests
             var accounts = new List<Entity>() {account1,account2};
             context.Initialize(accounts);
 
-            if(System.IO.File.Exists(fileName)) System.IO.File.Delete(fileName);
+            if(System.IO.File.Exists(fileName))
+            {
+                System.IO.File.Delete(fileName);
+            }
 
             // The file name is not provided, so the default path should be used
             var options = new ExportOptions() { EntityName = "account", RecordNumber=true };
@@ -49,8 +52,8 @@ namespace DynamicsDataTools.Tests
             xml.Load(fileName);
 
             // check the contents of the exported file
-            Assert.AreEqual(account1["name"].ToString(), xml.SelectSingleNode("Data/account[1]/name/text()").Value);
-            Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/account[2]/name/text()").Value);
+            Assert.AreEqual(account1["name"].ToString(), xml.SelectSingleNode("Data/row[1]/name").InnerText);
+            Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/row[2]/name").InnerText);
 
             // Check the record numbers are there
             Assert.AreEqual("1", xml.SelectSingleNode("Data/account[1]/@i").Value);
