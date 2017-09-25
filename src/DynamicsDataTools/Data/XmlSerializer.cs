@@ -1,5 +1,4 @@
-﻿using DynamicsDataTools.Data;
-using System;
+﻿using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -126,7 +125,7 @@ namespace DynamicsDataTools.Data
                 docWriter.WriteStartElement(attributeKey);
                 if(entityRecord[attributeKey] != null)
                 {
-                    if (entityRecord[attributeKey] is EntityReferenceValue) WriteXmlAttributes(docWriter, (EntityReferenceValue) entityRecord[attributeKey]);
+                    WriteXmlAttributes(docWriter, entityRecord[attributeKey]);
                     var attrValue = GetAttributeValue(entityRecord[attributeKey]);
                     var strAttrValue = attrValue != null ? attrValue.ToString() : null;
                     docWriter.WriteValue(strAttrValue);
@@ -135,10 +134,14 @@ namespace DynamicsDataTools.Data
             }
         }
 
-        private void WriteXmlAttributes(XmlTextWriter docWriter, EntityReferenceValue attribute)
+        private void WriteXmlAttributes(XmlTextWriter docWriter, object attributeValue)
         {
-                docWriter.WriteAttributeString("Name", attribute.Name);
-                docWriter.WriteAttributeString("LogicalName", attribute.LogicalName);
+            if (attributeValue is EntityReferenceValue)
+            {
+                var referenceValue = (EntityReferenceValue)attributeValue;
+                docWriter.WriteAttributeString("Name", referenceValue.Name);
+                docWriter.WriteAttributeString("LogicalName", referenceValue.LogicalName);
+            }
         }
 
         private object GetAttributeValue(object attributeValue)

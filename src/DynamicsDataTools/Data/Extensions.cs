@@ -34,6 +34,10 @@ namespace DynamicsDataTools.Data
                 var er = (EntityReference)value;
                 retVal = new EntityReferenceValue() { LogicalName=er.LogicalName, Name=er.Name, Value=er.Id };
             }
+            else if (value is Money)
+            {
+                retVal = ((Money)value).Value;
+            }
 
             // TODO add more data type converters
 
