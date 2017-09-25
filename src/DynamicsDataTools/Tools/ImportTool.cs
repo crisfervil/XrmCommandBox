@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DynamicsDataTools.ImportTool
+namespace DynamicsDataTools.Tools
 {
     public class ImportTool
     {

@@ -2,7 +2,7 @@
 using CommandLine.Text;
 using System.Collections.Generic;
 
-namespace DynamicsDataTools.ExportTools
+namespace DynamicsDataTools.Tools
 {
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
     public class ExportOptions : CommonOptions

@@ -5,7 +5,7 @@ using System.Xml;
 using Microsoft.Xrm.Sdk;
 using DynamicsDataTools.Data;
 
-namespace DynamicsDataTools.ExportTools
+namespace DynamicsDataTools.Tools
 {
     public class ExportTool
     {

@@ -113,9 +113,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Data\XmlSerializerTests.cs" />
-    <Compile Include="ExportTool\ExportToolTests.cs" />
+    <Compile Include="Tools\ExportToolTests.cs" />
     <Compile Include="FakeLog.cs" />
-    <Compile Include="ImportTool\ImportToolTests.cs" />
+    <Compile Include="Tools\ImportToolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

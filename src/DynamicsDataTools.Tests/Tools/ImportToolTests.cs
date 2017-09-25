@@ -1,11 +1,12 @@
 ﻿using DynamicsDataTools.Tests;
+using DynamicsDataTools.Tools;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace DynamicsDataTools.ImportTool.Tests
+namespace DynamicsDataTools.Tests.Tools
 {
     [TestClass]
     public class ImportToolTests

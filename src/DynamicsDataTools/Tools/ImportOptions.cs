@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace DynamicsDataTools.ImportTool
+namespace DynamicsDataTools.Tools
 {
     public class ImportOptions : CommonOptions
     {

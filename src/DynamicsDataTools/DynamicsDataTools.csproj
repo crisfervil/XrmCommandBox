@@ -44,11 +44,11 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="DefaultVerb.cs" />
-    <Compile Include="ExportTool\ExportOptions.cs" />
-    <Compile Include="ExportTool\ExportTool.cs" />
+    <Compile Include="Tools\ExportOptions.cs" />
+    <Compile Include="Tools\ExportTool.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="ImportTool\ImportOptions.cs" />
-    <Compile Include="ImportTool\ImportTool.cs" />
+    <Compile Include="Tools\ImportOptions.cs" />
+    <Compile Include="Tools\ImportTool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
