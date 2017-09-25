@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DynamicsDataTools.Tools
 {
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
-    public class ExportOptions : CommonOptions
+    public class ExportToolOptions : CommonOptions
     {
         [Option("recordNumber", HelpText = "Adds the record number to each exported record")]
         public bool RecordNumber { get; set; }
@@ -24,7 +24,7 @@ namespace DynamicsDataTools.Tools
         {
             get
             {
-                yield return new Example("Simple Export", new ExportOptions() { File="Accounts.xml", ConnectionName = "DEV", EntityName = "account"});
+                yield return new Example("Simple Export", new ExportToolOptions() { File="Accounts.xml", ConnectionName = "DEV", EntityName = "account"});
             }
         }
     }

@@ -39,7 +39,7 @@ namespace DynamicsDataTools.Tests.Tools
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
 
-            var options = new ImportOptions() { File = xmlFile };
+            var options = new ImportToolOptions() { File = xmlFile };
 
             var importTool = new ImportTool(log, service);
             importTool.Run(options);

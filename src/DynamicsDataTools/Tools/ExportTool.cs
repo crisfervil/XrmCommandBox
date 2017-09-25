@@ -18,7 +18,7 @@ namespace DynamicsDataTools.Tools
             _crmService = service;
         }
 
-        public void Run(ExportOptions options)
+        public void Run(ExportToolOptions options)
         {
             _log.Info("Running Export tool...");
 
@@ -43,7 +43,7 @@ namespace DynamicsDataTools.Tools
             _log.Info("Completed");
         }
 
-        private EntityCollection GetRecords(ExportOptions options)
+        private EntityCollection GetRecords(ExportToolOptions options)
         {
             EntityCollection foundRecords = null;
             if (!string.IsNullOrEmpty(options.EntityName))
@@ -57,7 +57,7 @@ namespace DynamicsDataTools.Tools
             return foundRecords;
         }
 
-        private void ValidateOptions(ExportOptions options)
+        private void ValidateOptions(ExportToolOptions options)
         {
             if (string.IsNullOrEmpty(options.FetchFile) && string.IsNullOrEmpty(options.EntityName))
             {

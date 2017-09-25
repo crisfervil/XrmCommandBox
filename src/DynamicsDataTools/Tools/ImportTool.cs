@@ -19,7 +19,7 @@ namespace DynamicsDataTools.Tools
             _crmService = service;
         }
 
-        public void Run(ImportOptions options)
+        public void Run(ImportToolOptions options)
         {
             _log.Info("Running Import tool...");
 

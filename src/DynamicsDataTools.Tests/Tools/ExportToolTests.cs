@@ -39,7 +39,7 @@ namespace DynamicsDataTools.Tests.Tools
             }
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { EntityName = "account", RecordNumber=true };
+            var options = new ExportToolOptions() { EntityName = "account", RecordNumber=true };
 
             // TODO: Delete this if the FaxeXrmEaxy pull request is accepted
             options.File = fileName;
@@ -72,7 +72,7 @@ namespace DynamicsDataTools.Tests.Tools
             var service = context.GetOrganizationService();
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
+            var options = new ExportToolOptions() { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
 
             // run the tool
             var exportTool = new ExportTool(log, service);
@@ -95,7 +95,7 @@ namespace DynamicsDataTools.Tests.Tools
             var service = context.GetOrganizationService();
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions();
+            var options = new ExportToolOptions();
 
             // run the tool
             var exportTool = new ExportTool(log, service);
@@ -126,7 +126,7 @@ namespace DynamicsDataTools.Tests.Tools
             System.IO.File.WriteAllBytes(fetchFile,Encoding.Default.GetBytes(fetchQuery));
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { FetchFile = fetchFile, File = fileName};
+            var options = new ExportToolOptions() { FetchFile = fetchFile, File = fileName};
 
             // run the tool
             var exportTool = new ExportTool(log, service);
@@ -156,7 +156,7 @@ namespace DynamicsDataTools.Tests.Tools
             System.IO.File.WriteAllBytes(fetchFile, Encoding.Default.GetBytes(fetchQuery));
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportOptions() { FetchFile = fetchFile };
+            var options = new ExportToolOptions() { FetchFile = fetchFile };
 
             // run the tool
             var exportTool = new ExportTool(log, service);

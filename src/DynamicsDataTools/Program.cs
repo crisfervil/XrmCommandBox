@@ -21,9 +21,9 @@ namespace DynamicsDataTools
             try
             {
 
-                Parser.Default.ParseArguments<DefaultVerb, ExportOptions>(args)
+                Parser.Default.ParseArguments<DefaultVerb, ExportToolOptions>(args)
                     .MapResult((DefaultVerb opts) => RunNoVerb(opts),
-                                (ExportOptions opts) => RunExportAndReturnExitCode(opts),
+                                (ExportToolOptions opts) => RunExportAndReturnExitCode(opts),
                                 HandleErrors);
 
             }
@@ -55,7 +55,7 @@ namespace DynamicsDataTools
             return 0;
         }
 
-        private static int RunExportAndReturnExitCode(ExportOptions opts)
+        private static int RunExportAndReturnExitCode(ExportToolOptions opts)
         {
             Init(opts);
             new ExportTool(Log,_crmService).Run(opts);
