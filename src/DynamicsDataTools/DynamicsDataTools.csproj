@@ -43,7 +43,6 @@
     <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
-    <Compile Include="DefaultVerb.cs" />
     <Compile Include="Tools\ExportToolOptions.cs" />
     <Compile Include="Tools\ExportTool.cs" />
     <Compile Include="Helper.cs" />
