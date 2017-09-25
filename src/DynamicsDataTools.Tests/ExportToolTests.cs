@@ -40,6 +40,9 @@ namespace DynamicsDataTools.Tests
             // The file name is not provided, so the default path should be used
             var options = new ExportOptions() { EntityName = "account", RecordNumber=true };
 
+            // TODO: Delete this if the FaxeXrmEaxy pull request is accepted
+            options.File = fileName;
+
             // run the tool
             var exportTool = new ExportTool(log,service);
             exportTool.Run(options);
@@ -56,8 +59,8 @@ namespace DynamicsDataTools.Tests
             Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/row[2]/name").InnerText);
 
             // Check the record numbers are there
-            Assert.AreEqual("1", xml.SelectSingleNode("Data/account[1]/@i").Value);
-            Assert.AreEqual("2", xml.SelectSingleNode("Data/account[2]/@i").Value);
+            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i").Value);
+            Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/@i").Value);
        }
 
         [TestMethod]

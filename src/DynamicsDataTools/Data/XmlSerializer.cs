@@ -28,7 +28,7 @@ namespace DynamicsDataTools.Data
                 foreach (var entityRecord in data)
                 {
                     docWriter.WriteStartElement("row");
-                    if (addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString()); ;
+                    if (addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString());
                     WriteAttributeValues(entityRecord, docWriter);
                     docWriter.WriteEndElement();
                     recordNumber++;
@@ -38,11 +38,11 @@ namespace DynamicsDataTools.Data
             }
         }
 
-        public void Serialize(DataTable data, string fileName)
+        public void Serialize(DataTable data, string fileName, bool addRecordNumber = false)
         {
             using (var ts = File.CreateText(fileName))
             {
-                Serialize(data, ts);
+                Serialize(data, ts, addRecordNumber);
                 ts.Close();
             }
         }

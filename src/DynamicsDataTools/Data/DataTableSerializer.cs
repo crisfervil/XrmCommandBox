@@ -14,11 +14,11 @@ namespace DynamicsDataTools.Data
             this._log = log;
         }
 
-        public void Serialize(DataTable data, string fileName)
+        public void Serialize(DataTable data, string fileName, bool addRecordNumber = false)
         {
             var extension = Path.GetExtension(fileName);
             var serializer = GetSerializer(extension);
-            serializer.Serialize(data,fileName);
+            serializer.Serialize(data,fileName, addRecordNumber);
         }
 
         public DataTable Deserialize(string fileName)

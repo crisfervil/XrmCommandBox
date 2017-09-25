@@ -31,8 +31,6 @@ namespace DynamicsDataTools.ExportTools
             // Convert to a data table
             var recordsTable = foundRecords.AsDataTable();
 
-            // Export 
-
             // set a default file name
             if (string.IsNullOrEmpty(options.File))
             {
@@ -40,7 +38,7 @@ namespace DynamicsDataTools.ExportTools
             }
 
             var serializer = new DataTableSerializer(_log);
-            serializer.Serialize(recordsTable, options.File);
+            serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
             _log.Info("Completed");
         }

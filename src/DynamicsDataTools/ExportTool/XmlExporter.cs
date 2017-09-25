@@ -29,7 +29,7 @@ namespace DynamicsDataTools.ExportTools
                 foreach (var entityRecord in data)
                 {
                     docWriter.WriteStartElement(entityRecord.LogicalName);
-                    if(addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString()); ;
+                    if(addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString());
                     WriteAttributeValues(entityRecord, docWriter);
                     docWriter.WriteEndElement();
                     recordNumber++;
