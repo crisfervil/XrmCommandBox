@@ -38,6 +38,10 @@ namespace DynamicsDataTools.Data
             {
                 retVal = ((Money)value).Value;
             }
+            else if (value is OptionSetValue)
+            {
+                retVal = ((OptionSetValue)value).Value;
+            }
 
             // TODO add more data type converters
 
