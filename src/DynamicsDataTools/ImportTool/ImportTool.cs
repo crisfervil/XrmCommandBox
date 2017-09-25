@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using DynamicsDataTools.Data;
+using log4net;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,14 @@ namespace DynamicsDataTools.ImportTool
 
         public void Run(ImportOptions options)
         {
-            var extension = Path.GetExtension(options.File);
-            IDataReader reader = GetReader(extension);
+            _log.Info("Running Import tool...");
 
-            // Read the file and get the records to import
-            var dataTable = reader.Read(options.File);
+            var serializer = new DataTableSerializer(_log);
 
+            _log.Info("Reading file...");
+            var dataTable = serializer.Deserialize(options.File);
+
+            _log.Info("Processing records...");
             foreach (var row in dataTable)
             {
                 var entity = GetEntity(row, dataTable.Name);
@@ -44,19 +47,6 @@ namespace DynamicsDataTools.ImportTool
             }
 
             return entity;
-        }
-
-        private IDataReader GetReader(string extension)
-        {
-            var emptyObjectArray = new object[] { };
-            var arrayWithLogOnly = new object[] { _log };
-
-            var readers = Helper.GetObjectInstances<IDataReader>(new object[][] { emptyObjectArray, arrayWithLogOnly });
-
-            var found = readers.Where(x => x.Extension == extension).ToList();
-            if (!found.Any()) throw new Exception($"No exporter found for extension {extension}");
-            if (found.Count > 1) throw new Exception($"Too many exporters found for extension {extension}");
-            return found[0];
         }
     }
 }
