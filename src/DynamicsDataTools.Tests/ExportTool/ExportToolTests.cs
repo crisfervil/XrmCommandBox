@@ -6,8 +6,9 @@ using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using DynamicsDataTools.ExportTools;
+using DynamicsDataTools.Tests;
 
-namespace DynamicsDataTools.Tests
+namespace DynamicsDataTools.ExportTool.Tests
 {
     [TestClass]
     public class ExportToolTests
@@ -44,7 +45,7 @@ namespace DynamicsDataTools.Tests
             options.File = fileName;
 
             // run the tool
-            var exportTool = new ExportTool(log,service);
+            var exportTool = new ExportTools.ExportTool(log,service);
             exportTool.Run(options);
 
             // Checks the file exists
@@ -74,7 +75,7 @@ namespace DynamicsDataTools.Tests
             var options = new ExportOptions() { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTools.ExportTool(log, service);
             try
             {
                 exportTool.Run(options);
@@ -97,7 +98,7 @@ namespace DynamicsDataTools.Tests
             var options = new ExportOptions();
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTools.ExportTool(log, service);
             try
             {
                 exportTool.Run(options);
@@ -128,7 +129,7 @@ namespace DynamicsDataTools.Tests
             var options = new ExportOptions() { FetchFile = fetchFile, File = fileName};
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTools.ExportTool(log, service);
             exportTool.Run(options);
 
             // Checks the file exists
@@ -158,7 +159,7 @@ namespace DynamicsDataTools.Tests
             var options = new ExportOptions() { FetchFile = fetchFile };
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTools.ExportTool(log, service);
             try
             {
                 exportTool.Run(options);

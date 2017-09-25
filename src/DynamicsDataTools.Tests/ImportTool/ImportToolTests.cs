@@ -1,13 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Text;
-using DynamicsDataTools.ImportTool;
+﻿using DynamicsDataTools.Tests;
 using FakeXrmEasy;
-using System.Collections;
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 using System.Linq;
+using System.Text;
 
-namespace DynamicsDataTools.Tests
+namespace DynamicsDataTools.ImportTool.Tests
 {
     [TestClass]
     public class ImportToolTests
@@ -42,7 +40,7 @@ namespace DynamicsDataTools.Tests
 
             var options = new ImportOptions() { File = xmlFile };
 
-            var importTool = new ImportTool.ImportTool(log, service);
+            var importTool = new ImportTool(log, service);
             importTool.Run(options);
 
 
