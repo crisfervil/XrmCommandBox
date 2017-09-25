@@ -22,7 +22,7 @@ namespace DynamicsDataTools
             {
 
                 Parser.Default.ParseArguments<ExportToolOptions, ImportToolOptions>(args)
-                    .MapResult((ImportToolOptions opts) => RunNoVerb(opts),
+                    .MapResult((ImportToolOptions opts) => RunImportAndReturnExitCode(opts),
                                 (ExportToolOptions opts) => RunExportAndReturnExitCode(opts),
                                 HandleErrors);
 
