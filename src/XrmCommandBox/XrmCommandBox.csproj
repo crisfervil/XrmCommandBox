@@ -7,8 +7,8 @@
     <ProjectGuid>{378D6EF5-E2E3-4151-9D1A-EE184B549220}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DynamicsDataTools</RootNamespace>
-    <AssemblyName>DynamicsDataTools</AssemblyName>
+    <RootNamespace>XrmCommandBox</RootNamespace>
+    <AssemblyName>Xrm</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
