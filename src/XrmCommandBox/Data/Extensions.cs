@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DynamicsDataTools.Data
+namespace XrmCommandBox.Data
 {
     public static class Extensions
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace DynamicsDataTools.Data
+namespace XrmCommandBox.Data
 {
     public class XmlSerializer : ISerializer
     {

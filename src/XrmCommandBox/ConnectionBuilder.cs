@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Tooling.Connector;
 using log4net;
 
-namespace DynamicsDataTools
+namespace XrmCommandBox
 {
     class ConnectionBuilder
     {

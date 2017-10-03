@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace DynamicsDataTools.Data
+namespace XrmCommandBox.Data
 {
     public class DataTableSerializer
     {

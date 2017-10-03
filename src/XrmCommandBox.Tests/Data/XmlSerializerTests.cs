@@ -1,4 +1,4 @@
-﻿using DynamicsDataTools.Data;
+﻿using XrmCommandBox.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace DynamicsDataTools.Tests.Data
+namespace XrmCommandBox.Tests.Data
 {
     [TestClass]
     public class XmlSerializerTests

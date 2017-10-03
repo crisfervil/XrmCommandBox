@@ -3,9 +3,9 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
-using DynamicsDataTools.Data;
+using XrmCommandBox.Data;
 
-namespace DynamicsDataTools.Tools
+namespace XrmCommandBox.Tools
 {
     public class ExportTool
     {

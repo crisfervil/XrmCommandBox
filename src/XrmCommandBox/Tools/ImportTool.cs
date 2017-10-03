@@ -1,4 +1,4 @@
-﻿using DynamicsDataTools.Data;
+﻿using XrmCommandBox.Data;
 using log4net;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace DynamicsDataTools.Tools
+namespace XrmCommandBox.Tools
 {
     public class ImportTool
     {

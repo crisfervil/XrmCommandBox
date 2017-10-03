@@ -120,9 +120,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DynamicsDataTools\DynamicsDataTools.csproj">
+    <ProjectReference Include="..\XrmCommandBox\XrmCommandBox.csproj">
       <Project>{378d6ef5-e2e3-4151-9d1a-ee184b549220}</Project>
-      <Name>DynamicsDataTools</Name>
+      <Name>XrmCommandBox</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

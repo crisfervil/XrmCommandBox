@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DynamicsDataTools.Data
+namespace XrmCommandBox.Data
 {
     /// <summary>
     /// A DataTable is an object where every row is a dictionary of column names and values

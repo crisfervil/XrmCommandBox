@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using log4net;
 using log4net.Core;
 
-namespace DynamicsDataTools.Tests
+namespace XrmCommandBox.Tests
 {
     class FakeLog : ILog
     {

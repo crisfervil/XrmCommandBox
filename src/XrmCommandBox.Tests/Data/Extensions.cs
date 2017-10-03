@@ -1,9 +1,9 @@
-﻿using DynamicsDataTools.Data;
+﻿using XrmCommandBox.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using System;
 
-namespace DynamicsDataTools.Tests.Data
+namespace XrmCommandBox.Tests.Data
 {
     [TestClass]
     public class Extensions

@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace DynamicsDataTools
+namespace XrmCommandBox
 {
     public class CommonOptions
     {

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicsDataTools", "DynamicsDataTools\DynamicsDataTools.csproj", "{378D6EF5-E2E3-4151-9D1A-EE184B549220}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmCommandBox", "XrmCommandBox\XrmCommandBox.csproj", "{378D6EF5-E2E3-4151-9D1A-EE184B549220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicsDataTools.Tests", "DynamicsDataTools.Tests\DynamicsDataTools.Tests.csproj", "{D6744BF4-249D-41EE-85C5-35F0B78C223B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmCommandBox.Tests", "XrmCommandBox.Tests\XrmCommandBox.Tests.csproj", "{D6744BF4-249D-41EE-85C5-35F0B78C223B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

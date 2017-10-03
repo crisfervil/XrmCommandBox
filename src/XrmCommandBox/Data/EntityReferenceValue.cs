@@ -1,4 +1,4 @@
-﻿namespace DynamicsDataTools.Data
+﻿namespace XrmCommandBox.Data
 {
     public class EntityReferenceValue
     {

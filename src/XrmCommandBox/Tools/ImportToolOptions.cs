@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace DynamicsDataTools.Tools
+namespace XrmCommandBox.Tools
 {
     [Verb("import", HelpText = "Imports information from a file to Dynamics")]
     public class ImportToolOptions : CommonOptions

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DynamicsDataTools
+namespace XrmCommandBox
 {
     public static class Helper
     {

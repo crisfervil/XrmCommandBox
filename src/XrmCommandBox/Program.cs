@@ -4,9 +4,9 @@ using log4net;
 using log4net.Config;
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
-using DynamicsDataTools.Tools;
+using XrmCommandBox.Tools;
 
-namespace DynamicsDataTools
+namespace XrmCommandBox
 {
     class Program
     {

@@ -5,10 +5,10 @@ using System.Xml;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
-using DynamicsDataTools.Tools;
-using DynamicsDataTools.Tests;
+using XrmCommandBox.Tools;
+using XrmCommandBox.Tests;
 
-namespace DynamicsDataTools.Tests.Tools
+namespace XrmCommandBox.Tests.Tools
 {
     [TestClass]
     public class ExportToolTests
