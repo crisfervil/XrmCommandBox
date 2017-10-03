@@ -11,7 +11,7 @@ namespace DynamicsDataTools.Data
 
         public void Serialize(DataTable data, TextWriter writer, bool addRecordNumber = false)
         {
-            int recordNumber = 1;
+            var recordNumber = 1;
             using (var docWriter = new XmlTextWriter(writer))
             {
                 docWriter.WriteStartDocument();
@@ -48,7 +48,7 @@ namespace DynamicsDataTools.Data
 
         public DataTable Deserialize(string fileName)
         {
-            var dataTable = new DataTable();
+            DataTable dataTable;
 
             // read the xml file
             using(var fs = File.OpenRead(fileName))
@@ -127,8 +127,11 @@ namespace DynamicsDataTools.Data
                 {
                     WriteXmlAttributes(docWriter, entityRecord[attributeKey]);
                     var attrValue = GetAttributeValue(entityRecord[attributeKey]);
-                    var strAttrValue = attrValue != null ? attrValue.ToString() : null;
-                    docWriter.WriteValue(strAttrValue);
+                    var strAttrValue = attrValue?.ToString();
+                    if (strAttrValue != null)
+                    {
+                        docWriter.WriteValue(strAttrValue);
+                    }
                 }
                 docWriter.WriteEndElement();
             }
@@ -136,9 +139,9 @@ namespace DynamicsDataTools.Data
 
         private void WriteXmlAttributes(XmlTextWriter docWriter, object attributeValue)
         {
-            if (attributeValue is EntityReferenceValue)
+            var referenceValue = attributeValue as EntityReferenceValue;
+            if (referenceValue != null)
             {
-                var referenceValue = (EntityReferenceValue)attributeValue;
                 docWriter.WriteAttributeString("Name", referenceValue.Name);
                 docWriter.WriteAttributeString("LogicalName", referenceValue.LogicalName);
             }
@@ -148,9 +151,10 @@ namespace DynamicsDataTools.Data
         {
             object value = null;
 
-            if (attributeValue is EntityReferenceValue)
+            var referenceValue = attributeValue as EntityReferenceValue;
+            if (referenceValue != null)
             {
-                value = ((EntityReferenceValue)attributeValue).Value;
+                value = referenceValue.Value;
             }
             else
             {

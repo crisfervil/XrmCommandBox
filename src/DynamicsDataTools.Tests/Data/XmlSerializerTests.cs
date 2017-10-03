@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -33,13 +34,13 @@ namespace DynamicsDataTools.Tests.Data
             // Check the results in sb
             var xml = new System.Xml.XmlDocument();
             xml.LoadXml(serializedXml);
-            Assert.AreEqual("MyTable", xml.SelectSingleNode("/Data/@name").Value);
-            Assert.AreEqual("Value1", xml.SelectSingleNode("/Data/row[1]/Attr1").InnerText);
-            Assert.AreEqual("2.3", xml.SelectSingleNode("/Data/row[1]/Attr2").InnerText);
-            Assert.AreEqual(dateValue.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr2").InnerText);
-            Assert.AreEqual(referenceValue.Value.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr4").InnerText);
-            Assert.AreEqual(referenceValue.Name, xml.SelectSingleNode("/Data/row[2]/Attr4/@Name").Value);
-            Assert.AreEqual(referenceValue.LogicalName, xml.SelectSingleNode("/Data/row[2]/Attr4/@LogicalName").Value);
+            Assert.AreEqual("MyTable", xml.SelectSingleNode("/Data/@name")?.Value);
+            Assert.AreEqual("Value1", xml.SelectSingleNode("/Data/row[1]/Attr1")?.InnerText);
+            Assert.AreEqual("2.3", xml.SelectSingleNode("/Data/row[1]/Attr2")?.InnerText);
+            Assert.AreEqual(dateValue.ToString(CultureInfo.CurrentCulture), xml.SelectSingleNode("/Data/row[2]/Attr2")?.InnerText);
+            Assert.AreEqual(referenceValue.Value.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr4")?.InnerText);
+            Assert.AreEqual(referenceValue.Name, xml.SelectSingleNode("/Data/row[2]/Attr4/@Name")?.Value);
+            Assert.AreEqual(referenceValue.LogicalName, xml.SelectSingleNode("/Data/row[2]/Attr4/@LogicalName")?.Value);
         }
 
         [TestMethod]
