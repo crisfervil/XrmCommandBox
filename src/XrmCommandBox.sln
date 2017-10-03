@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmCommandBox", "XrmCommand
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmCommandBox.Tests", "XrmCommandBox.Tests\XrmCommandBox.Tests.csproj", "{D6744BF4-249D-41EE-85C5-35F0B78C223B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmCommandBox.IntegrationTests", "XrmCommandBox.IntegrationTests\XrmCommandBox.IntegrationTests.csproj", "{9DBB689D-3FA8-4829-9340-024E9304F71F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D6744BF4-249D-41EE-85C5-35F0B78C223B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6744BF4-249D-41EE-85C5-35F0B78C223B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6744BF4-249D-41EE-85C5-35F0B78C223B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DBB689D-3FA8-4829-9340-024E9304F71F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DBB689D-3FA8-4829-9340-024E9304F71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DBB689D-3FA8-4829-9340-024E9304F71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DBB689D-3FA8-4829-9340-024E9304F71F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

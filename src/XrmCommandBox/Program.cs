@@ -8,12 +8,12 @@ using XrmCommandBox.Tools;
 
 namespace XrmCommandBox
 {
-    class Program
+    public class Program
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
         private static IOrganizationService _crmService = null;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // Log configuration
             BasicConfigurator.Configure();
