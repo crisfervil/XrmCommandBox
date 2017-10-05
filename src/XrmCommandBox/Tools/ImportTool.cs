@@ -32,7 +32,7 @@ namespace XrmCommandBox.Tools
             foreach (var row in dataTable)
             {
                 var entity = GetEntity(row, dataTable.Name);
-                var recordId = _crmService.Create(entity);
+                _crmService.Create(entity);
             }
         }
 
