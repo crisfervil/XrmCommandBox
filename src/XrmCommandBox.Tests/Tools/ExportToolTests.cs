@@ -39,7 +39,7 @@ namespace XrmCommandBox.Tests.Tools
             }
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions() { EntityName = "account", RecordNumber=true };
+            var options = new ExportToolOptions { EntityName = "account", RecordNumber=true };
 
             // TODO: Delete this if the FaxeXrmEaxy pull request is accepted
             options.File = fileName;
@@ -56,12 +56,12 @@ namespace XrmCommandBox.Tests.Tools
             xml.Load(fileName);
 
             // check the contents of the exported file
-            Assert.AreEqual(account1["name"].ToString(), xml.SelectSingleNode("Data/row[1]/name").InnerText);
-            Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/row[2]/name").InnerText);
+            Assert.AreEqual(account1["name"].ToString(), xml.SelectSingleNode("Data/row[1]/name")?.InnerText);
+            Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/row[2]/name")?.InnerText);
 
             // Check the record numbers are there
-            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i").Value);
-            Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/@i").Value);
+            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i")?.Value);
+            Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/@i")?.Value);
        }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace XrmCommandBox.Tests.Tools
             var service = context.GetOrganizationService();
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions() { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
+            var options = new ExportToolOptions { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
 
             // run the tool
             var exportTool = new ExportTool(log, service);
