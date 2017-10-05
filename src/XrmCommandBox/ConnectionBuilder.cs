@@ -25,7 +25,7 @@ namespace XrmCommandBox
             var connStrValue = connection;
             if (connStr != null)
             {
-                _log.Debug($"ConnectionString named {connection} found");
+                _log.Debug($"Using ConnectionString {connection}");
                 connStrValue = connStr.ConnectionString;
             }
 

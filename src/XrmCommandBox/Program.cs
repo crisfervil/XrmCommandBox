@@ -3,6 +3,7 @@ using CommandLine;
 using log4net;
 using log4net.Config;
 using System.Collections.Generic;
+using System.Xml;
 using Microsoft.Xrm.Sdk;
 using XrmCommandBox.Tools;
 
@@ -21,9 +22,10 @@ namespace XrmCommandBox
             try
             {
 
-                Parser.Default.ParseArguments<ExportToolOptions, ImportToolOptions>(args)
+                Parser.Default.ParseArguments<ExportToolOptions, ImportToolOptions, DeleteToolOptions>(args)
                     .MapResult((ImportToolOptions opts) => RunImportAndReturnExitCode(opts),
                                 (ExportToolOptions opts) => RunExportAndReturnExitCode(opts),
+                                (DeleteToolOptions opts) => RunDeleteAndReturnExitCode(opts),
                                 HandleErrors);
 
             }
@@ -47,6 +49,7 @@ namespace XrmCommandBox
             {
                 System.Diagnostics.Debugger.Launch();
             }
+            new CommandOptionsSerializer(Log).Deserialize(options);
             InitConnection(options);
         }
 
@@ -61,6 +64,13 @@ namespace XrmCommandBox
         {
             Init(opts);
             new ExportTool(Log,_crmService).Run(opts);
+            return 0;
+        }
+
+        private static int RunDeleteAndReturnExitCode(DeleteToolOptions opts)
+        {
+            Init(opts);
+            new DeleteTool(Log, _crmService).Run(opts);
             return 0;
         }
 
