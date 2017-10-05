@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System;
 
 namespace XrmCommandBox.Data
 {
@@ -65,36 +66,50 @@ namespace XrmCommandBox.Data
 
             using (var reader = XmlReader.Create(data))
             {
-                // read the first element
-                reader.Read();
-
-                // read table attributes
-                while (reader.MoveToNextAttribute())
-                {
-                    if (reader.Name == "name")
-                    {
-                        dataTable.Name = reader.Value;
-                    }
-                }
-
                 // read all the child elements
                 while (reader.Read())
                 {
-                    // Ignore anything that is not an element
-                    if (!reader.IsStartElement()) continue;
+                    if (reader.NodeType == XmlNodeType.XmlDeclaration)
+                    {
+                        // ignore this element and move to next node
+                    }
+                    else if (reader.NodeType == XmlNodeType.Attribute)
+                    {
+                        if (reader.Name=="name")
+                        {
+                            dataTable.Name = reader.Name;
+                        }
+                    }
+                    else if (reader.NodeType == XmlNodeType.Element)
+                    {
+                        // Read the name attribute (if the attribute is not set or is null, the table name will be set to null)
+                        dataTable.Name = reader.GetAttribute("name");
+
+                        // This should be the main Data node
+                        var content = reader.ReadSubtree();
+                        ReadRows(content, dataTable);
+                    }
+                }
+            }
+
+            return dataTable;
+        }
+
+        private void ReadRows(XmlReader reader, DataTable dataTable)
+        {
+            reader.MoveToContent();
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
 
                     // read attributes
                     var content = reader.ReadSubtree();
                     var record = ReadAttributes(content);
 
-                    dataTable.Add(record);
-
-                    // Move the reader to the next sibling
-                    reader.Skip();
+                    dataTable.Add(record);                    
                 }
             }
-
-            return dataTable;
         }
 
         private Dictionary<string, object> ReadAttributes(XmlReader reader)
@@ -104,18 +119,40 @@ namespace XrmCommandBox.Data
             reader.MoveToContent();
             while (reader.Read())
             {
-                // Ignore anything that is not an element
-                if (!reader.IsStartElement()) continue;
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    // the element name at this level should match the attribute name
+                    var attrName = reader.Name;
 
-                // the element name at this level should match the attribute name
-                var attrName = reader.Name;
-                var attrValue = reader.ReadElementContentAsString();
+                    // move to the element value
+                    var content = reader.ReadSubtree();
 
-                // add the attribute value
-                row[attrName] = attrValue;
+                    var attrValue = ReadAttrValue(content);
+
+                    // add the attribute value
+                    row[attrName] = attrValue;
+                }
             }
 
             return row;
+        }
+
+        private object ReadAttrValue(XmlReader reader)
+        {
+            object attrValue = null;
+            reader.MoveToContent();
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Text)
+                {
+                    attrValue = reader.Value;
+                }
+                else
+                {
+                    // TODO: Add support for this
+                }
+            }
+            return attrValue;
         }
 
         private void WriteAttributeValues(Dictionary<string,object> entityRecord, XmlTextWriter docWriter)

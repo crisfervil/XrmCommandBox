@@ -7,7 +7,12 @@ namespace XrmCommandBox.Data
 {
     public class DataTableSerializer
     {
-        private ILog _log;
+        private readonly ILog _log;
+
+        public DataTableSerializer()
+        {
+            this._log = LogManager.GetLogger(typeof(Program));
+        }
 
         public DataTableSerializer(ILog log)
         {
