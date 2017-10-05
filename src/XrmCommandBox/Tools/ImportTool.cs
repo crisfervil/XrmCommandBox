@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Workflow.ComponentModel;
 
 namespace XrmCommandBox.Tools
 {
@@ -43,10 +44,22 @@ namespace XrmCommandBox.Tools
             foreach (var attrName in record.Keys)
             {
                 // Convert this to the type specified in the metadata for the attribute in the entity
-                entity[attrName] = record[attrName];
+                entity[attrName] = GetValue(record[attrName]);
             }
 
             return entity;
+        }
+
+        private object GetValue(object value)
+        {
+            var convertedValue = value;
+            var referenceValue = value as EntityReferenceValue;
+            if (referenceValue != null)
+            {
+                convertedValue = new EntityReference(referenceValue.LogicalName,Guid.Parse((string)referenceValue.Value));
+            }
+
+            return convertedValue;
         }
     }
 }

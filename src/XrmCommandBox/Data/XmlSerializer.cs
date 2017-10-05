@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System;
+using System.Runtime.Remoting.Messaging;
 
 namespace XrmCommandBox.Data
 {
@@ -124,10 +125,14 @@ namespace XrmCommandBox.Data
                     // the element name at this level should match the attribute name
                     var attrName = reader.Name;
 
+                    // If the attribute contains Name and LogicalName, deserialize the value as 
+                    var nameAttrValue = reader.GetAttribute("Name");
+                    var logicalNameAttrValue = reader.GetAttribute("LogicalName");
+
                     // move to the element value
                     var content = reader.ReadSubtree();
 
-                    var attrValue = ReadAttrValue(content);
+                    var attrValue = ReadAttrValue(content, nameAttrValue, logicalNameAttrValue);
 
                     // add the attribute value
                     row[attrName] = attrValue;
@@ -137,7 +142,7 @@ namespace XrmCommandBox.Data
             return row;
         }
 
-        private object ReadAttrValue(XmlReader reader)
+        private object ReadAttrValue(XmlReader reader, string nameAttribute, string logicalNameAtrtibute)
         {
             object attrValue = null;
             reader.MoveToContent();
@@ -152,6 +157,13 @@ namespace XrmCommandBox.Data
                     // TODO: Add support for this
                 }
             }
+
+            if (!string.IsNullOrEmpty(nameAttribute) && !string.IsNullOrEmpty(logicalNameAtrtibute))
+            {
+                // if any of the above attributes are specified
+                attrValue = new EntityReferenceValue {Name = nameAttribute, LogicalName = logicalNameAtrtibute, Value = attrValue};
+            }
+
             return attrValue;
         }
 
