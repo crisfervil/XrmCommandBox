@@ -10,7 +10,7 @@ namespace XrmCommandBox
         [Option("debug-brk", HelpText = "Launches the debugger before running the selected command")]
         public bool DebugBreak { get; set; }
 
-        [Option("configfile", HelpText = "Xml file containing the command options")]
+        [Option("config-file", HelpText = "Xml file containing the command options")]
         public string ConfigFile { get; set; }
 
         [Option("continue-on-error", HelpText = "Continue if there's an error while processing the command")]
