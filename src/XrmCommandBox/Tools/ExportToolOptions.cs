@@ -16,8 +16,8 @@ namespace XrmCommandBox.Tools
         [Option("entity", HelpText = "Name of the entity you want to export")]
         public string EntityName { get; set; }
 
-        [Option("fetchfile", HelpText = "Name of the file containing que FetchXml query to retrieve the data")]
-        public string FetchFile { get; set; }
+        [Option("fetch-query", HelpText = "Fetch query to retrieve the records to export")]
+        public string FetchQuery { get; set; }
 
         [Usage(ApplicationAlias = "dynamicsdatatools")]
         public static IEnumerable<Example> Examples

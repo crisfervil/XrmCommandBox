@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
 using XrmCommandBox.Tools;
-using XrmCommandBox.Tests;
 
 namespace XrmCommandBox.Tests.Tools
 {
@@ -32,9 +32,9 @@ namespace XrmCommandBox.Tests.Tools
             var accounts = new List<Entity>() {account1,account2};
             context.Initialize(accounts);
 
-            if(System.IO.File.Exists(fileName))
+            if(File.Exists(fileName))
             {
-                System.IO.File.Delete(fileName);
+                File.Delete(fileName);
             }
 
             // The file name is not provided, so the default path should be used
@@ -48,7 +48,7 @@ namespace XrmCommandBox.Tests.Tools
             exportTool.Run(options);
 
             // Checks the file exists
-            Assert.IsTrue(System.IO.File.Exists(fileName));
+            Assert.IsTrue(File.Exists(fileName));
 
             // Make sure the file is not empty and is a valid xml file
             var xml = new XmlDocument();
@@ -103,7 +103,7 @@ namespace XrmCommandBox.Tests.Tools
             }
             catch (Exception ex)
             {
-                Assert.AreEqual("Either the entityname or the fetchfile options are required", ex.Message);
+                Assert.AreEqual("Either the entity or the fetch-query options are required", ex.Message);
             }
         }
 
@@ -112,60 +112,27 @@ namespace XrmCommandBox.Tests.Tools
         {
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
-            var fileName = "exported.xml";
-            var fetchFile = "fetch.xml";
-            var fetchQuery = @"<fetch top='50' >
-                                <entity name='account' />
-                               </fetch>";
-
-            // save query to a file
-            System.IO.File.WriteAllBytes(fetchFile,Encoding.Default.GetBytes(fetchQuery));
+            var exportedFile = "exported.xml";
+            var fetchXml = @"<fetch top='50' >
+                               <entity name='account' />
+                              </fetch>";
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions() { FetchFile = fetchFile, File = fileName};
+            var options = new ExportToolOptions() { FetchQuery = fetchXml, File = exportedFile};
 
             // run the tool
             var exportTool = new ExportTool(service);
             exportTool.Run(options);
 
             // Checks the file exists
-            Assert.IsTrue(System.IO.File.Exists(fileName));
+            Assert.IsTrue(File.Exists(exportedFile));
 
             // Make sure the file is not empty and is a valid xml file
             var xml = new XmlDocument();
-            xml.Load(fileName);
+            xml.Load(exportedFile);
+
+            // delete files to avoid unexpected effects in other tests
+            File.Delete(exportedFile);
         }
-
-
-        [TestMethod]
-        public void Exports_From_Fetch_With_Wrong_Fetch()
-        {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-            var fetchFile = "fetch.xml";
-            var fetchQuery = @"<data><fetch top='50' >
-                                <entity name='account' />
-                               </fetch></data>";
-
-            // save query to a file
-            System.IO.File.WriteAllBytes(fetchFile, Encoding.Default.GetBytes(fetchQuery));
-
-            // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions() { FetchFile = fetchFile };
-
-            // run the tool
-            var exportTool = new ExportTool(service);
-            try
-            {
-                exportTool.Run(options);
-                Assert.Fail("Exeption not thrown");
-            }
-            catch (Exception ex)
-            {
-                Assert.AreEqual("Invalid xml document. The first node in the document must be a fetch", ex.Message);
-            }
-        }
-
-
     }
 }

@@ -47,35 +47,23 @@ namespace XrmCommandBox.Tools
             EntityCollection foundRecords = null;
             if (!string.IsNullOrEmpty(options.EntityName))
             {
-                foundRecords = _crmService.RetrieveMultiple(GetAllRecordsQuery(options.EntityName));
+                var qry = GetAllRecordsQuery(options.EntityName);
+                foundRecords = _crmService.RetrieveMultiple(qry);
             }
-            else if (!string.IsNullOrEmpty(options.FetchFile))
+            else if (!string.IsNullOrEmpty(options.FetchQuery))
             {
-                foundRecords = _crmService.RetrieveMultiple(GetFetchQuery(options.FetchFile));
+                var qry = new FetchExpression(options.FetchQuery);
+                foundRecords = _crmService.RetrieveMultiple(qry);
             }
             return foundRecords;
         }
 
         private void ValidateOptions(ExportToolOptions options)
         {
-            if (string.IsNullOrEmpty(options.FetchFile) && string.IsNullOrEmpty(options.EntityName))
+            if (string.IsNullOrEmpty(options.FetchQuery) && string.IsNullOrEmpty(options.EntityName))
             {
-                throw new Exception("Either the entityname or the fetchfile options are required");
+                throw new Exception("Either the entity or the fetch-query options are required");
             }
-        }
-
-        private QueryBase GetFetchQuery(string fileName)
-        {
-            // read xml file
-            var xml = new XmlDocument();
-            xml.Load(fileName);
-
-            if (xml.DocumentElement == null || xml.DocumentElement.Name != "fetch")
-            {
-                throw new Exception("Invalid xml document. The first node in the document must be a fetch");
-            }
-
-            return new FetchExpression(xml.DocumentElement.OuterXml);
         }
 
         private QueryBase GetAllRecordsQuery(string entityName)

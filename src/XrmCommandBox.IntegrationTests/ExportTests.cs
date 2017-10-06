@@ -55,6 +55,9 @@ namespace XrmCommandBox.IntegrationTests
             // Run the command
             Program.Main(commandParameters);
 
+            // Check the exit code
+            Assert.AreEqual(0, Environment.ExitCode);
+
             // Expected serialized file name
             var serializedFileName = "contact.xml";
 
