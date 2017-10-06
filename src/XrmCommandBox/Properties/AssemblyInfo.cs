@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Dynamics Data Tools")]
-[assembly: AssemblyDescription("Tools to interact with Dynamics 365 data")]
+[assembly: AssemblyTitle("Xrm Command Box")]
+[assembly: AssemblyDescription("Command Tools to interact with Dynamics 365")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("crisfervil")]
-[assembly: AssemblyProduct("Dynamics Data Tools")]
+[assembly: AssemblyProduct("Xrm Command Box")]
 [assembly: AssemblyCopyright("Copyright © crisfervil 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
