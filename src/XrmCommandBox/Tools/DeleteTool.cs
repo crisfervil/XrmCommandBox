@@ -19,7 +19,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(DeleteToolOptions options)
         {
-            _log.Info("Running Export tool...");
+            _log.Info("Running Delete tool...");
 
             ValidateOptions(options);
 
@@ -28,29 +28,32 @@ namespace XrmCommandBox.Tools
             _log.Info($"{foundRecords.Entities.Count} records found");
 
             // Convert to a data table
-            DeleteRecords(foundRecords, options.ContinueOnError);
-
-            _log.Info("Completed");
+            var statistics = DeleteRecords(foundRecords, options.ContinueOnError);
+            var withErrors = statistics.Item2 > 0 ? "with errors" : "successfully";
+            _log.Info($"Completed {withErrors}. Processed: {statistics.Item1} Errors: {statistics.Item2}");
         }
 
-        private void DeleteRecords(EntityCollection foundRecords, bool continueOnError)
+        private Tuple<int,int> DeleteRecords(EntityCollection foundRecords, bool continueOnError)
         {
-            var count = 0;
+            var processedCount = 0;
+            var errorsCount = 0;
             _log.Debug("Starting to delete records...");
             foreach (var recordToDelete in foundRecords.Entities)
             {
                 try
                 {
-                    _log.Info($"Deleting {recordToDelete.LogicalName} {++count} of {foundRecords.Entities.Count}: {recordToDelete.Id}");
+                    _log.Info($"Deleting {recordToDelete.LogicalName} {++processedCount} of {foundRecords.Entities.Count}: {recordToDelete.Id}");
                     _crmService.Delete(recordToDelete.LogicalName, recordToDelete.Id);                    
                 }
                 catch(Exception ex)
                 {
+                    errorsCount++;
                     _log.Error(ex);
                     _log.Info("Unexpected error while deleting records.");
                     if (!continueOnError) throw;
                 }
             }
+            return Tuple.Create(processedCount, errorsCount);
         }
 
         private EntityCollection GetRecords(DeleteToolOptions options)
