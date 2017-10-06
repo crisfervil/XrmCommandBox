@@ -45,6 +45,7 @@
     <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
+    <Compile Include="LogLevels.cs" />
     <Compile Include="Tools\DeleteToolOptions.cs" />
     <Compile Include="Tools\DeleteTool.cs" />
     <Compile Include="Tools\ExportToolOptions.cs" />

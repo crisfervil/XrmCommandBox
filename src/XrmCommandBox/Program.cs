@@ -16,9 +16,6 @@ namespace XrmCommandBox
 
         public static void Main(string[] args)
         {
-            // Log configuration
-            BasicConfigurator.Configure();
-
             try
             {
 
@@ -33,9 +30,39 @@ namespace XrmCommandBox
             {
                 if(ex.InnerException!= null) Log.Error(ex.InnerException);
                 Log.Error($"Unexpected error: {ex.Message}");
-                Log.Error(ex.ToString());
+                Log.Error(ex);
                 Environment.Exit(-1);
             }
+        }
+
+        private static void ConfigureLog(CommonOptions options)
+        {
+
+            var logLevel = Enum.GetName(typeof(LogLevels), options.LogLevel);
+            logLevel = logLevel?.ToUpper();
+
+            BasicConfigurator.Configure();
+
+            // http://geekswithblogs.net/rakker/archive/2007/08/22/114900.aspx
+            var repositories = LogManager.GetAllRepositories();
+
+            //Configure all loggers to be at the speified level.
+            foreach (var repository in repositories)
+            {
+                repository.Threshold = repository.LevelMap[logLevel];
+                var hier = (log4net.Repository.Hierarchy.Hierarchy)repository;
+                var loggers = hier.GetCurrentLoggers();
+                foreach (var logger in loggers)
+                {
+                    ((log4net.Repository.Hierarchy.Logger)logger).Level = hier.LevelMap[logLevel];
+                }
+            }
+
+            //Configure the root logger.
+            var logHierarchy = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
+            var rootLogger = logHierarchy.Root;
+            rootLogger.Level = logHierarchy.LevelMap[logLevel];
+
         }
 
         private static void InitConnection(CommonOptions options)
@@ -49,7 +76,11 @@ namespace XrmCommandBox
             {
                 System.Diagnostics.Debugger.Launch();
             }
+
+            ConfigureLog(options);
+
             new CommandOptionsSerializer().Deserialize(options);
+
             InitConnection(options);
         }
 

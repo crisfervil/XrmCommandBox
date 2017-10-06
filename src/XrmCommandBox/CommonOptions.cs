@@ -16,5 +16,7 @@ namespace XrmCommandBox
         [Option("continue-on-error", HelpText = "Continue if there's an error while processing the command")]
         public bool ContinueOnError { get; set; }
 
+        [Option("log-level", HelpText = "Sets the current logging output. Can be Debug, Info, Error")]
+        public LogLevels LogLevel { get; set; } = LogLevels.Info;
     }
 }
