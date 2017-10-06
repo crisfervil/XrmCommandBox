@@ -115,7 +115,6 @@
     <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\XmlSerializerTests.cs" />
     <Compile Include="Tools\ExportToolTests.cs" />
-    <Compile Include="FakeLog.cs" />
     <Compile Include="Tools\ImportToolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

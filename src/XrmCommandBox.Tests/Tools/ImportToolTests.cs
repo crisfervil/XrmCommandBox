@@ -39,13 +39,12 @@ namespace XrmCommandBox.Tests.Tools
             // save the contents
             File.WriteAllBytes(xmlFile, Encoding.Default.GetBytes(xmlContent));
 
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
 
             var options = new ImportToolOptions { File = xmlFile };
 
-            var importTool = new ImportTool(log, service);
+            var importTool = new ImportTool(service);
             importTool.Run(options);
 
 

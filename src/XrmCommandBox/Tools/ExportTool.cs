@@ -9,12 +9,11 @@ namespace XrmCommandBox.Tools
 {
     public class ExportTool
     {
-        private readonly ILog _log;
+        private readonly ILog _log = LogManager.GetLogger(typeof(ExportTool));
         private readonly IOrganizationService _crmService;
 
-        public ExportTool(ILog log, IOrganizationService service)
+        public ExportTool(IOrganizationService service)
         {
-            _log = log;
             _crmService = service;
         }
 
@@ -37,7 +36,7 @@ namespace XrmCommandBox.Tools
                 options.File = $"{foundRecords.EntityName}.xml";
             }
 
-            var serializer = new DataTableSerializer(_log);
+            var serializer = new DataTableSerializer();
             serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
             _log.Info("Completed");

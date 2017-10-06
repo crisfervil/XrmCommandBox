@@ -8,12 +8,7 @@ namespace XrmCommandBox
 {
     class ConnectionBuilder
     {
-        private readonly ILog _log;
-
-        public ConnectionBuilder(ILog log)
-        {
-            _log = log;
-        }
+        private readonly ILog _log = LogManager.GetLogger(typeof(ConnectionBuilder));
 
         public IOrganizationService GetConnection(string connection)
         {

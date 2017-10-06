@@ -32,15 +32,15 @@ namespace XrmCommandBox
             catch (Exception ex)
             {
                 if(ex.InnerException!= null) Log.Error(ex.InnerException);
+                Log.Error($"Unexpected error: {ex.Message}");
                 Log.Error(ex.ToString());
-                Log.Info($"Unexpected error: {ex.Message}");
                 Environment.Exit(-1);
             }
         }
 
         private static void InitConnection(CommonOptions options)
         {
-            _crmService = new ConnectionBuilder(Log).GetConnection(options.ConnectionName);
+            _crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
         }
 
         private static void Init(CommonOptions options)
@@ -49,28 +49,28 @@ namespace XrmCommandBox
             {
                 System.Diagnostics.Debugger.Launch();
             }
-            new CommandOptionsSerializer(Log).Deserialize(options);
+            new CommandOptionsSerializer().Deserialize(options);
             InitConnection(options);
         }
 
         private static int RunImportAndReturnExitCode(ImportToolOptions opts)
         {
             Init(opts);
-            new ImportTool(Log, _crmService).Run(opts);
+            new ImportTool(_crmService).Run(opts);
             return 0;
         }
 
         private static int RunExportAndReturnExitCode(ExportToolOptions opts)
         {
             Init(opts);
-            new ExportTool(Log,_crmService).Run(opts);
+            new ExportTool(_crmService).Run(opts);
             return 0;
         }
 
         private static int RunDeleteAndReturnExitCode(DeleteToolOptions opts)
         {
             Init(opts);
-            new DeleteTool(Log, _crmService).Run(opts);
+            new DeleteTool(_crmService).Run(opts);
             return 0;
         }
 

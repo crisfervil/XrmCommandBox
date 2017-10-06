@@ -6,17 +6,7 @@ namespace XrmCommandBox
 {
     public class CommandOptionsSerializer
     {
-        private ILog _log = LogManager.GetLogger(typeof(Program));
-
-        public CommandOptionsSerializer()
-        {
-            
-        }
-
-        public CommandOptionsSerializer(ILog log)
-        {
-            this._log = log;
-        }
+        private readonly ILog _log = LogManager.GetLogger(typeof(CommandOptionsSerializer));
 
         public void Deserialize(CommonOptions options)
         {

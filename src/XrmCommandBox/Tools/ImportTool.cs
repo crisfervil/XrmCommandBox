@@ -8,12 +8,11 @@ namespace XrmCommandBox.Tools
 {
     public class ImportTool
     {
-        private readonly ILog _log;
+        private readonly ILog _log = LogManager.GetLogger(typeof(ImportTool));
         private readonly IOrganizationService _crmService;
 
-        public ImportTool(ILog log, IOrganizationService service)
+        public ImportTool(IOrganizationService service)
         {
-            _log = log;
             _crmService = service;
         }
 
@@ -21,7 +20,7 @@ namespace XrmCommandBox.Tools
         {
             _log.Info("Running Import tool...");
 
-            var serializer = new DataTableSerializer(_log);
+            var serializer = new DataTableSerializer();
 
             _log.Info("Reading file...");
             var dataTable = serializer.Deserialize(options.File);

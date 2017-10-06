@@ -8,12 +8,11 @@ namespace XrmCommandBox.Tools
 {
     public class DeleteTool
     {
-        private readonly ILog _log;
+        private readonly ILog _log = LogManager.GetLogger(typeof(DeleteTool));
         private readonly IOrganizationService _crmService;
 
-        public DeleteTool(ILog log, IOrganizationService service)
+        public DeleteTool(IOrganizationService service)
         {
-            _log = log;
             _crmService = service;
         }
 
@@ -48,8 +47,8 @@ namespace XrmCommandBox.Tools
                 catch(Exception ex)
                 {
                     errorsCount++;
+                    _log.Error("Unexpected error while deleting records.");
                     _log.Error(ex);
-                    _log.Info("Unexpected error while deleting records.");
                     if (!continueOnError) throw;
                 }
             }

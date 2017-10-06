@@ -17,7 +17,6 @@ namespace XrmCommandBox.Tests.Tools
         public void Exports_Accounts_Xml()
         {
             const string fileName = "account.xml";
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
 
@@ -45,7 +44,7 @@ namespace XrmCommandBox.Tests.Tools
             options.File = fileName;
 
             // run the tool
-            var exportTool = new ExportTool(log,service);
+            var exportTool = new ExportTool(service);
             exportTool.Run(options);
 
             // Checks the file exists
@@ -67,7 +66,6 @@ namespace XrmCommandBox.Tests.Tools
         [TestMethod]
         public void Exports_Fails_If_Not_Exporter_Available()
         {
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
 
@@ -75,7 +73,7 @@ namespace XrmCommandBox.Tests.Tools
             var options = new ExportToolOptions { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTool(service);
             try
             {
                 exportTool.Run(options);
@@ -90,7 +88,6 @@ namespace XrmCommandBox.Tests.Tools
         [TestMethod]
         public void Export_Fails_With_Wrong_Options()
         {
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
 
@@ -98,7 +95,7 @@ namespace XrmCommandBox.Tests.Tools
             var options = new ExportToolOptions();
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTool(service);
             try
             {
                 exportTool.Run(options);
@@ -113,7 +110,6 @@ namespace XrmCommandBox.Tests.Tools
         [TestMethod]
         public void Exports_From_Fetch_Query()
         {
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
             var fileName = "exported.xml";
@@ -129,7 +125,7 @@ namespace XrmCommandBox.Tests.Tools
             var options = new ExportToolOptions() { FetchFile = fetchFile, File = fileName};
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTool(service);
             exportTool.Run(options);
 
             // Checks the file exists
@@ -144,7 +140,6 @@ namespace XrmCommandBox.Tests.Tools
         [TestMethod]
         public void Exports_From_Fetch_With_Wrong_Fetch()
         {
-            var log = new FakeLog();
             var context = new XrmFakedContext();
             var service = context.GetOrganizationService();
             var fetchFile = "fetch.xml";
@@ -159,7 +154,7 @@ namespace XrmCommandBox.Tests.Tools
             var options = new ExportToolOptions() { FetchFile = fetchFile };
 
             // run the tool
-            var exportTool = new ExportTool(log, service);
+            var exportTool = new ExportTool(service);
             try
             {
                 exportTool.Run(options);
