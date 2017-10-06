@@ -12,6 +12,7 @@ namespace XrmCommandBox.IntegrationTests
     public class ExportTests
     {
         [TestMethod]
+        [TestCategory("IntegrationTests")]
         public void Export_Accounts_Using_Entity_Name()
         {
             var commandParameters = new[] { "export",
@@ -36,6 +37,7 @@ namespace XrmCommandBox.IntegrationTests
         }
 
         [TestMethod]
+        [TestCategory("IntegrationTests")]
         public void Export_Contacts_Using_FetchXml()
         {
             var fetchFile = "fetch.xml";
