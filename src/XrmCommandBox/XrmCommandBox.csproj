@@ -48,6 +48,7 @@
     <Compile Include="LogLevels.cs" />
     <Compile Include="Tools\DeleteToolOptions.cs" />
     <Compile Include="Tools\DeleteTool.cs" />
+    <Compile Include="Tools\SolutionExportTool.cs" />
     <Compile Include="Tools\ExportToolOptions.cs" />
     <Compile Include="Tools\ExportTool.cs" />
     <Compile Include="Helper.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Tools\ImportTool.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\SolutionExportToolOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
