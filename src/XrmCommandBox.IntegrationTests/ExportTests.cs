@@ -40,17 +40,13 @@ namespace XrmCommandBox.IntegrationTests
         [TestCategory("IntegrationTests")]
         public void Export_Contacts_Using_FetchXml()
         {
-            var fetchFile = "fetch.xml";
             var fetchQuery = @"<fetch top='50' >
                                 <entity name='contact' />
                                </fetch>";
 
-            // save query to a file
-            File.WriteAllBytes(fetchFile, Encoding.Default.GetBytes(fetchQuery));
-
             var commandParameters = new[] { "export",
                                             "--connection", "integrationTests",
-                                            "--fetchfile", fetchFile,
+                                            "--fetch-query", fetchQuery,
                                             "--recordNumber" };
             // Run the command
             Program.Main(commandParameters);
@@ -77,7 +73,6 @@ namespace XrmCommandBox.IntegrationTests
 
             // delete files to avoid unexpected effects in other tests
             File.Delete(serializedFileName);
-            File.Delete(fetchFile);
         }
 
     }

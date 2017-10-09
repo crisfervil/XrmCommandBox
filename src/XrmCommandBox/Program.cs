@@ -52,6 +52,9 @@ namespace XrmCommandBox
 
                         // Configure the logging
                         commandCommonOptions.ConfigureLog();
+
+                        // Configure parameter defined in the config file
+                        new CommandOptionsSerializer().Deserialize(commandCommonOptions);
                     }
 
                     // create instance of the tool to run
