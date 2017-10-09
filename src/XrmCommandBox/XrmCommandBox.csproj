@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="CommandOptionsSerializer.cs" />
     <Compile Include="CommonOptions.cs" />
+    <Compile Include="CommonOptionsExtensions.cs" />
     <Compile Include="ConnectionBuilder.cs" />
     <Compile Include="Data\DataTable.cs" />
     <Compile Include="Data\DataTableSerializer.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="LogLevels.cs" />
     <Compile Include="Tools\DeleteToolOptions.cs" />
     <Compile Include="Tools\DeleteTool.cs" />
+    <Compile Include="HandlerAttribute.cs" />
     <Compile Include="Tools\SolutionExportTool.cs" />
     <Compile Include="Tools\ExportToolOptions.cs" />
     <Compile Include="Tools\ExportTool.cs" />

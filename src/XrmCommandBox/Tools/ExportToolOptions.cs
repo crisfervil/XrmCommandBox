@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace XrmCommandBox.Tools
 {
     [Verb("export", HelpText="Exports an entity or query from CRM to a file")]
+    [Handler(typeof(ExportTool))]
     public class ExportToolOptions : CommonOptions
     {
         [Option("recordNumber", HelpText = "Adds the record number to each exported record")]

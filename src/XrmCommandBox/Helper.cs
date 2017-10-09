@@ -2,13 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using CommandLine;
 
 namespace XrmCommandBox
 {
     public static class Helper
     {
+
+        public static Dictionary<Type, Delegate> ServicesMap = new Dictionary<Type, Delegate>();
+
+        /// <summary>
+        /// Returns all the exported types containing the specified attribute
+        /// </summary>
+        public static Type[] GetTypesWithAttribute(Type attrType)
+        {
+            return Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.GetCustomAttribute(attrType) != null).ToArray();
+        }
+
         public static IList<T> GetObjectInstances<T>(Object[][] parameterValues)
         {
             IList<T> foundInstances = new List<T>();
@@ -22,7 +35,7 @@ namespace XrmCommandBox
                 var foundTypes = GetTypes<T>(typesArr);
 
                 // create an instance of each type found
-                var typeInstances = foundTypes.Select(x => (T)x.GetConstructor(typesArr).Invoke(parameterSet));
+                var typeInstances = foundTypes.Select(x => (T)x.GetConstructor(typesArr)?.Invoke(parameterSet));
 
                 foreach (var typeInstance in typeInstances)
                 {
@@ -31,6 +44,34 @@ namespace XrmCommandBox
             }
 
             return foundInstances;
+        }
+
+        public static object CreateInstance(Type handlerType)
+        {
+            object instance;
+            var noParamsConstructor = handlerType.GetConstructor(Type.EmptyTypes);
+            if (noParamsConstructor != null)
+            {
+                instance = noParamsConstructor.Invoke(null);
+            }
+            else
+            {
+                var constructors = handlerType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+                // take the first available constructor
+                var constructor = constructors[0];
+                var constructorParameters = constructor.GetParameters();
+                var constructorParameterValues = new List<object>();
+                foreach (var constructorParameter in constructorParameters)
+                {
+                    var paramValueBuilder = ServicesMap[constructorParameter.ParameterType];
+                    var paramValue = paramValueBuilder.DynamicInvoke();
+                    constructorParameterValues.Add(paramValue);
+                }
+
+                instance = constructor.Invoke(constructorParameterValues.ToArray());
+            }
+
+            return instance;
         }
 
 
@@ -57,6 +98,11 @@ namespace XrmCommandBox
             }
 
             return found;
+        }
+
+        public static void RunTool(object toolInstance, object options)
+        {
+            toolInstance.GetType().GetMethod("Run")?.Invoke(toolInstance, new object[] {options});
         }
     }
 }

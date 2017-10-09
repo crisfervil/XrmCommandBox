@@ -3,6 +3,9 @@ using CommandLine;
 using log4net;
 using log4net.Config;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
 using XrmCommandBox.Tools;
@@ -12,19 +15,51 @@ namespace XrmCommandBox
     public class Program
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
-        private static IOrganizationService _crmService = null;
 
         public static void Main(string[] args)
         {
             try
             {
 
-                Parser.Default.ParseArguments<ExportToolOptions, ImportToolOptions, DeleteToolOptions>(args)
-                    .MapResult((ImportToolOptions opts) => RunImportAndReturnExitCode(opts),
-                                (ExportToolOptions opts) => RunExportAndReturnExitCode(opts),
-                                (DeleteToolOptions opts) => RunDeleteAndReturnExitCode(opts),
-                                HandleErrors);
+                // handle debugging
+                if (Array.IndexOf(args, "--debug-brk") != -1)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
 
+                // Get Available Commands
+                var commandTypes = Helper.GetTypesWithAttribute(typeof(VerbAttribute));
+
+                // Parse commands
+                var parsedResult = Parser.Default.ParseArguments(args, commandTypes);
+
+                // The command was successfully parsed
+                if (parsedResult.Tag == ParserResultType.Parsed)
+                {
+                    // Get the command handler for this command
+                    var parsedCommand = (Parsed<object>) parsedResult;
+                    var commandOptions = parsedCommand.Value;
+                    var commandOptionsType = commandOptions.GetType();
+                    var handlerAttr = commandOptionsType.GetCustomAttribute<HandlerAttribute>();
+
+                    var commandCommonOptions = commandOptions as CommonOptions;
+                    if (commandCommonOptions != null)
+                    {
+                        // Configure Services. Services are instances of objects that need to be injected in the constructors of the tools
+                        // By doing this, we allow tools to optionally have common shared objects passed in the constructor
+                        Func<object> getConnection = () => commandCommonOptions.GetConnection();
+                        Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
+
+                        // Configure the logging
+                        commandCommonOptions.ConfigureLog();
+                    }
+
+                    // create instance of the tool to run
+                    var toolInstance = Helper.CreateInstance(handlerAttr.HandlerType);
+
+                    // run it                    
+                    Helper.RunTool(toolInstance, commandOptions);
+                }
             }
             catch (Exception ex)
             {
@@ -35,79 +70,5 @@ namespace XrmCommandBox
             }
         }
 
-        private static void ConfigureLog(CommonOptions options)
-        {
-
-            var logLevel = Enum.GetName(typeof(LogLevels), options.LogLevel);
-            logLevel = logLevel?.ToUpper();
-
-            BasicConfigurator.Configure();
-
-            // http://geekswithblogs.net/rakker/archive/2007/08/22/114900.aspx
-            var repositories = LogManager.GetAllRepositories();
-
-            //Configure all loggers to be at the speified level.
-            foreach (var repository in repositories)
-            {
-                repository.Threshold = repository.LevelMap[logLevel];
-                var hier = (log4net.Repository.Hierarchy.Hierarchy)repository;
-                var loggers = hier.GetCurrentLoggers();
-                foreach (var logger in loggers)
-                {
-                    ((log4net.Repository.Hierarchy.Logger)logger).Level = hier.LevelMap[logLevel];
-                }
-            }
-
-            //Configure the root logger.
-            var logHierarchy = (log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository();
-            var rootLogger = logHierarchy.Root;
-            rootLogger.Level = logHierarchy.LevelMap[logLevel];
-
-        }
-
-        private static void InitConnection(CommonOptions options)
-        {
-            _crmService = new ConnectionBuilder().GetConnection(options.ConnectionName);
-        }
-
-        private static void Init(CommonOptions options)
-        {
-            if (options.DebugBreak)
-            {
-                System.Diagnostics.Debugger.Launch();
-            }
-
-            ConfigureLog(options);
-
-            new CommandOptionsSerializer().Deserialize(options);
-
-            InitConnection(options);
-        }
-
-        private static int RunImportAndReturnExitCode(ImportToolOptions opts)
-        {
-            Init(opts);
-            new ImportTool(_crmService).Run(opts);
-            return 0;
-        }
-
-        private static int RunExportAndReturnExitCode(ExportToolOptions opts)
-        {
-            Init(opts);
-            new ExportTool(_crmService).Run(opts);
-            return 0;
-        }
-
-        private static int RunDeleteAndReturnExitCode(DeleteToolOptions opts)
-        {
-            Init(opts);
-            new DeleteTool(_crmService).Run(opts);
-            return 0;
-        }
-
-        private static int HandleErrors(IEnumerable<Error> errors)
-        {
-            return -1;
-        }
     }
 }
