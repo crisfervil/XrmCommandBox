@@ -18,7 +18,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(DeleteToolOptions options)
         {
-            _log.Info("Running Delete tool...");
+            _log.Info("Running Delete Tool...");
 
             ValidateOptions(options);
 
@@ -30,6 +30,8 @@ namespace XrmCommandBox.Tools
             var statistics = DeleteRecords(foundRecords, options.ContinueOnError);
             var withErrors = statistics.Item2 > 0 ? "with errors" : "successfully";
             _log.Info($"Completed {withErrors}. Processed: {statistics.Item1} Errors: {statistics.Item2}");
+
+            _log.Info("Done!");
         }
 
         private Tuple<int,int> DeleteRecords(EntityCollection foundRecords, bool continueOnError)

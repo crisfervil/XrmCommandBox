@@ -19,7 +19,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(ExportToolOptions options)
         {
-            _log.Info("Running Export tool...");
+            _log.Info("Running Export Tool...");
 
             ValidateOptions(options);
 
@@ -39,7 +39,7 @@ namespace XrmCommandBox.Tools
             var serializer = new DataTableSerializer();
             serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
-            _log.Info("Completed");
+            _log.Info("Done!");
         }
 
         private EntityCollection GetRecords(ExportToolOptions options)

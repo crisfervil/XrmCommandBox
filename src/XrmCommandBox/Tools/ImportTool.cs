@@ -18,7 +18,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(ImportToolOptions options)
         {
-            _log.Info("Running Import tool...");
+            _log.Info("Running Import Tool...");
 
             var serializer = new DataTableSerializer();
 
@@ -31,6 +31,8 @@ namespace XrmCommandBox.Tools
                 var entity = GetEntity(row, dataTable.Name);
                 _crmService.Create(entity);
             }
+
+            _log.Info("Done!");
         }
 
         private Entity GetEntity(Dictionary<string,object> record, string entityName)
