@@ -2,11 +2,11 @@
 
 namespace XrmCommandBox.Tools
 {
-    [Verb("solution-export", HelpText = "Export the specified solution to a file")]
+    [Verb("solution-export", HelpText = "Export the specified solution to a .zip file")]
     [Handler(typeof(SolutionExportTool))]
-    public class SolutionExportToolOptions
+    public class SolutionExportToolOptions : CommonOptions
     {
-        [Option("solution-name", HelpText = "Unique name of the solution to export")]
+        [Option('s', "solution-name", Required = true, HelpText = "Unique name of the solution to export")]
         public string SolutionName { get; set; }
     }
 }

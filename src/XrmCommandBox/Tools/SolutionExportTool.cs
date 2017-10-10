@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using log4net;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
@@ -12,8 +7,8 @@ namespace XrmCommandBox.Tools
 {
     public class SolutionExportTool
     {
-        private readonly ILog _log = LogManager.GetLogger(typeof(SolutionExportTool));
         private readonly IOrganizationService _crmService;
+        private readonly ILog _log = LogManager.GetLogger(typeof(SolutionExportTool));
 
         public SolutionExportTool(IOrganizationService service)
         {
@@ -22,7 +17,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(SolutionExportToolOptions options)
         {
-            _log.Info("Running Solution Export tool...");
+            _log.Info("Running Solution Export Tool...");
 
             _log.Debug($"Solution Name: {options.SolutionName}");
 
@@ -35,13 +30,13 @@ namespace XrmCommandBox.Tools
                 SolutionName = options.SolutionName
             };
 
-            var response = (ExportSolutionResponse)_crmService.Execute(request);
+            var response = (ExportSolutionResponse) _crmService.Execute(request);
 
-            // TODO: Create log file
-
+            _log.Info($"Completed. {response.ExportSolutionFile.Length} bytes retrieved");
+            _log.Info("Writing File...");
             File.WriteAllBytes(fileName, response.ExportSolutionFile);
 
-            _log.Info("done");
+            _log.Info("Done!");
         }
     }
 }
