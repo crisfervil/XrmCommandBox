@@ -48,7 +48,7 @@ namespace XrmCommandBox
                         // Configure Services. Services are instances of objects that need to be injected in the constructors of the tools
                         // By doing this, we allow tools to optionally have common shared objects passed in the constructor
                         Func<object> getConnection = () => commandCommonOptions.GetConnection();
-                        Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
+                        if(!Helper.ServicesMap.ContainsKey(typeof(IOrganizationService))) Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
 
                         // Configure the logging
                         commandCommonOptions.ConfigureLog();
