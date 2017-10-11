@@ -47,6 +47,8 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="LogLevels.cs" />
+    <Compile Include="Tools\PublishAllTool.cs" />
+    <Compile Include="Tools\PublishAllToolOptions.cs" />
     <Compile Include="Tools\DeleteToolOptions.cs" />
     <Compile Include="Tools\DeleteTool.cs" />
     <Compile Include="HandlerAttribute.cs" />
