@@ -26,38 +26,16 @@ namespace XrmCommandBox.Tools
             var dataTable = serializer.Deserialize(options.File);
 
             _log.Info("Processing records...");
-            foreach (var row in dataTable)
+            var records = dataTable.AsEntityCollection();
+
+            var recordCount = 0;
+            foreach (var entityRecord in records.Entities)
             {
-                var entity = GetEntity(row, dataTable.Name);
-                _crmService.Create(entity);
+                _log.Debug($"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
+                _crmService.Create(entityRecord);
             }
 
             _log.Info("Done!");
-        }
-
-        private Entity GetEntity(Dictionary<string,object> record, string entityName)
-        {
-            var entity = new Entity(entityName);
-
-            foreach (var attrName in record.Keys)
-            {
-                // Convert this to the type specified in the metadata for the attribute in the entity
-                entity[attrName] = GetValue(record[attrName]);
-            }
-
-            return entity;
-        }
-
-        private object GetValue(object value)
-        {
-            var convertedValue = value;
-            var referenceValue = value as EntityReferenceValue;
-            if (referenceValue != null)
-            {
-                convertedValue = new EntityReference(referenceValue.LogicalName,Guid.Parse((string)referenceValue.Value));
-            }
-
-            return convertedValue;
         }
     }
 }

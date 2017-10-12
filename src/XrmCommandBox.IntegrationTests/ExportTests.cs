@@ -68,8 +68,8 @@ namespace XrmCommandBox.IntegrationTests
 
             // Make sure the record numbers are there
             Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i")?.Value);
-            Assert.AreEqual("systemuser", ((EntityReferenceValue)dt[0]["ownerid"]).LogicalName);
-            Assert.IsNotNull(((EntityReferenceValue)dt[0]["ownerid"]).Value);
+            Assert.AreEqual("systemuser", dt[0]["ownerid.type"]);
+            Assert.IsNotNull(dt[0]["ownerid"]);
 
             // delete files to avoid unexpected effects in other tests
             File.Delete(serializedFileName);

@@ -42,7 +42,6 @@
     <Compile Include="ConnectionBuilder.cs" />
     <Compile Include="Data\DataTable.cs" />
     <Compile Include="Data\DataTableSerializer.cs" />
-    <Compile Include="Data\EntityReferenceValue.cs" />
     <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />

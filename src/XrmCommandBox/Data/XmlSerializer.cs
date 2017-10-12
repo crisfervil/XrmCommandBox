@@ -1,9 +1,6 @@
-﻿using Microsoft.Xrm.Sdk;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System;
-using System.Runtime.Remoting.Messaging;
 
 namespace XrmCommandBox.Data
 {
@@ -70,18 +67,7 @@ namespace XrmCommandBox.Data
                 // read all the child elements
                 while (reader.Read())
                 {
-                    if (reader.NodeType == XmlNodeType.XmlDeclaration)
-                    {
-                        // ignore this element and move to next node
-                    }
-                    else if (reader.NodeType == XmlNodeType.Attribute)
-                    {
-                        if (reader.Name=="name")
-                        {
-                            dataTable.Name = reader.Name;
-                        }
-                    }
-                    else if (reader.NodeType == XmlNodeType.Element)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
                         // Read the name attribute (if the attribute is not set or is null, the table name will be set to null)
                         dataTable.Name = reader.GetAttribute("name");
@@ -125,14 +111,10 @@ namespace XrmCommandBox.Data
                     // the element name at this level should match the attribute name
                     var attrName = reader.Name;
 
-                    // If the attribute contains Name and LogicalName, deserialize the value as 
-                    var nameAttrValue = reader.GetAttribute("Name");
-                    var logicalNameAttrValue = reader.GetAttribute("LogicalName");
-
                     // move to the element value
                     var content = reader.ReadSubtree();
 
-                    var attrValue = ReadAttrValue(content, nameAttrValue, logicalNameAttrValue);
+                    var attrValue = ReadAttrValue(content);
 
                     // add the attribute value
                     row[attrName] = attrValue;
@@ -142,7 +124,7 @@ namespace XrmCommandBox.Data
             return row;
         }
 
-        private object ReadAttrValue(XmlReader reader, string nameAttribute, string logicalNameAtrtibute)
+        private object ReadAttrValue(XmlReader reader)
         {
             object attrValue = null;
             reader.MoveToContent();
@@ -157,13 +139,6 @@ namespace XrmCommandBox.Data
                     // TODO: Add support for this
                 }
             }
-
-            if (!string.IsNullOrEmpty(nameAttribute) && !string.IsNullOrEmpty(logicalNameAtrtibute))
-            {
-                // if any of the above attributes are specified
-                attrValue = new EntityReferenceValue {Name = nameAttribute, LogicalName = logicalNameAtrtibute, Value = attrValue};
-            }
-
             return attrValue;
         }
 
@@ -174,8 +149,7 @@ namespace XrmCommandBox.Data
                 docWriter.WriteStartElement(attributeKey);
                 if(entityRecord[attributeKey] != null)
                 {
-                    WriteXmlAttributes(docWriter, entityRecord[attributeKey]);
-                    var attrValue = GetAttributeValue(entityRecord[attributeKey]);
+                    var attrValue = entityRecord[attributeKey];
                     var strAttrValue = attrValue?.ToString();
                     if (strAttrValue != null)
                     {
@@ -185,33 +159,5 @@ namespace XrmCommandBox.Data
                 docWriter.WriteEndElement();
             }
         }
-
-        private void WriteXmlAttributes(XmlTextWriter docWriter, object attributeValue)
-        {
-            var referenceValue = attributeValue as EntityReferenceValue;
-            if (referenceValue != null)
-            {
-                docWriter.WriteAttributeString("Name", referenceValue.Name);
-                docWriter.WriteAttributeString("LogicalName", referenceValue.LogicalName);
-            }
-        }
-
-        private object GetAttributeValue(object attributeValue)
-        {
-            object value = null;
-
-            var referenceValue = attributeValue as EntityReferenceValue;
-            if (referenceValue != null)
-            {
-                value = referenceValue.Value;
-            }
-            else
-            {
-                value = attributeValue;
-            }
-
-            return value;
-        }
-
     }
 }

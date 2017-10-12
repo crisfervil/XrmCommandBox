@@ -1,14 +1,32 @@
 ﻿using Microsoft.Xrm.Sdk;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace XrmCommandBox.Data
 {
     public static class Extensions
     {
+
+        public static EntityCollection AsEntityCollection(this DataTable dataTable)
+        {
+            var records = new EntityCollection();
+
+            foreach (var record in dataTable)
+            {
+                var entityRecord = new Entity(dataTable.Name);
+
+                foreach (var recordAttr in record)
+                {
+                    // TODO: query the metadata to get the attribute value types
+                    entityRecord[recordAttr.Key] = recordAttr.Value;
+                }
+
+                records.Entities.Add(entityRecord);
+            }
+
+            return records;
+        }
+
         public static DataTable AsDataTable(this EntityCollection records)
         {
             var data = new DataTable() {  Name=records.EntityName };
@@ -19,10 +37,21 @@ namespace XrmCommandBox.Data
                 foreach (var recordAttr in recordData.Attributes)
                 {
                     attrValues.Add(recordAttr.Key, Convert(recordAttr.Value));
+                    AddAdditionalValues(recordAttr.Key, attrValues, recordAttr.Value);
                 }
                 data.Add(attrValues);
             }
             return data;
+        }
+
+        private static void AddAdditionalValues(string attrName, Dictionary<string, object> record, object value)
+        {
+            var erValue = value as EntityReference;
+            if (erValue != null)
+            {
+                record.Add($"{attrName}.name", erValue.Name);
+                record.Add($"{attrName}.type", erValue.LogicalName);
+            }
         }
 
         private static object Convert(object value)
@@ -31,8 +60,7 @@ namespace XrmCommandBox.Data
 
             if(value is EntityReference)
             {
-                var er = (EntityReference)value;
-                retVal = new EntityReferenceValue() { LogicalName=er.LogicalName, Name=er.Name, Value=er.Id };
+                retVal = ((EntityReference)value).Id;
             }
             else if (value is Money)
             {

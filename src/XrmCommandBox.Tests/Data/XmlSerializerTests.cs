@@ -20,9 +20,8 @@ namespace XrmCommandBox.Tests.Data
             // add row
             var numberValue = 2.3;
             var dateValue = DateTime.Now;
-            var referenceValue = new EntityReferenceValue() { LogicalName="MyEntity", Name="EntityText", Value=Guid.NewGuid() };
             var row1 = new Dictionary<string, object>() { { "Attr1", "Value1" }, { "Attr2", numberValue } };
-            var row2 = new Dictionary<string, object>() { { "Attr2", dateValue }, { "Attr4", referenceValue } };
+            var row2 = new Dictionary<string, object>() { { "Attr2", dateValue }, { "Attr2.name", "this is a test" } };
             dataTable.Add(row1);
             dataTable.Add(row2);
 
@@ -38,9 +37,7 @@ namespace XrmCommandBox.Tests.Data
             Assert.AreEqual("Value1", xml.SelectSingleNode("/Data/row[1]/Attr1")?.InnerText);
             Assert.AreEqual("2.3", xml.SelectSingleNode("/Data/row[1]/Attr2")?.InnerText);
             Assert.AreEqual(dateValue.ToString(CultureInfo.CurrentCulture), xml.SelectSingleNode("/Data/row[2]/Attr2")?.InnerText);
-            Assert.AreEqual(referenceValue.Value.ToString(), xml.SelectSingleNode("/Data/row[2]/Attr4")?.InnerText);
-            Assert.AreEqual(referenceValue.Name, xml.SelectSingleNode("/Data/row[2]/Attr4/@Name")?.Value);
-            Assert.AreEqual(referenceValue.LogicalName, xml.SelectSingleNode("/Data/row[2]/Attr4/@LogicalName")?.Value);
+            Assert.AreEqual("this is a test", xml.SelectSingleNode("/Data/row[2]/Attr2.name")?.InnerText);
         }
 
         [TestMethod]
@@ -54,7 +51,7 @@ namespace XrmCommandBox.Tests.Data
                                 </row>
                                 <row>
                                     <attr2>Value4</attr2>
-                                    <attr3>Value5</attr3>
+                                    <attr2.name>Value5</attr2.name>
                                     <attr4>Value6</attr4>
                                 </row>
                             </DataTable>";
@@ -70,7 +67,7 @@ namespace XrmCommandBox.Tests.Data
             Assert.AreEqual(false, dataTable[0].ContainsKey("attr4"));
             Assert.AreEqual(false, dataTable[1].ContainsKey("attr1"));
             Assert.AreEqual("Value4", dataTable[1]["attr2"]);
-            Assert.AreEqual("Value5", dataTable[1]["attr3"]);
+            Assert.AreEqual("Value5", dataTable[1]["attr2.name"]);
             Assert.AreEqual("Value6", dataTable[1]["attr4"]);
         }
     }
