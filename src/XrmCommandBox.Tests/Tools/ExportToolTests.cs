@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using FakeXrmEasy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,16 +28,14 @@ namespace XrmCommandBox.Tests.Tools
             account2.Id = Guid.NewGuid();
             account2["name"] = "Account2";
 
-            var accounts = new List<Entity>() {account1,account2};
+            var accounts = new List<Entity> {account1, account2};
             context.Initialize(accounts);
 
-            if(File.Exists(fileName))
-            {
+            if (File.Exists(fileName))
                 File.Delete(fileName);
-            }
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions { EntityName = "account", RecordNumber=true };
+            var options = new ExportToolOptions {EntityName = "account", RecordNumber = true};
 
             // TODO: Delete this if the FaxeXrmEaxy pull request is accepted
             options.File = fileName;
@@ -61,7 +58,7 @@ namespace XrmCommandBox.Tests.Tools
             // Check the record numbers are there
             Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i")?.Value);
             Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/@i")?.Value);
-       }
+        }
 
         [TestMethod]
         public void Exports_Fails_If_Not_Exporter_Available()
@@ -70,7 +67,11 @@ namespace XrmCommandBox.Tests.Tools
             var service = context.GetOrganizationService();
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions { EntityName = "account", File = "account.xyz" /* There's no exporter for extension xyz */};
+            var options = new ExportToolOptions
+            {
+                EntityName = "account",
+                File = "account.xyz" /* There's no exporter for extension xyz */
+            };
 
             // run the tool
             var exportTool = new ExportTool(service);
@@ -118,7 +119,7 @@ namespace XrmCommandBox.Tests.Tools
                               </fetch>";
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions() { FetchQuery = fetchXml, File = exportedFile};
+            var options = new ExportToolOptions {FetchQuery = fetchXml, File = exportedFile};
 
             // run the tool
             var exportTool = new ExportTool(service);

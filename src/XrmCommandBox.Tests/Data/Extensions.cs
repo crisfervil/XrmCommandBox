@@ -1,7 +1,7 @@
-﻿using XrmCommandBox.Data;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
-using System;
+using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tests.Data
 {
@@ -16,7 +16,7 @@ namespace XrmCommandBox.Tests.Data
             var referenceGuid1 = Guid.NewGuid();
             var entity1 = new Entity("myEntity1");
             entity1["attr1"] = "Value1";
-            entity1["attr2"] = new EntityReference("myEntity2", referenceGuid1) { Name = "My test value" };
+            entity1["attr2"] = new EntityReference("myEntity2", referenceGuid1) {Name = "My test value"};
             data.Entities.Add(entity1);
 
             var entity2 = new Entity("myEntity1");
