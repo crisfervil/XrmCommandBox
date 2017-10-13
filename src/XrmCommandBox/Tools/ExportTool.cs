@@ -42,9 +42,10 @@ namespace XrmCommandBox.Tools
         private EntityCollection GetRecords(ExportToolOptions options)
         {
             EntityCollection foundRecords = null;
+
             if (!string.IsNullOrEmpty(options.EntityName))
             {
-                var qry = GetAllRecordsQuery(options.EntityName);
+                var qry = GetAllRecordsQuery(options.EntityName, options.PageSize, options.Page);
                 foundRecords = _crmService.RetrieveMultiple(qry);
             }
             else if (!string.IsNullOrEmpty(options.FetchQuery))
@@ -61,11 +62,16 @@ namespace XrmCommandBox.Tools
                 throw new Exception("Either the entity or the fetch-query options are required");
         }
 
-        private QueryBase GetAllRecordsQuery(string entityName)
+        private QueryBase GetAllRecordsQuery(string entityName, int pageSie, int page)
         {
             return new QueryExpression(entityName)
             {
-                ColumnSet = new ColumnSet(true) // retrieve all columns
+                ColumnSet = new ColumnSet(true), // retrieve all columns
+                PageInfo =
+                {
+                    PageNumber = page,
+                    Count = pageSie
+                }
             };
         }
     }

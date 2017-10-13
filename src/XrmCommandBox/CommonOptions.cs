@@ -17,9 +17,6 @@ namespace XrmCommandBox
         [Option('f', "config-file", HelpText = "Xml file containing the command options")]
         public string ConfigFile { get; set; }
 
-        [Option('e', "continue-on-error", HelpText = "Continue if there's an error while processing the command")]
-        public bool ContinueOnError { get; set; }
-
         [Option('l', "log-level", HelpText = "Sets the current logging output. Can be Debug, Info, Error")]
         public LogLevels LogLevel { get; set; } = LogLevels.Info;
     }

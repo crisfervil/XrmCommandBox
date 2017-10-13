@@ -18,7 +18,9 @@ namespace XrmCommandBox.IntegrationTests
                 "export",
                 "--connection", "integrationTests",
                 "--entity", "account",
-                "--recordNumber"
+                "--recordNumber",
+                "--page-size", "10",
+                "--page", "1"
             };
 
             // Run the command
@@ -41,7 +43,7 @@ namespace XrmCommandBox.IntegrationTests
         [TestCategory("IntegrationTests")]
         public void Export_Contacts_Using_FetchXml()
         {
-            var fetchQuery = @"<fetch top='50' >
+            var fetchQuery = @"<fetch top='10' >
                                 <entity name='contact' />
                                </fetch>";
 

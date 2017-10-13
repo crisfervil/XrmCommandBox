@@ -6,7 +6,10 @@ namespace XrmCommandBox.Tools
     [Handler(typeof(DeleteTool))]
     public class DeleteToolOptions : CommonOptions
     {
-        [Option("fetch-query", HelpText = "Fetch query to retrieve the records to delete")]
+        [Option('q', "fetch-query", HelpText = "Fetch query to retrieve the records to delete")]
         public string FetchQuery { get; set; }
+
+        [Option('e', "continue-on-error", HelpText = "Continue if there's an error while processing the command")]
+        public bool ContinueOnError { get; set; }
     }
 }
