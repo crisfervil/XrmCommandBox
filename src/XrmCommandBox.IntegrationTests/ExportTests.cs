@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Xml;
-using XrmCommandBox;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using XrmCommandBox.Data;
 
@@ -15,10 +13,13 @@ namespace XrmCommandBox.IntegrationTests
         [TestCategory("IntegrationTests")]
         public void Export_Accounts_Using_Entity_Name()
         {
-            var commandParameters = new[] { "export",
-                                                "--connection", "integrationTests",
-                                                "--entity", "account",
-                                                "--recordNumber" };
+            var commandParameters = new[]
+            {
+                "export",
+                "--connection", "integrationTests",
+                "--entity", "account",
+                "--recordNumber"
+            };
 
             // Run the command
             Program.Main(commandParameters);
@@ -44,10 +45,13 @@ namespace XrmCommandBox.IntegrationTests
                                 <entity name='contact' />
                                </fetch>";
 
-            var commandParameters = new[] { "export",
-                                            "--connection", "integrationTests",
-                                            "--fetch-query", fetchQuery,
-                                            "--recordNumber" };
+            var commandParameters = new[]
+            {
+                "export",
+                "--connection", "integrationTests",
+                "--fetch-query", fetchQuery,
+                "--recordNumber"
+            };
             // Run the command
             Program.Main(commandParameters);
 
@@ -74,6 +78,5 @@ namespace XrmCommandBox.IntegrationTests
             // delete files to avoid unexpected effects in other tests
             File.Delete(serializedFileName);
         }
-
     }
 }
