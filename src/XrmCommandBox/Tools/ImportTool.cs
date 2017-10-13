@@ -2,6 +2,8 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tools
@@ -25,17 +27,27 @@ namespace XrmCommandBox.Tools
             _log.Info("Reading file...");
             var dataTable = serializer.Deserialize(options.File);
 
+            _log.Debug("Querying metadata...");
+            var metadata = GetMetadata(dataTable.Name);
+
             _log.Info("Processing records...");
-            var records = dataTable.AsEntityCollection();
+            var records = dataTable.AsEntityCollection(metadata);
 
             var recordCount = 0;
             foreach (var entityRecord in records.Entities)
             {
-                _log.Debug($"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
+                _log.Info($"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
                 _crmService.Create(entityRecord);
             }
 
             _log.Info("Done!");
+        }
+
+        private EntityMetadata GetMetadata(string entityName)
+        {
+            var request = new RetrieveEntityRequest() { EntityFilters = EntityFilters.Entity, LogicalName = entityName};
+            var response = (RetrieveEntityResponse) _crmService.Execute(request);
+            return response.EntityMetadata;
         }
     }
 }

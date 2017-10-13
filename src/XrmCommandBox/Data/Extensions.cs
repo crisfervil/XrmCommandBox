@@ -1,13 +1,20 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk.Metadata;
+using System.Linq;
 using System;
+using System.Workflow.Activities;
+using log4net;
+using XrmCommandBox.Tools;
 
 namespace XrmCommandBox.Data
 {
     public static class Extensions
     {
 
-        public static EntityCollection AsEntityCollection(this DataTable dataTable)
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Extensions));
+
+        public static EntityCollection AsEntityCollection(this DataTable dataTable, EntityMetadata metadata)
         {
             var records = new EntityCollection();
 
@@ -17,14 +24,55 @@ namespace XrmCommandBox.Data
 
                 foreach (var recordAttr in record)
                 {
-                    // TODO: query the metadata to get the attribute value types
-                    entityRecord[recordAttr.Key] = recordAttr.Value;
+                    // Query the metadata to get the attribute value types
+                    var found = metadata.Attributes.Where(attr => attr.SchemaName == recordAttr.Key).ToList();
+                    var attrMetadata = found.Count > 0 ? found[0] : null;
+                    if (attrMetadata != null)
+                    {
+                        entityRecord[recordAttr.Key] = GetAttrValue(recordAttr.Key, recordAttr.Value, record, attrMetadata);
+                    }
+                    else
+                    {
+                        Log.Debug($"Attr {recordAttr.Key} not found in entity {dataTable.Name}. Skipping");
+                    }
                 }
 
                 records.Entities.Add(entityRecord);
             }
 
             return records;
+        }
+
+        private static object GetAttrValue(string attrName, object attrValue, Dictionary<string, object> record, AttributeMetadata attrMetadata)
+        {
+            object retVal = attrValue;
+            if (attrValue != null)
+            {
+                var strAttrValue = attrValue as string;
+                if (attrMetadata.AttributeType == AttributeTypeCode.Lookup)
+                {
+                    Guid referenceGuid = strAttrValue != null ? Guid.Parse(strAttrValue) : (Guid) attrValue; 
+
+                    // try to find the attr type
+                    var lookupType = record[$"{attrName}.type"];
+                    if (lookupType != null)
+                    {
+                        retVal = new EntityReference((string)lookupType,referenceGuid);
+                    }                
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Money)
+                {
+                    decimal moneyValue = strAttrValue != null ? decimal.Parse(strAttrValue) : (decimal) attrValue;
+                    retVal = new Money(moneyValue);
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Picklist)
+                {
+                    int optionValue = strAttrValue != null ? int.Parse(strAttrValue) : (int)attrValue;
+                    retVal = new OptionSetValue(optionValue);
+                }                
+            }
+
+            return retVal;
         }
 
         public static DataTable AsDataTable(this EntityCollection records)
