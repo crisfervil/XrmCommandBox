@@ -19,10 +19,12 @@ namespace XrmCommandBox.Tests.Tools
         {
             var randomGuid = Guid.NewGuid();
             int optionValue1 = 1, optionValue2 = 2;
+            decimal moneyValue1 = 123.456m;
             string xmlContent = $@"<DataTable name='account'>
                                     <row n='1'>
                                         <attr1>Value1</attr1>
                                         <attr2>{optionValue1}</attr2>
+                                        <attr4>{moneyValue1}</attr4>
                                     </row>
                                     <row n='2'>
                                         <attr1>Value3</attr1>
@@ -62,7 +64,12 @@ namespace XrmCommandBox.Tests.Tools
             { 
                 SchemaName = "attr3"                
             };
-            accountMetadata.SetAttributeCollection(new AttributeMetadata[] {attr1Metadata, attr2Metadata, attr3Metadata});
+            var attr4Metadata = new MoneyAttributeMetadata()
+            {
+                SchemaName = "attr4"
+            };
+
+            accountMetadata.SetAttributeCollection(new AttributeMetadata[] {attr1Metadata, attr2Metadata, attr3Metadata, attr4Metadata});
 
             context.InitializeMetadata(accountMetadata);
 
@@ -77,6 +84,8 @@ namespace XrmCommandBox.Tests.Tools
             Assert.AreEqual(2, accountsCreated.Count);
             Assert.AreEqual("Value1", accountsCreated[0]["attr1"]);
             Assert.AreEqual(optionValue1, ((OptionSetValue)accountsCreated[0]["attr2"]).Value);
+            Assert.AreEqual(moneyValue1, ((Money)accountsCreated[0]["attr4"]).Value);
+
             Assert.AreEqual("Value3", accountsCreated[1]["attr1"]);
             Assert.AreEqual(optionValue2, ((OptionSetValue)accountsCreated[1]["attr2"]).Value);
             var refValue = (EntityReference)accountsCreated[1]["attr3"];
