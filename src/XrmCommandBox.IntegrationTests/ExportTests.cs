@@ -9,6 +9,18 @@ namespace XrmCommandBox.IntegrationTests
     [TestClass]
     public class ExportTests
     {
+        private string _connectionString = "integrationTests";
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            var environmentConnectionString = Environment.GetEnvironmentVariable("IntegrationTestsConnectionString");
+            if (environmentConnectionString != null)
+            {
+                _connectionString = environmentConnectionString;
+            }            
+        }
+
         [TestMethod]
         [TestCategory("IntegrationTests")]
         public void Export_Accounts_Using_Entity_Name()
@@ -16,7 +28,7 @@ namespace XrmCommandBox.IntegrationTests
             var commandParameters = new[]
             {
                 "export",
-                "--connection", "integrationTests",
+                "--connection", _connectionString,
                 "--entity", "account",
                 "--recordNumber",
                 "--page-size", "10",
@@ -50,7 +62,7 @@ namespace XrmCommandBox.IntegrationTests
             var commandParameters = new[]
             {
                 "export",
-                "--connection", "integrationTests",
+                "--connection", _connectionString,
                 "--fetch-query", fetchQuery,
                 "--recordNumber"
             };
