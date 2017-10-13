@@ -1,17 +1,14 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xrm.Sdk.Metadata;
 using System.Linq;
-using System;
-using System.Workflow.Activities;
 using log4net;
-using XrmCommandBox.Tools;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace XrmCommandBox.Data
 {
     public static class Extensions
     {
-
         private static readonly ILog Log = LogManager.GetLogger(typeof(Extensions));
 
         public static EntityCollection AsEntityCollection(this DataTable dataTable, EntityMetadata metadata)
@@ -28,13 +25,10 @@ namespace XrmCommandBox.Data
                     var found = metadata.Attributes.Where(attr => attr.SchemaName == recordAttr.Key).ToList();
                     var attrMetadata = found.Count > 0 ? found[0] : null;
                     if (attrMetadata != null)
-                    {
-                        entityRecord[recordAttr.Key] = GetAttrValue(recordAttr.Key, recordAttr.Value, record, attrMetadata);
-                    }
+                        entityRecord[recordAttr.Key] =
+                            GetAttrValue(recordAttr.Key, recordAttr.Value, record, attrMetadata);
                     else
-                    {
                         Log.Debug($"Attr {recordAttr.Key} not found in entity {dataTable.Name}. Skipping");
-                    }
                 }
 
                 records.Entities.Add(entityRecord);
@@ -43,33 +37,32 @@ namespace XrmCommandBox.Data
             return records;
         }
 
-        private static object GetAttrValue(string attrName, object attrValue, Dictionary<string, object> record, AttributeMetadata attrMetadata)
+        private static object GetAttrValue(string attrName, object attrValue, Dictionary<string, object> record,
+            AttributeMetadata attrMetadata)
         {
-            object retVal = attrValue;
+            var retVal = attrValue;
             if (attrValue != null)
             {
                 var strAttrValue = attrValue as string;
                 if (attrMetadata.AttributeType == AttributeTypeCode.Lookup)
                 {
-                    Guid referenceGuid = strAttrValue != null ? Guid.Parse(strAttrValue) : (Guid) attrValue; 
+                    var referenceGuid = strAttrValue != null ? Guid.Parse(strAttrValue) : (Guid) attrValue;
 
                     // try to find the attr type
                     var lookupType = record[$"{attrName}.type"];
                     if (lookupType != null)
-                    {
-                        retVal = new EntityReference((string)lookupType,referenceGuid);
-                    }                
+                        retVal = new EntityReference((string) lookupType, referenceGuid);
                 }
                 else if (attrMetadata.AttributeType == AttributeTypeCode.Money)
                 {
-                    decimal moneyValue = strAttrValue != null ? decimal.Parse(strAttrValue) : (decimal) attrValue;
+                    var moneyValue = strAttrValue != null ? decimal.Parse(strAttrValue) : (decimal) attrValue;
                     retVal = new Money(moneyValue);
                 }
                 else if (attrMetadata.AttributeType == AttributeTypeCode.Picklist)
                 {
-                    int optionValue = strAttrValue != null ? int.Parse(strAttrValue) : (int)attrValue;
+                    var optionValue = strAttrValue != null ? int.Parse(strAttrValue) : (int) attrValue;
                     retVal = new OptionSetValue(optionValue);
-                }                
+                }
             }
 
             return retVal;
@@ -77,7 +70,7 @@ namespace XrmCommandBox.Data
 
         public static DataTable AsDataTable(this EntityCollection records)
         {
-            var data = new DataTable() {  Name=records.EntityName };
+            var data = new DataTable {Name = records.EntityName};
 
             foreach (var recordData in records.Entities)
             {
@@ -106,18 +99,12 @@ namespace XrmCommandBox.Data
         {
             var retVal = value;
 
-            if(value is EntityReference)
-            {
-                retVal = ((EntityReference)value).Id;
-            }
+            if (value is EntityReference)
+                retVal = ((EntityReference) value).Id;
             else if (value is Money)
-            {
-                retVal = ((Money)value).Value;
-            }
+                retVal = ((Money) value).Value;
             else if (value is OptionSetValue)
-            {
-                retVal = ((OptionSetValue)value).Value;
-            }
+                retVal = ((OptionSetValue) value).Value;
 
             // TODO add more data type converters
 

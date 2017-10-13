@@ -4,11 +4,11 @@ namespace XrmCommandBox
 {
     public class HandlerAttribute : Attribute
     {
-        public Type HandlerType { get; set; }
-
         public HandlerAttribute(Type handler)
         {
-            this.HandlerType = handler;
+            HandlerType = handler;
         }
+
+        public Type HandlerType { get; set; }
     }
 }

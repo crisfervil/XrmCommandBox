@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using CommandLine;
 
 namespace XrmCommandBox
 {
     public static class Helper
     {
-
         public static Dictionary<Type, Delegate> ServicesMap = new Dictionary<Type, Delegate>();
 
         /// <summary>
-        /// Returns all the exported types containing the specified attribute
+        ///     Returns all the exported types containing the specified attribute
         /// </summary>
         public static Type[] GetTypesWithAttribute(Type attrType)
         {
-            return Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.GetCustomAttribute(attrType) != null).ToArray();
+            return Assembly.GetExecutingAssembly()
+                .GetExportedTypes()
+                .Where(t => t.GetCustomAttribute(attrType) != null)
+                .ToArray();
         }
 
-        public static IList<T> GetObjectInstances<T>(Object[][] parameterValues)
+        public static IList<T> GetObjectInstances<T>(object[][] parameterValues)
         {
             IList<T> foundInstances = new List<T>();
             foreach (var parameterSet in parameterValues)
@@ -35,12 +33,10 @@ namespace XrmCommandBox
                 var foundTypes = GetTypes<T>(typesArr);
 
                 // create an instance of each type found
-                var typeInstances = foundTypes.Select(x => (T)x.GetConstructor(typesArr)?.Invoke(parameterSet));
+                var typeInstances = foundTypes.Select(x => (T) x.GetConstructor(typesArr)?.Invoke(parameterSet));
 
                 foreach (var typeInstance in typeInstances)
-                {
                     foundInstances.Add(typeInstance);
-                }
             }
 
             return foundInstances;
@@ -76,7 +72,7 @@ namespace XrmCommandBox
 
 
         /// <summary>
-        /// Returns all the types with public constructors with parameters of the specified types
+        ///     Returns all the types with public constructors with parameters of the specified types
         /// </summary>
         /// <typeparam name="T">Interface that must be implemented by the returned type</typeparam>
         /// <param name="constructorParameterTypes"></param>
@@ -92,9 +88,7 @@ namespace XrmCommandBox
             {
                 var constructor = validType.GetConstructor(constructorParameterTypes);
                 if (constructor != null)
-                {
                     found.Add(validType);
-                }
             }
 
             return found;
@@ -102,7 +96,7 @@ namespace XrmCommandBox
 
         public static void RunTool(object toolInstance, object options)
         {
-            toolInstance.GetType().GetMethod("Run")?.Invoke(toolInstance, new object[] {options});
+            toolInstance.GetType().GetMethod("Run")?.Invoke(toolInstance, new[] {options});
         }
     }
 }

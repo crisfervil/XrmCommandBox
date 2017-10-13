@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Xml;
 using log4net;
-using System.Xml;
 
 namespace XrmCommandBox
 {
@@ -17,20 +16,14 @@ namespace XrmCommandBox
                 xml.Load(options.ConfigFile);
 
                 if (xml.DocumentElement != null)
-                {
                     foreach (XmlNode configNode in xml.DocumentElement.ChildNodes)
                     {
                         var configOptionName = configNode.Name;
                         var optionProperty = options.GetType().GetProperty(configOptionName);
                         if (optionProperty != null)
-                        {
                             if (optionProperty.PropertyType == typeof(string))
-                            {
-                                optionProperty.SetValue(options,configNode.InnerXml);
-                            }
-                        }
-                    }                    
-                }
+                                optionProperty.SetValue(options, configNode.InnerXml);
+                    }
             }
         }
     }

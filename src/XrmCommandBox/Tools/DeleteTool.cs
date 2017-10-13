@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Activities.Statements;
 using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -8,8 +7,8 @@ namespace XrmCommandBox.Tools
 {
     public class DeleteTool
     {
-        private readonly ILog _log = LogManager.GetLogger(typeof(DeleteTool));
         private readonly IOrganizationService _crmService;
+        private readonly ILog _log = LogManager.GetLogger(typeof(DeleteTool));
 
         public DeleteTool(IOrganizationService service)
         {
@@ -34,26 +33,25 @@ namespace XrmCommandBox.Tools
             _log.Info("Done!");
         }
 
-        private Tuple<int,int> DeleteRecords(EntityCollection foundRecords, bool continueOnError)
+        private Tuple<int, int> DeleteRecords(EntityCollection foundRecords, bool continueOnError)
         {
             var processedCount = 0;
             var errorsCount = 0;
             _log.Debug("Starting to delete records...");
             foreach (var recordToDelete in foundRecords.Entities)
-            {
                 try
                 {
-                    _log.Info($"Deleting {recordToDelete.LogicalName} {++processedCount} of {foundRecords.Entities.Count}: {recordToDelete.Id}");
-                    _crmService.Delete(recordToDelete.LogicalName, recordToDelete.Id);                    
+                    _log.Info(
+                        $"Deleting {recordToDelete.LogicalName} {++processedCount} of {foundRecords.Entities.Count}: {recordToDelete.Id}");
+                    _crmService.Delete(recordToDelete.LogicalName, recordToDelete.Id);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     errorsCount++;
                     _log.Error("Unexpected error while deleting records.");
                     _log.Error(ex);
                     if (!continueOnError) throw;
                 }
-            }
             return Tuple.Create(processedCount, errorsCount);
         }
 
@@ -67,7 +65,6 @@ namespace XrmCommandBox.Tools
 
         private void ValidateOptions(DeleteToolOptions options)
         {
-            
         }
     }
 }

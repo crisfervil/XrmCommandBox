@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Net;
+using System.Configuration;
+using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Tooling.Connector;
-using log4net;
 
 namespace XrmCommandBox
 {
-    class ConnectionBuilder
+    internal class ConnectionBuilder
     {
         private readonly ILog _log = LogManager.GetLogger(typeof(ConnectionBuilder));
 
         public IOrganizationService GetConnection(string connection)
         {
-
             _log.Info("Connecting to CRM...");
- 
+
             // The connection can be a connection name in the app.config file or a connection string
-            var connStr = System.Configuration.ConfigurationManager.ConnectionStrings[connection];
+            var connStr = ConfigurationManager.ConnectionStrings[connection];
             var connStrValue = connection;
             if (connStr != null)
             {
@@ -26,7 +25,7 @@ namespace XrmCommandBox
 
             var client = new CrmServiceClient(connStrValue);
 
-            if (!client.IsReady || client.LastCrmException!=null || !string.IsNullOrEmpty(client.LastCrmError))
+            if (!client.IsReady || client.LastCrmException != null || !string.IsNullOrEmpty(client.LastCrmError))
             {
                 var url = client.CrmConnectOrgUriActual != null ? client.CrmConnectOrgUriActual.ToString() : "CRM";
                 throw new Exception($"Error when connecting to {url} - {client.LastCrmError}", client.LastCrmException);
@@ -34,8 +33,7 @@ namespace XrmCommandBox
 
             _log.Info($"Connected to: {client.CrmConnectOrgUriActual}");
 
-            return client.OrganizationWebProxyClient ?? (IOrganizationService)client.OrganizationServiceProxy;
-
+            return client.OrganizationWebProxyClient ?? (IOrganizationService) client.OrganizationServiceProxy;
         }
     }
 }

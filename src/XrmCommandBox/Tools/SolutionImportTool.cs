@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using log4net;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using System.Threading;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace XrmCommandBox.Tools
@@ -72,9 +72,7 @@ namespace XrmCommandBox.Tools
             while (!completed)
             {
                 if (end < DateTime.Now)
-                {
                     throw new Exception($"Import Timeout Exceeded: {asyncTimeout}");
-                }
 
                 Thread.Sleep(sleepInterval * 1000);
                 _log.Debug($"Sleeping for {sleepInterval} seconds");
@@ -83,7 +81,8 @@ namespace XrmCommandBox.Tools
 
                 try
                 {
-                    asyncOperation = _crmService.Retrieve("asyncoperation", asyncJobId, new ColumnSet("asyncoperationid", "statuscode", "message"));
+                    asyncOperation = _crmService.Retrieve("asyncoperation", asyncJobId,
+                        new ColumnSet("asyncoperationid", "statuscode", "message"));
                 }
                 catch (Exception ex)
                 {
@@ -92,7 +91,7 @@ namespace XrmCommandBox.Tools
                     continue;
                 }
 
-                var statusCode = (OptionSetValue)asyncOperation["statuscode"];
+                var statusCode = (OptionSetValue) asyncOperation["statuscode"];
                 _log.Debug($"Status Code: {statusCode.Value}");
 
                 switch (statusCode.Value)
@@ -109,7 +108,6 @@ namespace XrmCommandBox.Tools
                         throw new Exception($"Solution Import Failed: {statusCode.Value} {asyncOperation["message"]}");
                 }
             }
-
         }
     }
 }

@@ -1,14 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using CommandLine;
 using log4net;
-using log4net.Config;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Xml;
 using Microsoft.Xrm.Sdk;
-using XrmCommandBox.Tools;
 
 namespace XrmCommandBox
 {
@@ -20,12 +15,9 @@ namespace XrmCommandBox
         {
             try
             {
-
                 // handle debugging
                 if (Array.IndexOf(args, "--debug-brk") != -1)
-                {
-                    System.Diagnostics.Debugger.Break();
-                }
+                    Debugger.Break();
 
                 // Get Available Commands
                 var commandTypes = Helper.GetTypesWithAttribute(typeof(VerbAttribute));
@@ -48,7 +40,8 @@ namespace XrmCommandBox
                         // Configure Services. Services are instances of objects that need to be injected in the constructors of the tools
                         // By doing this, we allow tools to optionally have common shared objects passed in the constructor
                         Func<object> getConnection = () => commandCommonOptions.GetConnection();
-                        if(!Helper.ServicesMap.ContainsKey(typeof(IOrganizationService))) Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
+                        if (!Helper.ServicesMap.ContainsKey(typeof(IOrganizationService)))
+                            Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
 
                         // Configure the logging
                         commandCommonOptions.ConfigureLog();
@@ -66,12 +59,11 @@ namespace XrmCommandBox
             }
             catch (Exception ex)
             {
-                if(ex.InnerException!= null) Log.Error(ex.InnerException);
+                if (ex.InnerException != null) Log.Error(ex.InnerException);
                 Log.Error($"Unexpected error: {ex.Message}");
                 Log.Error(ex);
                 Environment.Exit(-1);
             }
         }
-
     }
 }
