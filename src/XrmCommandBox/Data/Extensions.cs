@@ -22,13 +22,20 @@ namespace XrmCommandBox.Data
                 foreach (var recordAttr in record)
                 {
                     // Query the metadata to get the attribute value types
-                    var found = metadata.Attributes.Where(attr => attr.SchemaName == recordAttr.Key).ToList();
+                    var found = metadata.Attributes.Where(attr => String.Compare(attr.LogicalName,recordAttr.Key, StringComparison.OrdinalIgnoreCase)==0).ToList();
                     var attrMetadata = found.Count > 0 ? found[0] : null;
                     if (attrMetadata != null)
+                    {
                         entityRecord[recordAttr.Key] =
                             GetAttrValue(recordAttr.Key, recordAttr.Value, record, attrMetadata);
+                        if (string.Compare(recordAttr.Key,metadata.PrimaryIdAttribute, StringComparison.OrdinalIgnoreCase)==0)
+                        {
+                            entityRecord.Id = entityRecord.GetAttributeValue<Guid>(recordAttr.Key);
+                        }                        
+                    }
                     else
                         Log.Debug($"Attr {recordAttr.Key} not found in entity {dataTable.Name}. Skipping");
+
                 }
 
                 records.Entities.Add(entityRecord);
@@ -60,8 +67,32 @@ namespace XrmCommandBox.Data
                 }
                 else if (attrMetadata.AttributeType == AttributeTypeCode.Picklist)
                 {
-                    var optionValue = strAttrValue != null ? int.Parse(strAttrValue) : (int) attrValue;
+                    var optionValue = strAttrValue != null ? int.Parse(strAttrValue) : (int)attrValue;
                     retVal = new OptionSetValue(optionValue);
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Uniqueidentifier)
+                {
+                    var idValue = strAttrValue != null ? Guid.Parse(strAttrValue) : (Guid)attrValue;
+                    retVal = idValue;
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Integer)
+                {
+                    var intValue = strAttrValue != null ? int.Parse(strAttrValue) : (int)attrValue;
+                    retVal = intValue;
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Decimal)
+                {
+                    var decimalValue = strAttrValue != null ? decimal.Parse(strAttrValue) : (decimal)attrValue;
+                    retVal = decimalValue;
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.String)
+                {
+                    var strValue = (string)attrValue;
+                    retVal = strValue;
+                }
+                else
+                {
+                    Log.Debug($"Counld not convert attribute {attrName} value {attrValue} entity {attrMetadata.EntityLogicalName}");
                 }
             }
 

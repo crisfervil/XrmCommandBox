@@ -1,8 +1,13 @@
-﻿using log4net;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using XrmCommandBox.Data;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace XrmCommandBox.Tools
 {
@@ -31,20 +36,115 @@ namespace XrmCommandBox.Tools
             _log.Info("Processing records...");
             var records = dataTable.AsEntityCollection(metadata);
 
-            var recordCount = 0;
+            int recordCount=0, createdCount=0, updatedCount=0, errorsCount=0;
             foreach (var entityRecord in records.Entities)
             {
-                _log.Info(
-                    $"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
-                _crmService.Create(entityRecord);
+                try
+                {
+                    _log.Info($"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
+
+                    // figure out if the record exists, in order to decide to create or update it
+                    var recordId = GetRecordId(entityRecord.LogicalName, entityRecord, options.MatchAttributes?.ToList(), metadata);
+                    _log.Debug($"RecordId: {recordId}");
+
+                    if (recordId != null)
+                    {
+                        // the record exists, so update it
+                        _log.Info($"Updating record: {recordId}...");
+                        entityRecord[metadata.PrimaryIdAttribute] = recordId.Value;
+                        _crmService.Update(entityRecord);
+                        _log.Info("Record updated successfully");
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        // the record doesn't exist, so create it
+                        _log.Info("Creating record....");
+                        recordId = _crmService.Create(entityRecord);
+                        _log.Info($"Record created successfully: Guid {recordId}");
+                        createdCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorsCount++;
+                    _log.Error(ex);
+                    if (!options.ContinueOnError) throw;
+                }
             }
 
-            _log.Info("Done!");
+            _log.Info($"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
+        }
+
+        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
+        {
+            Guid? recordGuid = null;
+
+            var qry = GetMatchQuery(entityName, entityRecord, matchAttributes, entityMetadata);
+
+            var foundRecords = _crmService.RetrieveMultiple(qry);
+
+            if (foundRecords.Entities.Count > 0)
+            {
+                if (foundRecords.Entities.Count > 1)
+                {
+                    throw  new Exception("Too many records found");
+                }
+
+                recordGuid = foundRecords.Entities[0].GetAttributeValue<Guid>(entityMetadata.PrimaryIdAttribute);
+            }
+
+            return recordGuid;
+        }
+
+        private QueryBase GetMatchQuery(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
+        {
+            if (matchAttributes == null || matchAttributes.Count == 0)
+            {
+                // set the id attribute as match attribute
+                var attrId = entityMetadata.PrimaryIdAttribute;
+
+                matchAttributes = new[] {attrId};
+            }
+
+            var qry = new QueryByAttribute
+            {
+                EntityName = entityName,
+                ColumnSet = new ColumnSet(entityMetadata.PrimaryIdAttribute)                
+            };
+
+            qry.Attributes.AddRange(matchAttributes);
+
+            foreach (var attrName in matchAttributes)
+            {
+                var filterAttrValue = entityRecord.Contains(attrName) ? GetFilterValue(entityRecord[attrName]) : null;
+                qry.Values.Add(filterAttrValue);
+            }
+
+            return qry;
+        }
+
+        private object GetFilterValue(object attributeValue)
+        {
+            object filterValue = attributeValue;
+
+            if (attributeValue is EntityReference)
+            {
+                var attrValueReference = (EntityReference) attributeValue;
+                filterValue = attrValueReference.Id;
+            }
+            else if (attributeValue is OptionSetValue)
+            {
+                var attrValueOptionset = (OptionSetValue) attributeValue;
+                filterValue = attrValueOptionset.Value;
+            }
+
+            return filterValue;
         }
 
         private EntityMetadata GetMetadata(string entityName)
         {
-            var request = new RetrieveEntityRequest {EntityFilters = EntityFilters.Entity, LogicalName = entityName};
+            var request = new RetrieveEntityRequest {EntityFilters = EntityFilters.Attributes, LogicalName = entityName};
             var response = (RetrieveEntityResponse) _crmService.Execute(request);
             return response.EntityMetadata;
         }

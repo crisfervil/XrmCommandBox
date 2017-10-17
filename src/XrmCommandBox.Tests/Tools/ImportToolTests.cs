@@ -22,11 +22,13 @@ namespace XrmCommandBox.Tests.Tools
             var moneyValue1 = 123.456m;
             var xmlContent = $@"<DataTable name='account'>
                                     <row n='1'>
+                                        <accountid>E08BAD83-CA69-4961-B5FC-3A0A704F85FE</accountid>
                                         <attr1>Value1</attr1>
                                         <attr2>{optionValue1}</attr2>
                                         <attr4>{moneyValue1}</attr4>
                                     </row>
                                     <row n='2'>
+                                        <accountid>4296FCA9-EE5A-4AA8-85D6-CBDD05E21F30</accountid>
                                         <attr1>Value3</attr1>
                                         <attr2>{optionValue2}</attr2>
                                         <attr3>{randomGuid}</attr3>
@@ -49,28 +51,33 @@ namespace XrmCommandBox.Tests.Tools
 
             var accountMetadata = new EntityMetadata
             {
-                LogicalName = "account"
+                LogicalName = "account", 
             };
+            accountMetadata.SetSealedPropertyValue("PrimaryIdAttribute","accountid");
 
+            var accountidMetadata = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "accountid"
+            };
             var attr1Metadata = new StringAttributeMetadata
             {
-                SchemaName = "attr1"
+                LogicalName = "attr1"
             };
             var attr2Metadata = new PicklistAttributeMetadata
             {
-                SchemaName = "attr2"
+                LogicalName = "attr2"
             };
             var attr3Metadata = new LookupAttributeMetadata
             {
-                SchemaName = "attr3"
+                LogicalName = "attr3"
             };
             var attr4Metadata = new MoneyAttributeMetadata
             {
-                SchemaName = "attr4"
+                LogicalName = "attr4"
             };
 
             accountMetadata.SetAttributeCollection(new AttributeMetadata[]
-                {attr1Metadata, attr2Metadata, attr3Metadata, attr4Metadata});
+                {accountidMetadata, attr1Metadata, attr2Metadata, attr3Metadata, attr4Metadata});
 
             context.InitializeMetadata(accountMetadata);
 
