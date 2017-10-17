@@ -8,7 +8,7 @@ namespace XrmCommandBox.Tools
     [Handler(typeof(ExportTool))]
     public class ExportToolOptions : CommonOptions
     {
-        [Option('r', "recordNumber", HelpText = "Adds the record number to each exported record")]
+        [Option('r', "record-number", HelpText = "Adds the record number to each exported record")]
         public bool RecordNumber { get; set; }
 
         [Option('f', "file", HelpText = "Path of the file where to save the exported data")]
