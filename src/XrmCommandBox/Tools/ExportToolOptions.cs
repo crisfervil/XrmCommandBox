@@ -20,7 +20,8 @@ namespace XrmCommandBox.Tools
         [Option('q', "fetch-query", HelpText = "Fetch query to retrieve the records to export", SetName = "fetch")]
         public string FetchQuery { get; set; }
 
-        [Option('s', "page-size", HelpText = "Number of records to retrieve from a page", SetName = "entity", Default = 5000)]
+        [Option('s', "page-size", HelpText = "Number of records to retrieve from a page", SetName = "entity",
+            Default = 5000)]
         public int PageSize { get; set; } = 5000;
 
         [Option('p', "page", HelpText = "Page of records to retrieve", SetName = "entity")]

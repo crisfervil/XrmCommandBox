@@ -51,9 +51,9 @@ namespace XrmCommandBox.Tests.Tools
 
             var accountMetadata = new EntityMetadata
             {
-                LogicalName = "account", 
+                LogicalName = "account"
             };
-            accountMetadata.SetSealedPropertyValue("PrimaryIdAttribute","accountid");
+            accountMetadata.SetSealedPropertyValue("PrimaryIdAttribute", "accountid");
 
             var accountidMetadata = new UniqueIdentifierAttributeMetadata
             {

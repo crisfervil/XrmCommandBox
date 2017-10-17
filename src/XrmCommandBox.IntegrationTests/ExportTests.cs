@@ -16,9 +16,7 @@ namespace XrmCommandBox.IntegrationTests
         {
             var environmentConnectionString = Environment.GetEnvironmentVariable("IntegrationTestsConnectionString");
             if (environmentConnectionString != null)
-            {
                 _connectionString = environmentConnectionString;
-            }            
         }
 
         [TestMethod]

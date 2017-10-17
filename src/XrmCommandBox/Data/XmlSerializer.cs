@@ -121,9 +121,7 @@ namespace XrmCommandBox.Data
             reader.MoveToContent();
             while (reader.Read())
                 if (reader.NodeType == XmlNodeType.Text)
-                {
                     attrValue = reader.Value;
-                }
             return attrValue;
         }
 

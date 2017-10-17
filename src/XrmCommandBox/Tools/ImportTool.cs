@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using XrmCommandBox.Data;
 using Microsoft.Xrm.Sdk.Query;
+using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tools
 {
@@ -36,15 +35,16 @@ namespace XrmCommandBox.Tools
             _log.Info("Processing records...");
             var records = dataTable.AsEntityCollection(metadata);
 
-            int recordCount=0, createdCount=0, updatedCount=0, errorsCount=0;
+            int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0;
             foreach (var entityRecord in records.Entities)
-            {
                 try
                 {
-                    _log.Info($"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
+                    _log.Info(
+                        $"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
 
                     // figure out if the record exists, in order to decide to create or update it
-                    var recordId = GetRecordId(entityRecord.LogicalName, entityRecord, options.MatchAttributes?.ToList(), metadata);
+                    var recordId = GetRecordId(entityRecord.LogicalName, entityRecord,
+                        options.MatchAttributes?.ToList(), metadata);
                     _log.Debug($"RecordId: {recordId}");
 
                     if (recordId != null)
@@ -71,12 +71,13 @@ namespace XrmCommandBox.Tools
                     _log.Error(ex);
                     if (!options.ContinueOnError) throw;
                 }
-            }
 
-            _log.Info($"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
+            _log.Info(
+                $"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
         }
 
-        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
+        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes,
+            EntityMetadata entityMetadata)
         {
             Guid? recordGuid = null;
 
@@ -87,9 +88,7 @@ namespace XrmCommandBox.Tools
             if (foundRecords.Entities.Count > 0)
             {
                 if (foundRecords.Entities.Count > 1)
-                {
-                    throw  new Exception("Too many records found");
-                }
+                    throw new Exception("Too many records found");
 
                 recordGuid = foundRecords.Entities[0].GetAttributeValue<Guid>(entityMetadata.PrimaryIdAttribute);
             }
@@ -97,7 +96,8 @@ namespace XrmCommandBox.Tools
             return recordGuid;
         }
 
-        private QueryBase GetMatchQuery(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
+        private QueryBase GetMatchQuery(string entityName, Entity entityRecord, IList<string> matchAttributes,
+            EntityMetadata entityMetadata)
         {
             if (matchAttributes == null || matchAttributes.Count == 0)
             {
@@ -110,7 +110,7 @@ namespace XrmCommandBox.Tools
             var qry = new QueryByAttribute
             {
                 EntityName = entityName,
-                ColumnSet = new ColumnSet(entityMetadata.PrimaryIdAttribute)                
+                ColumnSet = new ColumnSet(entityMetadata.PrimaryIdAttribute)
             };
 
             qry.Attributes.AddRange(matchAttributes);
@@ -126,7 +126,7 @@ namespace XrmCommandBox.Tools
 
         private object GetFilterValue(object attributeValue)
         {
-            object filterValue = attributeValue;
+            var filterValue = attributeValue;
 
             if (attributeValue is EntityReference)
             {
@@ -144,7 +144,11 @@ namespace XrmCommandBox.Tools
 
         private EntityMetadata GetMetadata(string entityName)
         {
-            var request = new RetrieveEntityRequest {EntityFilters = EntityFilters.Attributes, LogicalName = entityName};
+            var request = new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Attributes,
+                LogicalName = entityName
+            };
             var response = (RetrieveEntityResponse) _crmService.Execute(request);
             return response.EntityMetadata;
         }
