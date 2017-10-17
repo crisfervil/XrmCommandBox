@@ -36,7 +36,10 @@ namespace XrmCommandBox.IntegrationTests
             };
 
             // Run the command
-            Program.Main(commandParameters);
+            var exitCode = Program.Run(commandParameters);
+
+            // Check the exit code
+            Assert.AreEqual(0, exitCode);
 
             // Expected serialized file name
             var serializedFileName = "account.xml";
@@ -67,10 +70,10 @@ namespace XrmCommandBox.IntegrationTests
                 "--record-number"
             };
             // Run the command
-            Program.Main(commandParameters);
+            var exitCode = Program.Run(commandParameters);
 
             // Check the exit code
-            Assert.AreEqual(0, Environment.ExitCode);
+            Assert.AreEqual(0, exitCode);
 
             // Expected serialized file name
             var serializedFileName = "contact.xml";

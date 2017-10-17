@@ -13,11 +13,22 @@ namespace XrmCommandBox
 
         public static void Main(string[] args)
         {
+            // Don't add any code to the Main function. It's just a wrapper
+            var returnValue = Run(args);
+            Environment.Exit(returnValue);
+        }
+
+        public static int Run(string[] args)
+        {
+            var returnValue = 0;
             try
             {
                 // handle debugging
                 if (Array.IndexOf(args, "--debug-brk") != -1)
                     Debugger.Break();
+
+                // Configure Debug Listeners
+                Debug.Listeners.AddRange(new TraceListener[] {new TextWriterTraceListener(Console.Out)});
 
                 // Get Available Commands
                 var commandTypes = Helper.GetTypesWithAttribute(typeof(VerbAttribute));
@@ -62,8 +73,10 @@ namespace XrmCommandBox
                 if (ex.InnerException != null) Log.Error(ex.InnerException);
                 Log.Error($"Unexpected error: {ex.Message}");
                 Log.Error(ex);
-                Environment.Exit(-1);
+                returnValue = -1;
             }
+
+            return returnValue;
         }
     }
 }
