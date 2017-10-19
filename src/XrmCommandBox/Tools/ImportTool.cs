@@ -22,9 +22,11 @@ namespace XrmCommandBox.Tools
 
         public void Run(ImportToolOptions options)
         {
+            int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0, progress = 0;
+            var serializer = new DataTableSerializer();
+
             _log.Info("Running Import Tool...");
 
-            var serializer = new DataTableSerializer();
 
             _log.Info("Reading file...");
             var dataTable = serializer.Deserialize(options.File);
@@ -35,12 +37,12 @@ namespace XrmCommandBox.Tools
             _log.Info("Processing records...");
             var records = dataTable.AsEntityCollection(metadata);
 
-            int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0, progress = 0; 
             foreach (var entityRecord in records.Entities)
+            {
                 try
                 {
                     recordCount++;
-                    progress = (int) Math.Round((recordCount / records.Entities.Count)*100m); // calculate the progress percentage
+                    progress = (int)Math.Round((recordCount / records.Entities.Count) * 100m); // calculate the progress percentage
                     _log.Info(
                         $"{entityRecord.LogicalName} {recordCount} of {records.Entities.Count} : {entityRecord.Id} ({progress}%)");
 
@@ -73,6 +75,7 @@ namespace XrmCommandBox.Tools
                     _log.Error(ex);
                     if (!options.ContinueOnError) throw;
                 }
+            }
 
             _log.Info(
                 $"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
