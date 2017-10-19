@@ -8,11 +8,6 @@ namespace XrmCommandBox
 {
     public static class CommonOptionsExtensions
     {
-        public static IOrganizationService GetConnection(this CommonOptions options)
-        {
-            return new ConnectionBuilder().GetConnection(options.ConnectionName);
-        }
-
         public static void SetLogLevel(this CommonOptions options)
         {
             var logLevel = Enum.GetName(typeof(LogLevels), options.LogLevel);

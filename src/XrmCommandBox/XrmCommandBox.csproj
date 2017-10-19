@@ -37,6 +37,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandOptionsSerializer.cs" />
+    <Compile Include="CrmCommonOptionsExtensions.cs" />
+    <Compile Include="CrmCommonOptions.cs" />
     <Compile Include="CommonOptions.cs" />
     <Compile Include="CommonOptionsExtensions.cs" />
     <Compile Include="ConnectionBuilder.cs" />
@@ -46,6 +48,8 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="LogLevels.cs" />
+    <Compile Include="Tools\LookupTool.cs" />
+    <Compile Include="Tools\LookupToolOptions.cs" />
     <Compile Include="Tools\PublishAllTool.cs" />
     <Compile Include="Tools\PublishAllToolOptions.cs" />
     <Compile Include="Tools\DeleteToolOptions.cs" />

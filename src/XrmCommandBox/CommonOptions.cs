@@ -5,12 +5,6 @@ namespace XrmCommandBox
 {
     public class CommonOptions
     {
-        [Option('c', "connection", Required = true,
-            HelpText = "Connection string, or name of a connection string to use")]
-        public string ConnectionName { get; set; }
-
-        public IOrganizationService Connection { get; set; }
-
         [Option('b', "debug-brk", HelpText = "Launches the debugger before running the selected command")]
         public bool DebugBreak { get; set; }
 

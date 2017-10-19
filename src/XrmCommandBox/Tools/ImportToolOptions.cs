@@ -5,7 +5,7 @@ namespace XrmCommandBox.Tools
 {
     [Verb("import", HelpText = "Imports information from a file to Dynamics")]
     [Handler(typeof(ImportTool))]
-    public class ImportToolOptions : CommonOptions
+    public class ImportToolOptions : CrmCommonOptions
     {
         [Option('f', "file", HelpText = "File containing the data to import")]
         public string File { get; set; }

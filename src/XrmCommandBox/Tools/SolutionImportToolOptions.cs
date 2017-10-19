@@ -4,7 +4,7 @@ namespace XrmCommandBox.Tools
 {
     [Verb("solution-import", HelpText = "Imports the specified solution .zip file into CRM")]
     [Handler(typeof(SolutionImportTool))]
-    public class SolutionImportToolOptions : CommonOptions
+    public class SolutionImportToolOptions : CrmCommonOptions
     {
         [Option('s', "solution-file", Required = true, HelpText = ".zip file containing the solution to import")]
         public string SolutionFile { get; set; }

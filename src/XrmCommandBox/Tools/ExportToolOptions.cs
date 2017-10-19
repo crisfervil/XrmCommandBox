@@ -6,7 +6,7 @@ namespace XrmCommandBox.Tools
 {
     [Verb("export", HelpText = "Exports an entity or query from CRM to a file")]
     [Handler(typeof(ExportTool))]
-    public class ExportToolOptions : CommonOptions
+    public class ExportToolOptions : CrmCommonOptions
     {
         [Option('r', "record-number", HelpText = "Adds the record number to each exported record")]
         public bool RecordNumber { get; set; }
