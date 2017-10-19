@@ -3,6 +3,9 @@ using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using XrmCommandBox.Data;
+using Microsoft.Crm.Sdk.Messages;
+using System.Linq;
+using System.Xml;
 
 namespace XrmCommandBox.Tools
 {
@@ -51,9 +54,71 @@ namespace XrmCommandBox.Tools
             else if (!string.IsNullOrEmpty(options.FetchQuery))
             {
                 var qry = new FetchExpression(options.FetchQuery);
-                foundRecords = _crmService.RetrieveMultiple(qry);
+                bool pageSpecified = FetchXmlPageSpecified(options.FetchQuery);
+                int currentPage = 1;
+                _log.Debug($"Page specified: {pageSpecified}");
+
+                while (true)
+                {
+                    _log.Debug("Executing query...");
+                    var pageRecords = _crmService.RetrieveMultiple(qry);
+                    if (foundRecords == null)
+                    {
+                        // initialize
+                        foundRecords = pageRecords;
+                    }
+                    else
+                    {
+                        foundRecords.Entities.AddRange(pageRecords.Entities);
+                    }
+                    
+                    if (pageRecords.MoreRecords && !pageSpecified)
+                    {
+                        // increase the page number
+                        var updatedQry = SetFetchXmlPagingAttributes(options.FetchQuery,++currentPage, pageRecords.PagingCookie);
+                        qry = new FetchExpression(updatedQry);
+                        _log.Info($"More records found. Querying page {currentPage}...");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
             }
             return foundRecords;
+        }
+
+        private string SetFetchXmlPagingAttributes(string fetchQuery, int pageNumber, string pagingCookie)
+        {
+            var xml = new XmlDocument();
+            xml.LoadXml(fetchQuery);
+
+            XmlAttribute pageAttr = xml.DocumentElement.Attributes["page"];
+            if (pageAttr == null)
+            {
+                pageAttr = xml.CreateAttribute("page");
+                xml.DocumentElement.Attributes.Append(pageAttr);
+            }
+            pageAttr.Value = pageNumber.ToString();
+
+            XmlAttribute pagingCookieAttr = xml.DocumentElement.Attributes["paging-cookie"];
+            if (pagingCookieAttr == null)
+            {
+                pagingCookieAttr = xml.CreateAttribute("paging-cookie");
+                xml.DocumentElement.Attributes.Append(pagingCookieAttr);
+            }
+            pagingCookieAttr.Value = pagingCookie;
+
+
+            return xml.OuterXml;
+        }
+
+        private bool FetchXmlPageSpecified(string fetchQuery)
+        {
+            var xml = new XmlDocument();
+            xml.LoadXml(fetchQuery);
+            return xml.DocumentElement.Attributes["page"] != null;
         }
 
         private void ValidateOptions(ExportToolOptions options)

@@ -56,7 +56,7 @@ namespace XrmCommandBox.IntegrationTests
         [TestCategory("IntegrationTests")]
         public void Export_Contacts_Using_FetchXml()
         {
-            var fetchQuery = @"<fetch top='10' >
+            var fetchQuery = @"<fetch count='50'>
                                 <entity name='contact' />
                                </fetch>";
 
