@@ -66,6 +66,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\SolutionImportToolOptions.cs" />
     <Compile Include="Tools\SolutionExportToolOptions.cs" />
+    <Compile Include="XrmExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

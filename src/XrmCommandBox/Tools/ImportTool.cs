@@ -31,7 +31,7 @@ namespace XrmCommandBox.Tools
             var dataTable = serializer.Deserialize(options.File);
 
             _log.Debug("Querying metadata...");
-            var metadata = GetMetadata(dataTable.Name);
+            var metadata = _crmService.GetMetadata(dataTable.Name);
 
             _log.Info("Processing records...");
             var records = dataTable.AsEntityCollection(metadata);
@@ -144,15 +144,5 @@ namespace XrmCommandBox.Tools
             return filterValue;
         }
 
-        private EntityMetadata GetMetadata(string entityName)
-        {
-            var request = new RetrieveEntityRequest
-            {
-                EntityFilters = EntityFilters.Attributes,
-                LogicalName = entityName
-            };
-            var response = (RetrieveEntityResponse) _crmService.Execute(request);
-            return response.EntityMetadata;
-        }
     }
 }
