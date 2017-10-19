@@ -25,7 +25,7 @@ namespace XrmCommandBox.Tools
 
             ValidateOptions(options);
 
-            _log.Debug("Executing query...");
+            _log.Info("Executing query...");
             var foundRecords = GetRecords(options);
             _log.Info($"{foundRecords.Entities.Count} records found");
 
@@ -36,6 +36,7 @@ namespace XrmCommandBox.Tools
             if (string.IsNullOrEmpty(options.File))
                 options.File = $"{foundRecords.EntityName}.xml";
 
+            _log.Info("Saving file...");
             var serializer = new DataTableSerializer();
             serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
@@ -48,11 +49,13 @@ namespace XrmCommandBox.Tools
 
             if (!string.IsNullOrEmpty(options.EntityName))
             {
+                _log.Debug("Entity name specified");
                 var qry = GetAllRecordsQuery(options.EntityName, options.PageSize, options.Page);
                 foundRecords = _crmService.RetrieveMultiple(qry);
             }
             else if (!string.IsNullOrEmpty(options.FetchQuery))
             {
+                _log.Debug("Fetch Query specified");
                 foundRecords = ExecuteFetchQuery(options, foundRecords);
 
             }
@@ -68,7 +71,6 @@ namespace XrmCommandBox.Tools
 
             while (true)
             {
-                _log.Debug("Executing query...");
                 var pageRecords = _crmService.RetrieveMultiple(qry);
                 if (foundRecords == null)
                 {
@@ -89,6 +91,7 @@ namespace XrmCommandBox.Tools
                 }
                 else
                 {
+                    _log.Debug("No more monkeys jumping in the bed!");
                     break;
                 }
             }
