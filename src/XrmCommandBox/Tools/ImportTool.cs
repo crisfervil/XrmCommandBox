@@ -27,7 +27,6 @@ namespace XrmCommandBox.Tools
 
             _log.Info("Running Import Tool...");
 
-
             _log.Info("Reading file...");
             var dataTable = serializer.Deserialize(options.File);
 
@@ -42,7 +41,7 @@ namespace XrmCommandBox.Tools
                 try
                 {
                     recordCount++;
-                    progress = (int)Math.Round((recordCount / records.Entities.Count) * 100m); // calculate the progress percentage
+                    progress = (int)Math.Round(((decimal)recordCount / records.Entities.Count) * 100); // calculate the progress percentage
                     _log.Info(
                         $"{entityRecord.LogicalName} {recordCount} of {records.Entities.Count} : {entityRecord.Id} ({progress}%)");
 
@@ -81,8 +80,7 @@ namespace XrmCommandBox.Tools
                 $"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
         }
 
-        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes,
-            EntityMetadata entityMetadata)
+        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
         {
             Guid? recordGuid = null;
 
@@ -101,8 +99,7 @@ namespace XrmCommandBox.Tools
             return recordGuid;
         }
 
-        private QueryBase GetMatchQuery(string entityName, Entity entityRecord, IList<string> matchAttributes,
-            EntityMetadata entityMetadata)
+        private QueryBase GetMatchQuery(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
         {
             if (matchAttributes == null || matchAttributes.Count == 0)
             {
