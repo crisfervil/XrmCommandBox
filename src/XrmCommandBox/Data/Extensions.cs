@@ -47,8 +47,7 @@ namespace XrmCommandBox.Data
             return records;
         }
 
-        private static object GetAttrValue(string attrName, object attrValue, Dictionary<string, object> record,
-            AttributeMetadata attrMetadata)
+        private static object GetAttrValue(string attrName, object attrValue, Dictionary<string, object> record, AttributeMetadata attrMetadata)
         {
             var retVal = attrValue;
             if (attrValue != null)
@@ -139,7 +138,9 @@ namespace XrmCommandBox.Data
             else if (value is Money)
                 retVal = ((Money) value).Value;
             else if (value is OptionSetValue)
-                retVal = ((OptionSetValue) value).Value;
+                retVal = ((OptionSetValue)value).Value;
+            else if (value is AliasedValue)
+                retVal = Convert(((AliasedValue)value).Value);
 
             // TODO add more data type converters
 
