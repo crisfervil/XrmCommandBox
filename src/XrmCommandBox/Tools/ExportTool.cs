@@ -53,39 +53,46 @@ namespace XrmCommandBox.Tools
             }
             else if (!string.IsNullOrEmpty(options.FetchQuery))
             {
-                var qry = new FetchExpression(options.FetchQuery);
-                bool pageSpecified = FetchXmlPageSpecified(options.FetchQuery);
-                int currentPage = 1;
-                _log.Debug($"Page specified: {pageSpecified}");
-
-                while (true)
-                {
-                    _log.Debug("Executing query...");
-                    var pageRecords = _crmService.RetrieveMultiple(qry);
-                    if (foundRecords == null)
-                    {
-                        // initialize
-                        foundRecords = pageRecords;
-                    }
-                    else
-                    {
-                        foundRecords.Entities.AddRange(pageRecords.Entities);
-                    }
-                    
-                    if (pageRecords.MoreRecords && !pageSpecified)
-                    {
-                        // increase the page number
-                        var updatedQry = SetFetchXmlPagingAttributes(options.FetchQuery,++currentPage, pageRecords.PagingCookie);
-                        qry = new FetchExpression(updatedQry);
-                        _log.Info($"More records found. Querying page {currentPage}...");
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+                foundRecords = ExecuteFetchQuery(options, foundRecords);
 
             }
+            return foundRecords;
+        }
+
+        private EntityCollection ExecuteFetchQuery(ExportToolOptions options, EntityCollection foundRecords)
+        {
+            var qry = new FetchExpression(options.FetchQuery);
+            bool pageSpecified = FetchXmlPageSpecified(options.FetchQuery);
+            int currentPage = 1;
+            _log.Debug($"Page specified: {pageSpecified}");
+
+            while (true)
+            {
+                _log.Debug("Executing query...");
+                var pageRecords = _crmService.RetrieveMultiple(qry);
+                if (foundRecords == null)
+                {
+                    // initialize
+                    foundRecords = pageRecords;
+                }
+                else
+                {
+                    foundRecords.Entities.AddRange(pageRecords.Entities);
+                }
+
+                if (pageRecords.MoreRecords && !pageSpecified)
+                {
+                    // increase the page number
+                    var updatedQry = SetFetchXmlPagingAttributes(options.FetchQuery, ++currentPage, pageRecords.PagingCookie);
+                    qry = new FetchExpression(updatedQry);
+                    _log.Info($"More records found. Querying page {currentPage}...");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
             return foundRecords;
         }
 
