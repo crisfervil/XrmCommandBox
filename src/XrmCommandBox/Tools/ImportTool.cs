@@ -35,12 +35,14 @@ namespace XrmCommandBox.Tools
             _log.Info("Processing records...");
             var records = dataTable.AsEntityCollection(metadata);
 
-            int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0;
+            int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0, progress = 0; 
             foreach (var entityRecord in records.Entities)
                 try
                 {
+                    recordCount++;
+                    progress = (int) Math.Round((recordCount / records.Entities.Count)*100m); // calculate the progress percentage
                     _log.Info(
-                        $"{entityRecord.LogicalName} {++recordCount} of {records.Entities.Count} : {entityRecord.Id}");
+                        $"{entityRecord.LogicalName} {recordCount} of {records.Entities.Count} : {entityRecord.Id} ({progress}%)");
 
                     // figure out if the record exists, in order to decide to create or update it
                     var recordId = GetRecordId(entityRecord.LogicalName, entityRecord,
