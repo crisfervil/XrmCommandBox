@@ -55,7 +55,7 @@ namespace XrmCommandBox
                             Helper.ServicesMap.Add(typeof(IOrganizationService), getConnection);
 
                         // Configure the logging
-                        commandCommonOptions.ConfigureLog();
+                        commandCommonOptions.SetLogLevel();
 
                         // Configure parameter defined in the config file
                         new CommandOptionsSerializer().Deserialize(commandCommonOptions);

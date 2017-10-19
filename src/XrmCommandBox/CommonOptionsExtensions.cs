@@ -13,12 +13,10 @@ namespace XrmCommandBox
             return new ConnectionBuilder().GetConnection(options.ConnectionName);
         }
 
-        public static void ConfigureLog(this CommonOptions options)
+        public static void SetLogLevel(this CommonOptions options)
         {
             var logLevel = Enum.GetName(typeof(LogLevels), options.LogLevel);
             logLevel = logLevel?.ToUpper();
-
-            BasicConfigurator.Configure(); // Configure the log from app.config file
 
             // http://geekswithblogs.net/rakker/archive/2007/08/22/114900.aspx
             var repositories = LogManager.GetAllRepositories();
