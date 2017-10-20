@@ -89,8 +89,28 @@ namespace XrmCommandBox.Data
                 }
                 else if (attrMetadata.AttributeType == AttributeTypeCode.String)
                 {
-                    var strValue = (string) attrValue;
+                    var strValue = (string)attrValue;
                     retVal = strValue;
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.DateTime)
+                {
+                    var dateValue = strAttrValue != null ? DateTime.Parse(strAttrValue) : (DateTime)attrValue;
+                    retVal = dateValue;
+                }
+                else if (attrMetadata.AttributeType == AttributeTypeCode.Boolean)
+                {
+                    if (string.Compare(strAttrValue, "true", true) == 0)
+                    {
+                        retVal = true;
+                    }
+                    else if (string.Compare(strAttrValue, "false", true) == 0)
+                    {
+                        retVal = false;
+                    }
+                    else
+                    {
+                        throw new Exception($"Can't convert ${attrName} attribute value ${strAttrValue} to boolean. Entity ${attrMetadata.EntityLogicalName}");
+                    }
                 }
                 else
                 {
