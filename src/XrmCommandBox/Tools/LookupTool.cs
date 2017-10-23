@@ -32,7 +32,8 @@ namespace XrmCommandBox.Tools
             var metadata = _crmService.GetMetadata(options.EntityName);
 
             _log.Info($"{options.File} file...");
-            var dataTable = serializer.Deserialize(options.File);
+            var containsRecordNumber = false;
+            var dataTable = serializer.Deserialize(options.File, out containsRecordNumber);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
             IList<string> matchAttributes = options.MatchAttributes.ToList();
@@ -46,9 +47,7 @@ namespace XrmCommandBox.Tools
                     progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
                     _log.Info($"Looking Up {dataTable.Name} record {recordCount} of {dataTable.Count} ({progress}%)...");
 
-                    var lookupColumnValue = record[options.Column];
-
-                    if (lookupColumnValue != null) // if the column is empty, we don't perform the lookup
+                    if (record.ContainsKey(options.Column)) // if the column is empty, we don't perform the lookup
                     {
                         // create query to run against crm
                         var qry = new QueryByAttribute()
@@ -122,8 +121,8 @@ namespace XrmCommandBox.Tools
 
             _log.Info("Saving file...");
 
-            // TODO: Make addRecordNumber dynamic
-            serializer.Serialize(dataTable, options.File, true);
+            // If the recordNumber was included originally, then it has to be set again
+            serializer.Serialize(dataTable, options.File, containsRecordNumber);
 
             sw.Stop();
             _log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");

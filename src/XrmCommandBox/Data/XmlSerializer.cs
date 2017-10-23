@@ -19,12 +19,18 @@ namespace XrmCommandBox.Data
 
         public DataTable Deserialize(string fileName)
         {
+            var containsRecordNumber = true;
+            return Deserialize(fileName, out containsRecordNumber);
+        }
+
+        public DataTable Deserialize(string fileName, out bool containsRecordNumber)
+        {
             DataTable dataTable;
 
             // read the xml file
             using (var fs = File.OpenRead(fileName))
             {
-                dataTable = Deserialize(fs);
+                dataTable = Deserialize(fs, out containsRecordNumber);
             }
 
             return dataTable;
@@ -56,14 +62,16 @@ namespace XrmCommandBox.Data
             }
         }
 
-        public DataTable Deserialize(Stream data)
+        public DataTable Deserialize(Stream data, out bool containsRecordNumber)
         {
             var dataTable = new DataTable();
+            containsRecordNumber = false;
 
             using (var reader = XmlReader.Create(data))
             {
                 // read all the child elements
                 while (reader.Read())
+                {
                     if (reader.NodeType == XmlNodeType.Element)
                     {
                         // Read the name attribute (if the attribute is not set or is null, the table name will be set to null)
@@ -71,25 +79,31 @@ namespace XrmCommandBox.Data
 
                         // This should be the main Data node
                         var content = reader.ReadSubtree();
-                        ReadRows(content, dataTable);
+                        ReadRows(content, dataTable, out containsRecordNumber);
                     }
+                }
             }
 
             return dataTable;
         }
 
-        private void ReadRows(XmlReader reader, DataTable dataTable)
+        private void ReadRows(XmlReader reader, DataTable dataTable, out bool containsRecordNumber)
         {
+            containsRecordNumber = false;
             reader.MoveToContent();
             while (reader.Read())
+            {
                 if (reader.NodeType == XmlNodeType.Element)
                 {
-                    // read attributes
+                    // if at least one of the record number attributes is set, we can say that the record numbers are set
+                    containsRecordNumber = reader.GetAttribute("i") != null;
+
                     var content = reader.ReadSubtree();
                     var record = ReadAttributes(content);
 
                     dataTable.Add(record);
                 }
+            }
         }
 
         private Dictionary<string, object> ReadAttributes(XmlReader reader)

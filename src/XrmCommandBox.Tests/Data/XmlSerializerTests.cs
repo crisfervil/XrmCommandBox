@@ -59,7 +59,8 @@ namespace XrmCommandBox.Tests.Data
                             </DataTable>";
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(xmlData));
             var serializer = new XmlSerializer();
-            var dataTable = serializer.Deserialize(ms);
+            var containsRecordNumber = false;
+            var dataTable = serializer.Deserialize(ms, out containsRecordNumber);
 
             Assert.AreEqual(2, dataTable.Count);
             Assert.AreEqual("MyDataTable", dataTable.Name);

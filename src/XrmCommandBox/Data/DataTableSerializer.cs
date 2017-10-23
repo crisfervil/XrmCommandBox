@@ -18,9 +18,15 @@ namespace XrmCommandBox.Data
 
         public DataTable Deserialize(string fileName)
         {
+            bool containsRecordNumber = false;
+            return Deserialize(fileName, out containsRecordNumber);
+        }
+
+        public DataTable Deserialize(string fileName, out bool containsRecordNumber)
+        {
             var extension = Path.GetExtension(fileName);
             var serializer = GetSerializer(extension);
-            var data = serializer.Deserialize(fileName);
+            var data = serializer.Deserialize(fileName, out containsRecordNumber);
             return data;
         }
 
