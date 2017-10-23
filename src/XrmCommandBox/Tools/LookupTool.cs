@@ -46,61 +46,71 @@ namespace XrmCommandBox.Tools
                     progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
                     _log.Info($"Looking Up {dataTable.Name} record {recordCount} of {dataTable.Count} ({progress}%)...");
 
-                    // create query to run against crm
-                    var qry = new QueryByAttribute()
+                    var lookupColumnValue = record[options.Column];
+
+                    if (lookupColumnValue != null) // if the column is empty, we don't perform the lookup
                     {
-                        EntityName = options.EntityName,
-                        ColumnSet = new ColumnSet(metadata.PrimaryIdAttribute)
-                    };
-
-                    qry.Attributes.AddRange(matchAttributes);
-
-                    var conditionsStr = new List<string>();
-                    for (var i = 0; i < matchColumns.Count; i++)
-                    {
-                        var colName = matchColumns[i];
-                        // TODO: Validate that the number of items in matchColumns and matchAttributes match
-                        var attrName = matchAttributes[i];
-                        var attrMetadata = metadata.Attributes.Where(attr => string.Compare(attr.LogicalName, attrName, StringComparison.OrdinalIgnoreCase) == 0).First();
-
-                        var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
-                        qry.Values.Add(filterAttrValue);
-                        conditionsStr.Add($"{attrName}={filterAttrValue}");
-                    }
-
-                    _log.Debug("Executing query...");
-                    var foundRecords = _crmService.RetrieveMultiple(qry);
-
-                    string errorMsg = null;
-
-                    if (foundRecords.Entities.Count == 0)
-                    {
-                        errorMsg = $"No {foundRecords.EntityName} record found with {String.Join(",", conditionsStr.ToArray())}";
-                    }
-                    else if (foundRecords.Entities.Count > 1)
-                    {
-                        errorMsg = $"Too many {foundRecords.EntityName} records found with {String.Join(",", conditionsStr.ToArray())}";
-                    }
-                    else
-                    {
-                        var recordId = foundRecords.Entities[0].Id;
-                        record[options.Column] = recordId;
-                        _log.Debug($"{foundRecords.EntityName} record found: {recordId}");
-                    }
-
-                    // handle errors in a log friendly way
-                    if (errorMsg != null)
-                    {
-                        if (options.ContinueOnError)
+                        // create query to run against crm
+                        var qry = new QueryByAttribute()
                         {
-                            errorsCount++;
-                            _log.Error(errorMsg);
+                            EntityName = options.EntityName,
+                            ColumnSet = new ColumnSet(metadata.PrimaryIdAttribute)
+                        };
+
+                        qry.Attributes.AddRange(matchAttributes);
+
+                        var conditionsStr = new List<string>();
+                        for (var i = 0; i < matchColumns.Count; i++)
+                        {
+                            var colName = matchColumns[i];
+                            // TODO: Validate that the number of items in matchColumns and matchAttributes match
+                            var attrName = matchAttributes[i];
+                            var attrMetadata = metadata.Attributes.Where(attr => string.Compare(attr.LogicalName, attrName, StringComparison.OrdinalIgnoreCase) == 0).First();
+
+                            var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
+                            qry.Values.Add(filterAttrValue);
+                            conditionsStr.Add($"{attrName}={filterAttrValue ?? "null"}");
+                        }
+
+                        _log.Debug("Executing query...");
+                        var foundRecords = _crmService.RetrieveMultiple(qry);
+
+                        string errorMsg = null;
+
+                        if (foundRecords.Entities.Count == 0)
+                        {
+                            errorMsg = $"No {foundRecords.EntityName} record found with {String.Join(",", conditionsStr.ToArray())}";
+                        }
+                        else if (foundRecords.Entities.Count > 1)
+                        {
+                            errorMsg = $"{foundRecords.Entities.Count} {foundRecords.EntityName} records found with {String.Join(",", conditionsStr.ToArray())}";
                         }
                         else
                         {
-                            throw new Exception(errorMsg);
+                            var recordId = foundRecords.Entities[0].Id;
+                            record[options.Column] = recordId;
+                            _log.Debug($"{foundRecords.EntityName} record found: {recordId}");
+                        }
+
+                        // handle errors in a log friendly way
+                        if (errorMsg != null)
+                        {
+                            if (options.ContinueOnError)
+                            {
+                                errorsCount++;
+                                _log.Error(errorMsg);
+                            }
+                            else
+                            {
+                                throw new Exception(errorMsg);
+                            }
                         }
                     }
+                    else
+                    {
+                        _log.Info($"Column {options.Column} empty. Skipping");
+                    }
+
                 }
                 catch (Exception ex)
                 {
