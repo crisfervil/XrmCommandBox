@@ -14,7 +14,7 @@ namespace XrmCommandBox.IntegrationTests
         [TestInitialize]
         public void TestInitialize()
         {
-            var environmentConnectionString = Environment.GetEnvironmentVariable("IntegrationTestsConnectionString");
+            var environmentConnectionString = Environment.GetEnvironmentVariable("XrmToolBoxIntegrationTestsConnectionString");
             if (environmentConnectionString != null)
                 _connectionString = environmentConnectionString;
         }
