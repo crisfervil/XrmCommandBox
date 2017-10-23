@@ -89,7 +89,7 @@ namespace XrmCommandBox.Tools
                         {
                             var recordId = foundRecords.Entities[0].Id;
                             record[options.Column] = recordId;
-                            _log.Debug($"{foundRecords.EntityName} record found: {recordId}");
+                            _log.Info($"{foundRecords.EntityName} record found: {recordId}");
                         }
 
                         // handle errors in a log friendly way
@@ -126,7 +126,7 @@ namespace XrmCommandBox.Tools
             serializer.Serialize(dataTable, options.File, true);
 
             sw.Stop();
-            _log.Info($"Done! Looked Up {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
+            _log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
         }
 
         private object GetFilterValue(object attributeValue, AttributeMetadata attrMetadata)
