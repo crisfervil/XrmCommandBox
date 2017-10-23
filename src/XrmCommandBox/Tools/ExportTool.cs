@@ -41,7 +41,7 @@ namespace XrmCommandBox.Tools
             serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
             sw.Stop();
-            _log.Info($"Done! Exported {recordsTable.Count} {recordsTable.Name} records to {options.File} in {sw.Elapsed.TotalSeconds} seconds");
+            _log.Info($"Done! Exported {recordsTable.Count} {recordsTable.Name} records to {options.File} in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds");
         }
 
         private EntityCollection GetRecords(ExportToolOptions options)

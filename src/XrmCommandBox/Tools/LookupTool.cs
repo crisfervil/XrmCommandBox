@@ -6,6 +6,7 @@ using XrmCommandBox.Data;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.Diagnostics;
 
 namespace XrmCommandBox.Tools
 {
@@ -21,7 +22,8 @@ namespace XrmCommandBox.Tools
 
         public void Run(LookupToolOptions options)
         {
-            int errorsCount = 0, recordCount = 0;
+            var sw = Stopwatch.StartNew();
+            int errorsCount = 0, recordCount = 0, progress=0;
             var serializer = new DataTableSerializer();
 
             _log.Info("Running Lookup Tool...");
@@ -29,8 +31,9 @@ namespace XrmCommandBox.Tools
             _log.Debug("Querying metadata...");
             var metadata = _crmService.GetMetadata(options.EntityName);
 
-            _log.Info("Reading file...");
+            _log.Info($"{options.File} file...");
             var dataTable = serializer.Deserialize(options.File);
+            _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
             IList<string> matchAttributes = options.MatchAttributes.ToList();
             IList<string> matchColumns = options.MatchColumns.ToList();
@@ -39,7 +42,9 @@ namespace XrmCommandBox.Tools
             {
                 try
                 {
-                    _log.Info($"Record {++recordCount} of {dataTable.Count}");
+                    recordCount++;
+                    progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
+                    _log.Info($"Looking Up {dataTable.Name} record {recordCount} of {dataTable.Count} ({progress}%)...");
 
                     // create query to run against crm
                     var qry = new QueryByAttribute()
@@ -50,6 +55,7 @@ namespace XrmCommandBox.Tools
 
                     qry.Attributes.AddRange(matchAttributes);
 
+                    var conditionsStr = new List<string>();
                     for (var i = 0; i < matchColumns.Count; i++)
                     {
                         var colName = matchColumns[i];
@@ -59,20 +65,42 @@ namespace XrmCommandBox.Tools
 
                         var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
                         qry.Values.Add(filterAttrValue);
+                        conditionsStr.Add($"{attrName}={filterAttrValue}");
                     }
 
+                    _log.Debug("Executing query...");
                     var foundRecords = _crmService.RetrieveMultiple(qry);
+
+                    string errorMsg = null;
+
                     if (foundRecords.Entities.Count == 0)
                     {
-                        throw new Exception("No data found");
+                        errorMsg = $"No {foundRecords.EntityName} record found with {String.Join(",", conditionsStr.ToArray())}";
                     }
-                    if (foundRecords.Entities.Count > 1)
+                    else if (foundRecords.Entities.Count > 1)
                     {
-                        throw new Exception("Too many records found");
+                        errorMsg = $"Too many {foundRecords.EntityName} records found with {String.Join(",", conditionsStr.ToArray())}";
+                    }
+                    else
+                    {
+                        var recordId = foundRecords.Entities[0].Id;
+                        record[options.Column] = recordId;
+                        _log.Debug($"{foundRecords.EntityName} record found: {recordId}");
                     }
 
-                    var recordId = foundRecords.Entities[0].Id;
-                    record[options.Column] = recordId;
+                    // handle errors in a log friendly way
+                    if (errorMsg != null)
+                    {
+                        if (options.ContinueOnError)
+                        {
+                            errorsCount++;
+                            _log.Error(errorMsg);
+                        }
+                        else
+                        {
+                            throw new Exception(errorMsg);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -82,14 +110,13 @@ namespace XrmCommandBox.Tools
                 }
             }
 
-            _log.Info($"Processed {recordCount} records. {errorsCount} errors");
-
             _log.Info("Saving file...");
 
             // TODO: Make addRecordNumber dynamic
             serializer.Serialize(dataTable, options.File, true);
 
-            _log.Info("Done!");
+            sw.Stop();
+            _log.Info($"Done! Looked Up {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
         }
 
         private object GetFilterValue(object attributeValue, AttributeMetadata attrMetadata)
