@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using log4net;
+﻿using log4net;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tools
@@ -22,13 +22,15 @@ namespace XrmCommandBox.Tools
 
         public void Run(ImportToolOptions options)
         {
+            var sw = Stopwatch.StartNew();
             int recordCount = 0, createdCount = 0, updatedCount = 0, errorsCount = 0, progress = 0;
             var serializer = new DataTableSerializer();
 
             _log.Info("Running Import Tool...");
 
-            _log.Info("Reading file...");
+            _log.Info($"Reading {options.File} file...");
             var dataTable = serializer.Deserialize(options.File);
+            _log.Info($"{dataTable.Count} {dataTable.Name} records read");
 
             _log.Debug("Querying metadata...");
             var metadata = _crmService.GetMetadata(dataTable.Name);
@@ -42,8 +44,7 @@ namespace XrmCommandBox.Tools
                 {
                     recordCount++;
                     progress = (int)Math.Round(((decimal)recordCount / records.Entities.Count) * 100); // calculate the progress percentage
-                    _log.Info(
-                        $"{entityRecord.LogicalName} {recordCount} of {records.Entities.Count} : {entityRecord.Id} ({progress}%)");
+                    _log.Info($"{entityRecord.LogicalName} {recordCount} of {records.Entities.Count} : {entityRecord.Id} ({progress}%)");
 
                     // figure out if the record exists, in order to decide to create or update it
                     var recordId = GetRecordId(entityRecord.LogicalName, entityRecord,
@@ -76,8 +77,8 @@ namespace XrmCommandBox.Tools
                 }
             }
 
-            _log.Info(
-                $"Done! Processed {recordCount} records. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
+            sw.Stop();
+            _log.Info($"Done! Processed {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds} seconds. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
         }
 
         private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)

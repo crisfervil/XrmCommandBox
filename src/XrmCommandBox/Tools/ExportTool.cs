@@ -1,11 +1,10 @@
-﻿using System;
-using log4net;
+﻿using log4net;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using XrmCommandBox.Data;
-using Microsoft.Crm.Sdk.Messages;
-using System.Linq;
+using System;
+using System.Diagnostics;
 using System.Xml;
+using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tools
 {
@@ -21,6 +20,7 @@ namespace XrmCommandBox.Tools
 
         public void Run(ExportToolOptions options)
         {
+            var sw = Stopwatch.StartNew();
             _log.Info("Running Export Tool...");
 
             ValidateOptions(options);
@@ -40,7 +40,8 @@ namespace XrmCommandBox.Tools
             var serializer = new DataTableSerializer();
             serializer.Serialize(recordsTable, options.File, options.RecordNumber);
 
-            _log.Info("Done!");
+            sw.Stop();
+            _log.Info($"Done! Exported {recordsTable.Count} {recordsTable.Name} records to {options.File} in {sw.Elapsed.TotalSeconds} seconds");
         }
 
         private EntityCollection GetRecords(ExportToolOptions options)
