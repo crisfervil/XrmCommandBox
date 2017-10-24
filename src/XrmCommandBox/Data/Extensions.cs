@@ -129,14 +129,14 @@ namespace XrmCommandBox.Data
             foreach (var recordData in records.Entities)
             {
                 var record = new Dictionary<string, object>();
+                if (addRowNumber)
+                {
+                    record.Add("rownumber", ++rowNumber);
+                }
                 foreach (var recordAttr in recordData.Attributes)
                 {
                     record.Add(recordAttr.Key, Convert(recordAttr.Value));
                     AddAdditionalValues(recordAttr.Key, record, recordAttr.Value);
-                }
-                if (addRowNumber)
-                {
-                    record.Add("rownumber", ++rowNumber);
                 }
                 data.Add(record);
             }

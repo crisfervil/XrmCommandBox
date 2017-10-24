@@ -120,7 +120,6 @@ namespace XrmCommandBox.Tools
 
             _log.Info("Saving file...");
 
-            // If the recordNumber was included originally, then it has to be set again
             serializer.Serialize(dataTable, options.File);
 
             sw.Stop();
