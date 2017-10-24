@@ -9,11 +9,11 @@ namespace XrmCommandBox.Data
     {
         private readonly ILog _log = LogManager.GetLogger(typeof(DataTableSerializer));
 
-        public void Serialize(DataTable data, string fileName, bool addRecordNumber = false)
+        public void Serialize(DataTable data, string fileName)
         {
             var extension = Path.GetExtension(fileName);
             var serializer = GetSerializer(extension);
-            serializer.Serialize(data, fileName, addRecordNumber);
+            serializer.Serialize(data, fileName);
         }
 
         public DataTable Deserialize(string fileName)

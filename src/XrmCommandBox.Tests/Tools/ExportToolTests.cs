@@ -32,7 +32,9 @@ namespace XrmCommandBox.Tests.Tools
             context.Initialize(accounts);
 
             if (File.Exists(fileName))
+            {
                 File.Delete(fileName);
+            }
 
             // The file name is not provided, so the default path should be used
             var options = new ExportToolOptions {EntityName = "account", RecordNumber = true};
@@ -56,8 +58,8 @@ namespace XrmCommandBox.Tests.Tools
             Assert.AreEqual(account2["name"].ToString(), xml.SelectSingleNode("Data/row[2]/name")?.InnerText);
 
             // Check the record numbers are there
-            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i")?.Value);
-            Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/@i")?.Value);
+            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/rownumber")?.InnerText);
+            Assert.AreEqual("2", xml.SelectSingleNode("Data/row[2]/rownumber")?.InnerText);
         }
 
         [TestMethod]

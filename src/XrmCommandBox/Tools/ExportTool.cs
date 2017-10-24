@@ -30,7 +30,7 @@ namespace XrmCommandBox.Tools
             _log.Info($"{foundRecords.Entities.Count} records found");
 
             // Convert to a data table
-            var recordsTable = foundRecords.AsDataTable();
+            var recordsTable = foundRecords.AsDataTable(options.RecordNumber);
 
             // set a default file name
             if (string.IsNullOrEmpty(options.File))
@@ -38,7 +38,7 @@ namespace XrmCommandBox.Tools
 
             _log.Info("Saving file...");
             var serializer = new DataTableSerializer();
-            serializer.Serialize(recordsTable, options.File, options.RecordNumber);
+            serializer.Serialize(recordsTable, options.File);
 
             sw.Stop();
             _log.Info($"Done! Exported {recordsTable.Count} {recordsTable.Name} records to {options.File} in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds");

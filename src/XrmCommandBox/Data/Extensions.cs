@@ -122,19 +122,23 @@ namespace XrmCommandBox.Data
             return retVal;
         }
 
-        public static DataTable AsDataTable(this EntityCollection records)
+        public static DataTable AsDataTable(this EntityCollection records, bool addRowNumber = false)
         {
             var data = new DataTable {Name = records.EntityName};
-
+            var rowNumber = 0;
             foreach (var recordData in records.Entities)
             {
-                var attrValues = new Dictionary<string, object>();
+                var record = new Dictionary<string, object>();
                 foreach (var recordAttr in recordData.Attributes)
                 {
-                    attrValues.Add(recordAttr.Key, Convert(recordAttr.Value));
-                    AddAdditionalValues(recordAttr.Key, attrValues, recordAttr.Value);
+                    record.Add(recordAttr.Key, Convert(recordAttr.Value));
+                    AddAdditionalValues(recordAttr.Key, record, recordAttr.Value);
                 }
-                data.Add(attrValues);
+                if (addRowNumber)
+                {
+                    record.Add("rownumber", ++rowNumber);
+                }
+                data.Add(record);
             }
             return data;
         }

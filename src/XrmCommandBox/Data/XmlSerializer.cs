@@ -8,11 +8,11 @@ namespace XrmCommandBox.Data
     {
         public string Extension { get; } = ".xml";
 
-        public void Serialize(DataTable data, string fileName, bool addRecordNumber = false)
+        public void Serialize(DataTable data, string fileName)
         {
             using (var ts = File.CreateText(fileName))
             {
-                Serialize(data, ts, addRecordNumber);
+                Serialize(data, ts);
                 ts.Close();
             }
         }
@@ -30,7 +30,7 @@ namespace XrmCommandBox.Data
             return dataTable;
         }
 
-        public void Serialize(DataTable data, TextWriter writer, bool addRecordNumber = false)
+        public void Serialize(DataTable data, TextWriter writer)
         {
             var recordNumber = 1;
             using (var docWriter = new XmlTextWriter(writer))
@@ -41,12 +41,13 @@ namespace XrmCommandBox.Data
                 docWriter.WriteStartElement("Data");
 
                 if (!string.IsNullOrEmpty(data.Name))
+                {
                     docWriter.WriteAttributeString("name", data.Name);
+                }
 
                 foreach (var entityRecord in data)
                 {
                     docWriter.WriteStartElement("row");
-                    if (addRecordNumber) docWriter.WriteAttributeString("i", "", recordNumber.ToString());
                     WriteAttributeValues(entityRecord, docWriter);
                     docWriter.WriteEndElement();
                     recordNumber++;
@@ -101,6 +102,7 @@ namespace XrmCommandBox.Data
 
             reader.MoveToContent();
             while (reader.Read())
+            {
                 if (reader.NodeType == XmlNodeType.Element)
                 {
                     // the element name at this level should match the attribute name
@@ -114,6 +116,7 @@ namespace XrmCommandBox.Data
                     // add the attribute value
                     row[attrName] = attrValue;
                 }
+            }
 
             return row;
         }
@@ -123,8 +126,12 @@ namespace XrmCommandBox.Data
             object attrValue = null;
             reader.MoveToContent();
             while (reader.Read())
+            {
                 if (reader.NodeType == XmlNodeType.Text)
+                {
                     attrValue = reader.Value;
+                }
+            }
             return attrValue;
         }
 

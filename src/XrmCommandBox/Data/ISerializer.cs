@@ -3,7 +3,7 @@
     public interface ISerializer
     {
         string Extension { get; }
-        void Serialize(DataTable data, string fileName, bool addRecordNumber = false);
+        void Serialize(DataTable data, string fileName);
         DataTable Deserialize(string fileName);
     }
 }

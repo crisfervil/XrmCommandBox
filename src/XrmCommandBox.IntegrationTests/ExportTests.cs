@@ -86,7 +86,7 @@ namespace XrmCommandBox.IntegrationTests
             Assert.AreEqual("contact", dt.Name);
 
             // Make sure the record numbers are there
-            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/@i")?.Value);
+            Assert.AreEqual("1", xml.SelectSingleNode("Data/row[1]/rownumber")?.InnerText);
             Assert.AreEqual("systemuser", dt[0]["ownerid.type"]);
             Assert.IsNotNull(dt[0]["ownerid"]);
 
