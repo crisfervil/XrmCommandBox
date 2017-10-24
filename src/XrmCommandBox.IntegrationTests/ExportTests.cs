@@ -28,7 +28,7 @@ namespace XrmCommandBox.IntegrationTests
                 "export",
                 "--connection", _connectionString,
                 "--entity", "account",
-                "--record-number",
+                "--row-number",
                 "--page-size", "10",
                 "--page", "1"
             };
@@ -65,7 +65,7 @@ namespace XrmCommandBox.IntegrationTests
                 "export",
                 "--connection", _connectionString,
                 "--fetch-query", fetchQuery,
-                "--record-number"
+                "--row-number"
             };
             // Run the command
             var exitCode = Program.Run(commandParameters);

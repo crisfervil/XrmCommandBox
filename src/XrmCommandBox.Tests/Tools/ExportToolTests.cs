@@ -37,7 +37,7 @@ namespace XrmCommandBox.Tests.Tools
             }
 
             // The file name is not provided, so the default path should be used
-            var options = new ExportToolOptions {EntityName = "account", RecordNumber = true};
+            var options = new ExportToolOptions {EntityName = "account", RowNumber = true};
 
             // TODO: Delete this if the FaxeXrmEaxy pull request is accepted
             options.File = fileName;

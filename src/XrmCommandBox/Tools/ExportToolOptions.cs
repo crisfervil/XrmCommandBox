@@ -8,8 +8,8 @@ namespace XrmCommandBox.Tools
     [Handler(typeof(ExportTool))]
     public class ExportToolOptions : CrmCommonOptions
     {
-        [Option('r', "record-number", HelpText = "Adds the record number to each exported record")]
-        public bool RecordNumber { get; set; }
+        [Option('r', "row-number", HelpText = "Adds the row number to each exported record")]
+        public bool RowNumber { get; set; }
 
         [Option('f', "file", HelpText = "Path of the file where to save the exported data")]
         public string File { get; set; }

@@ -30,7 +30,7 @@ namespace XrmCommandBox.Tools
             _log.Info($"{foundRecords.Entities.Count} records found");
 
             // Convert to a data table
-            var recordsTable = foundRecords.AsDataTable(options.RecordNumber);
+            var recordsTable = foundRecords.AsDataTable(options.RowNumber);
 
             // set a default file name
             if (string.IsNullOrEmpty(options.File))
