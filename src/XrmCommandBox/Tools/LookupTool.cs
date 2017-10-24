@@ -32,8 +32,7 @@ namespace XrmCommandBox.Tools
             var metadata = _crmService.GetMetadata(options.EntityName);
 
             _log.Info($"{options.File} file...");
-            var containsRecordNumber = false;
-            var dataTable = serializer.Deserialize(options.File, out containsRecordNumber);
+            var dataTable = serializer.Deserialize(options.File);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
             IList<string> matchAttributes = options.MatchAttributes.ToList();
@@ -122,7 +121,7 @@ namespace XrmCommandBox.Tools
             _log.Info("Saving file...");
 
             // If the recordNumber was included originally, then it has to be set again
-            serializer.Serialize(dataTable, options.File, containsRecordNumber);
+            serializer.Serialize(dataTable, options.File);
 
             sw.Stop();
             _log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");

@@ -19,18 +19,12 @@ namespace XrmCommandBox.Data
 
         public DataTable Deserialize(string fileName)
         {
-            var containsRecordNumber = true;
-            return Deserialize(fileName, out containsRecordNumber);
-        }
-
-        public DataTable Deserialize(string fileName, out bool containsRecordNumber)
-        {
             DataTable dataTable;
 
             // read the xml file
             using (var fs = File.OpenRead(fileName))
             {
-                dataTable = Deserialize(fs, out containsRecordNumber);
+                dataTable = Deserialize(fs);
             }
 
             return dataTable;
@@ -62,10 +56,9 @@ namespace XrmCommandBox.Data
             }
         }
 
-        public DataTable Deserialize(Stream data, out bool containsRecordNumber)
+        public DataTable Deserialize(Stream data)
         {
             var dataTable = new DataTable();
-            containsRecordNumber = false;
 
             using (var reader = XmlReader.Create(data))
             {
@@ -79,7 +72,7 @@ namespace XrmCommandBox.Data
 
                         // This should be the main Data node
                         var content = reader.ReadSubtree();
-                        ReadRows(content, dataTable, out containsRecordNumber);
+                        ReadRows(content, dataTable);
                     }
                 }
             }
@@ -87,17 +80,13 @@ namespace XrmCommandBox.Data
             return dataTable;
         }
 
-        private void ReadRows(XmlReader reader, DataTable dataTable, out bool containsRecordNumber)
+        private void ReadRows(XmlReader reader, DataTable dataTable)
         {
-            containsRecordNumber = false;
             reader.MoveToContent();
             while (reader.Read())
             {
                 if (reader.NodeType == XmlNodeType.Element)
                 {
-                    // if at least one of the record number attributes is set, we can say that the record numbers are set
-                    containsRecordNumber = reader.GetAttribute("i") != null;
-
                     var content = reader.ReadSubtree();
                     var record = ReadAttributes(content);
 
