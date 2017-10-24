@@ -35,8 +35,7 @@ namespace XrmCommandBox.Tools
             var dataTable = serializer.Deserialize(options.File);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
-            IList<string> matchAttributes = options.MatchAttributes.ToList();
-            IList<string> matchColumns = options.MatchColumns.ToList();
+
 
             foreach (var record in dataTable)
             {
@@ -49,26 +48,9 @@ namespace XrmCommandBox.Tools
                     if (record.ContainsKey(options.Column)) // if the column is empty, we don't perform the lookup
                     {
                         // create query to run against crm
-                        var qry = new QueryByAttribute()
-                        {
-                            EntityName = options.EntityName,
-                            ColumnSet = new ColumnSet(metadata.PrimaryIdAttribute)
-                        };
 
-                        qry.Attributes.AddRange(matchAttributes);
-
-                        var conditionsStr = new List<string>();
-                        for (var i = 0; i < matchColumns.Count; i++)
-                        {
-                            var colName = matchColumns[i];
-                            // TODO: Validate that the number of items in matchColumns and matchAttributes match
-                            var attrName = matchAttributes[i];
-                            var attrMetadata = metadata.Attributes.Where(attr => string.Compare(attr.LogicalName, attrName, StringComparison.OrdinalIgnoreCase) == 0).First();
-
-                            var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
-                            qry.Values.Add(filterAttrValue);
-                            conditionsStr.Add($"{attrName}={filterAttrValue ?? "null"}");
-                        }
+                        var conditionsStr = GetConditionsString(options,metadata,record);
+                        var qry = GetQuery(options, metadata, record);
 
                         _log.Debug("Executing query...");
                         var foundRecords = _crmService.RetrieveMultiple(qry);
@@ -77,11 +59,11 @@ namespace XrmCommandBox.Tools
 
                         if (foundRecords.Entities.Count == 0)
                         {
-                            errorMsg = $"No {foundRecords.EntityName} record found with {String.Join(",", conditionsStr.ToArray())}";
+                            errorMsg = $"No {foundRecords.EntityName} record found with {conditionsStr}";
                         }
                         else if (foundRecords.Entities.Count > 1)
                         {
-                            errorMsg = $"{foundRecords.Entities.Count} {foundRecords.EntityName} records found with {String.Join(",", conditionsStr.ToArray())}";
+                            errorMsg = $"{foundRecords.Entities.Count} {foundRecords.EntityName} records found with {conditionsStr}";
                         }
                         else
                         {
@@ -124,6 +106,50 @@ namespace XrmCommandBox.Tools
 
             sw.Stop();
             _log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
+        }
+
+        private QueryBase GetQuery(LookupToolOptions options, EntityMetadata metadata, Dictionary<string, object> record)
+        {
+            IList<string> matchAttributes = options.MatchAttributes.ToList();
+            IList<string> matchColumns = options.MatchColumns.ToList();
+            var qry = new QueryByAttribute()
+            {
+                EntityName = options.EntityName,
+                ColumnSet = new ColumnSet(metadata.PrimaryIdAttribute)
+            };
+            qry.Attributes.AddRange(matchAttributes);
+
+            for (var i = 0; i < matchColumns.Count; i++)
+            {
+                var colName = matchColumns[i];
+                // TODO: Validate that the number of items in matchColumns and matchAttributes match
+                var attrName = matchAttributes[i];
+                var attrMetadata = metadata.Attributes.Where(attr => string.Compare(attr.LogicalName, attrName, StringComparison.OrdinalIgnoreCase) == 0).First();
+
+                var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
+                qry.Values.Add(filterAttrValue);
+            }
+            return qry;
+        }
+
+        private string GetConditionsString(LookupToolOptions options, EntityMetadata metadata, Dictionary<string, object> record)
+        {
+            IList<string> matchAttributes = options.MatchAttributes.ToList();
+            IList<string> matchColumns = options.MatchColumns.ToList();
+
+            var conditionsStr = new List<string>();
+            for (var i = 0; i < matchColumns.Count; i++)
+            {
+                var colName = matchColumns[i];
+                // TODO: Validate that the number of items in matchColumns and matchAttributes match
+                var attrName = matchAttributes[i];
+                var attrMetadata = metadata.Attributes.Where(attr => string.Compare(attr.LogicalName, attrName, StringComparison.OrdinalIgnoreCase) == 0).First();
+
+                var filterAttrValue = record.ContainsKey(colName) ? GetFilterValue(record[colName], attrMetadata) : null;
+                conditionsStr.Add($"{attrName}={filterAttrValue ?? "null"}");
+            }
+
+            return String.Join(",",conditionsStr);
         }
 
         private object GetFilterValue(object attributeValue, AttributeMetadata attrMetadata)
