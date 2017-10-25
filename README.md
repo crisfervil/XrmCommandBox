@@ -7,7 +7,7 @@ Command line tool for Dynamics CRM. Because the command line is cool again!
 
 # How to use it
 
-Download the program from the latest release. Unzip the contents to any folder and open a console in that directory.
+[Download the latest release of the program from GitHub](https://github.com/crisfervil/XrmCommandBox/releases). Unzip the contents to any folder and open a console in that directory.
 
 Type xrm and the command you want to use.
 
