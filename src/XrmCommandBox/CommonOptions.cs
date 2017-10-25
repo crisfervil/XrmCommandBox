@@ -5,7 +5,7 @@ namespace XrmCommandBox
 {
     public class CommonOptions
     {
-        [Option('b', "debug-brk", HelpText = "Launches the debugger before running the selected command")]
+        [Option('b', "debug-brk", HelpText = "Launches the debugger before running the selected command", Hidden = true)]
         public bool DebugBreak { get; set; }
 
         [Option('f', "config-file", HelpText = "Xml file containing the command options")]
