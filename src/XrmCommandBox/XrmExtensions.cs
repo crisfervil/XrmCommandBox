@@ -6,11 +6,11 @@ namespace XrmCommandBox
 {
     public static class XrmExtensions
     {
-        public static EntityMetadata GetMetadata(this IOrganizationService service, string entityName)
+        public static EntityMetadata GetMetadata(this IOrganizationService service, string entityName, EntityFilters filters = EntityFilters.Attributes)
         {
             var request = new RetrieveEntityRequest
             {
-                EntityFilters = EntityFilters.Attributes|EntityFilters.Entity|EntityFilters.Relationships,
+                EntityFilters = filters,
                 LogicalName = entityName
             };
             var response = (RetrieveEntityResponse)service.Execute(request);

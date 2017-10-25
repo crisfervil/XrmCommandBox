@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace XrmCommandBox.Tools
             _log.Info($"{dataTable.Count} {dataTable.Name} n:n relationships read");
 
             _log.Debug("Querying metadata...");
-            var metadata = _crmService.GetMetadata(dataTable.Name);
+            var metadata = _crmService.GetMetadata(dataTable.Name, EntityFilters.Attributes | EntityFilters.Entity | EntityFilters.Relationships);
             if (metadata == null)
             {
                 throw new Exception($"{relationshipIntersectEntityName} entity metadata not found");
