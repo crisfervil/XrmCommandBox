@@ -48,6 +48,8 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="LogLevels.cs" />
+    <Compile Include="Tools\AssociateToolOptions.cs" />
+    <Compile Include="Tools\AssociateTool.cs" />
     <Compile Include="Tools\LookupTool.cs" />
     <Compile Include="Tools\LookupToolOptions.cs" />
     <Compile Include="Tools\PublishAllTool.cs" />

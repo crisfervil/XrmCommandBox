@@ -10,7 +10,7 @@ namespace XrmCommandBox
         {
             var request = new RetrieveEntityRequest
             {
-                EntityFilters = EntityFilters.Attributes,
+                EntityFilters = EntityFilters.Attributes|EntityFilters.Entity|EntityFilters.Relationships,
                 LogicalName = entityName
             };
             var response = (RetrieveEntityResponse)service.Execute(request);
