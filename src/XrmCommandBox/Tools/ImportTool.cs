@@ -78,7 +78,7 @@ namespace XrmCommandBox.Tools
             }
 
             sw.Stop();
-            _log.Info($"Done! Imported {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
+            _log.Info($"Done! Processed {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
         }
 
         private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
