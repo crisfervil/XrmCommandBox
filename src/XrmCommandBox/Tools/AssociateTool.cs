@@ -10,6 +10,9 @@ using XrmCommandBox.Data;
 
 namespace XrmCommandBox.Tools
 {
+    /// <summary>
+    /// This tool uses the Associate request to create relationships between 2 entity records
+    /// </summary>
     public class AssociateTool
     {
         private readonly IOrganizationService _crmService;
