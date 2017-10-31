@@ -12,6 +12,7 @@ Name | Description
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
+
 # lookup
 
 Updates a specific column from a data table querying data in CRM
@@ -30,6 +31,7 @@ Name | Description
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
+
 # publish-all
 
 Publishes all existing customizations in the environment
@@ -41,6 +43,7 @@ Name | Description
 -c, --connection | Connection string, or name of a connection string to use
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
+
 
 # delete
 
@@ -55,6 +58,7 @@ Name | Description
 -c, --connection | Connection string, or name of a connection string to use
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
+
 
 # export
 
@@ -74,6 +78,7 @@ Name | Description
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
+
 # import
 
 Imports information from a file to Dynamics
@@ -89,6 +94,7 @@ Name | Description
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
+
 # solution-import
 
 Imports the specified solution .zip file into CRM
@@ -103,6 +109,7 @@ Name | Description
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
+
 # solution-export
 
 Export the specified solution to a .zip file
@@ -115,4 +122,5 @@ Name | Description
 -c, --connection | Connection string, or name of a connection string to use
 -f, --config-file | Xml file containing the command options
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
+
 

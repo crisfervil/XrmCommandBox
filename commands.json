@@ -183,6 +183,9 @@
           "ShortName": "l",
           "HelpText": "Sets the current logging output. Can be Debug, Info, Error"
         }
+      ],
+      "Examples": [
+        "Simple Export"
       ]
     },
     {

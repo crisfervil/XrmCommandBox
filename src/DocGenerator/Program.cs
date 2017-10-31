@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using CommandLine;
 using Newtonsoft.Json;
+using CommandLine.Text;
 
 namespace DocGenerator
 {
@@ -23,6 +24,7 @@ namespace DocGenerator
             public string Remarks { get; set; }
             public List<CommandOption> Options { get; set; }
             public List<string> Examples { get; set; }
+            public string ApplicationAlias { get; set; }
         }
         
 
@@ -54,7 +56,8 @@ namespace DocGenerator
                 var verbAttrs = optionType.GetCustomAttribute<VerbAttribute>();
                 var commandInfo = new CommandInfo { Name = verbAttrs.Name,
                                                     HelpText = verbAttrs.HelpText,
-                                                    Options = new List<CommandOption>()};
+                                                    Options = new List<CommandOption>()
+                                                    };
 
 
                 // get the properties with the option attribute
@@ -68,7 +71,23 @@ namespace DocGenerator
                         commandInfo.Options.Add(new CommandOption() { ShortName=optionAttr.ShortName, LongName=optionAttr.LongName, HelpText=optionAttr.HelpText });
                     }
                 }
+
+                var usageProperties = optionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UsageAttribute)) != null).ToList();
                 
+                if(usageProperties.Count > 0)
+                {
+                    var usageProperty = usageProperties[0];
+                    commandInfo.Examples = new List<string>();
+
+                    var usageAttr = usageProperty.GetCustomAttribute<UsageAttribute>();
+                    var commandExamples = (IEnumerable<Example>)usageProperty.GetMethod.Invoke(null, null);
+
+                    foreach (var example in commandExamples)
+                    {
+                        commandInfo.Examples.Add(example.HelpText);
+                    }
+
+                }
 
                 doc.Commands.Add(commandInfo);
             }
