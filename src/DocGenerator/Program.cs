@@ -30,7 +30,7 @@ namespace DocGenerator
         {
             public string LongName { get; set; }
             public string ShortName { get; set; }
-            public string Description { get; set; }
+            public string HelpText { get; set; }
             public string Summary { get; set; }
             public string Remarks { get; set; }
         }
@@ -40,23 +40,40 @@ namespace DocGenerator
 
             // the first parameter contains the assembly with the command options
             var assemblyPath = System.IO.Path.GetFullPath(args[0]);
+            var outputPath = args.Length>1? System.IO.Path.GetFullPath(args[1]) : "doc.json";
             Console.WriteLine(assemblyPath);
 
             var assembly =  Assembly.LoadFile(assemblyPath);
 
             var optionTypes =  assembly.ExportedTypes.Where(t => t.GetCustomAttribute(typeof(VerbAttribute)) != null);
 
-            var doc = new Documentation() { Commands = { } };
+            var doc = new Documentation() { Commands = new List<CommandInfo>() };
 
             foreach (var optionType in optionTypes)
             {
                 var verbAttrs = optionType.GetCustomAttribute<VerbAttribute>();
                 var commandInfo = new CommandInfo { Name = verbAttrs.Name,
-                                                    HelpText = verbAttrs.HelpText };
+                                                    HelpText = verbAttrs.HelpText,
+                                                    Options = new List<CommandOption>()};
+
+
+                // get the properties with the option attribute
+                var options = optionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(OptionAttribute)) != null);
+                var optionAttrs = options.Select(x => x.GetCustomAttribute<OptionAttribute>());
+
+                foreach (var optionAttr in optionAttrs)
+                {
+                    if (!optionAttr.Hidden)
+                    {
+                        commandInfo.Options.Add(new CommandOption() { ShortName=optionAttr.ShortName, LongName=optionAttr.LongName, HelpText=optionAttr.HelpText });
+                    }
+                }
+                
+
                 doc.Commands.Add(commandInfo);
             }
 
-            System.IO.File.WriteAllText("doc.json", JsonConvert.SerializeObject(doc, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore }), Encoding.UTF8);
+            System.IO.File.WriteAllText(outputPath, JsonConvert.SerializeObject(doc, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore }), Encoding.Default);
         }
     }
 }

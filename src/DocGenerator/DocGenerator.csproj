@@ -56,13 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="gendoc.bat" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GenDoc.bat" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="template.tpl" />
+    <None Include="template.mustache" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

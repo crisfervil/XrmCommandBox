@@ -9,6 +9,6 @@ namespace XrmCommandBox
             HelpText = "Connection string, or name of a connection string to use")]
         public string ConnectionName { get; set; }
 
-        public IOrganizationService Connection { get; set; }
+        // public IOrganizationService Connection { get; set; }
     }
 }
