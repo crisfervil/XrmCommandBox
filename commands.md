@@ -79,6 +79,16 @@ Name | Description
 -l, --log-level | Sets the current logging output. Can be Debug, Info, Error
 
 
+## Examples
+Export all the existing accounts to an Accounts.xml file
+```
+xrm  --file Accounts.xml --entity account --connection DEV
+```
+Export all the existing contacts returned by a fetch query to the contacts.xml file
+```
+xrm  --file Contacts.xml --connection DEV --config-file ContactsQuery.xml
+```
+
 # import
 
 Imports information from a file to Dynamics

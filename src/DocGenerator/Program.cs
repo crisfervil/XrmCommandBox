@@ -23,7 +23,7 @@ namespace DocGenerator
             public string Summary { get; set; }
             public string Remarks { get; set; }
             public List<CommandOption> Options { get; set; }
-            public List<string> Examples { get; set; }
+            public List<CommandExample> Examples { get; set; }
             public string ApplicationAlias { get; set; }
         }
         
@@ -35,6 +35,20 @@ namespace DocGenerator
             public string HelpText { get; set; }
             public string Summary { get; set; }
             public string Remarks { get; set; }
+        }
+
+        class CommandExample
+        {
+            public string ApplicationAlias { get; set; }
+            public string HelpText { get; set; }
+            public List<CommandExampleParam> Values { get; set; }
+        }
+
+        class CommandExampleParam
+        {
+            public bool IsDefault { get; set; }
+            public string OptionLongName { get; set; }
+            public string ParamValue { get; set; }
         }
 
         static void Main(string[] args)
@@ -62,13 +76,13 @@ namespace DocGenerator
 
                 // get the properties with the option attribute
                 var options = optionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(OptionAttribute)) != null);
-                var optionAttrs = options.Select(x => x.GetCustomAttribute<OptionAttribute>());
+                var optionAttrs = options.Select(x => new { Property=x, OptionAttribute= x.GetCustomAttribute<OptionAttribute>() });
 
-                foreach (var optionAttr in optionAttrs)
+                foreach (var commandOption in optionAttrs)
                 {
-                    if (!optionAttr.Hidden)
+                    if (!commandOption.OptionAttribute.Hidden)
                     {
-                        commandInfo.Options.Add(new CommandOption() { ShortName=optionAttr.ShortName, LongName=optionAttr.LongName, HelpText=optionAttr.HelpText });
+                        commandInfo.Options.Add(new CommandOption() { ShortName=commandOption.OptionAttribute.ShortName, LongName=commandOption.OptionAttribute.LongName, HelpText=commandOption.OptionAttribute.HelpText });
                     }
                 }
 
@@ -77,16 +91,29 @@ namespace DocGenerator
                 if(usageProperties.Count > 0)
                 {
                     var usageProperty = usageProperties[0];
-                    commandInfo.Examples = new List<string>();
 
                     var usageAttr = usageProperty.GetCustomAttribute<UsageAttribute>();
+                    commandInfo.ApplicationAlias = usageAttr.ApplicationAlias;
+                    commandInfo.Examples = new List<CommandExample>();
+
                     var commandExamples = (IEnumerable<Example>)usageProperty.GetMethod.Invoke(null, null);
 
                     foreach (var example in commandExamples)
                     {
-                        commandInfo.Examples.Add(example.HelpText);
+                        var commandExample = new CommandExample() { ApplicationAlias = commandInfo.ApplicationAlias, Values = new List<CommandExampleParam>(), HelpText = example.HelpText };
+                        foreach (var optionAttr in optionAttrs)
+                        {
+                            // get the property vaue
+                            //System.Diagnostics.Debugger.Break();
+                            var propValue = optionAttr.Property.GetMethod.Invoke(example.Sample, null);
+                            if (propValue != null)
+                            {
+                                var isDefault = optionAttr.OptionAttribute.Default != null && optionAttr.OptionAttribute.Default.ToString() == propValue.ToString();
+                                commandExample.Values.Add(new CommandExampleParam { OptionLongName = optionAttr.OptionAttribute.LongName, ParamValue = propValue.ToString(), IsDefault=isDefault });
+                            }
+                        }
+                        commandInfo.Examples.Add(commandExample);
                     }
-
                 }
 
                 doc.Commands.Add(commandInfo);

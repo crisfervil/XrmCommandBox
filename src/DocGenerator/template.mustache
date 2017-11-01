@@ -11,12 +11,15 @@ Name | Description
 -{{ShortName}}, --{{LongName}} | {{HelpText}}
 {{/Options}}
 
-{{#Examples?}}
+{{#Examples.length}}
 
 ## Examples
 {{#Examples}}
-{{.}}
+{{HelpText}}
+```
+{{ApplicationAlias}} {{#Values}}{{^IsDefault}} --{{OptionLongName}} {{ParamValue}}{{/IsDefault}}{{/Values}}
+```
 {{/Examples}}
-{{/Examples?}}
+{{/Examples.length}}
 
 {{/Commands}}

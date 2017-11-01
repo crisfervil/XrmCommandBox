@@ -8,7 +8,7 @@ namespace XrmCommandBox.Tools
     [Handler(typeof(ExportTool))]
     public class ExportToolOptions : CrmCommonOptions
     {
-        [Option('r', "row-number", HelpText = "Adds the row number to each exported record")]
+        [Option('r', "row-number", HelpText = "Adds the row number to each exported record", Default = false)]
         public bool RowNumber { get; set; }
 
         [Option('f', "file", HelpText = "Path of the file where to save the exported data")]
@@ -20,11 +20,10 @@ namespace XrmCommandBox.Tools
         [Option('q', "fetch-query", HelpText = "Fetch query to retrieve the records to export", SetName = "fetch")]
         public string FetchQuery { get; set; }
 
-        [Option('s', "page-size", HelpText = "Number of records to retrieve from a page", SetName = "entity",
-            Default = 5000)]
+        [Option('s', "page-size", HelpText = "Number of records to retrieve from a page", SetName = "entity", Default = 5000)]
         public int PageSize { get; set; } = 5000;
 
-        [Option('p', "page", HelpText = "Page of records to retrieve", SetName = "entity")]
+        [Option('p', "page", HelpText = "Page of records to retrieve", SetName = "entity", Default = 1)]
         public int Page { get; set; } = 1;
 
         [Usage(ApplicationAlias = "xrm")]
@@ -32,8 +31,10 @@ namespace XrmCommandBox.Tools
         {
             get
             {
-                yield return new Example("Simple Export",
-                    new ExportToolOptions {File = "Accounts.xml", ConnectionName = "DEV", EntityName = "account"});
+                yield return new Example("Export all the existing accounts to an Accounts.xml file",
+                    new ExportToolOptions { File = "Accounts.xml", ConnectionName = "DEV", EntityName = "account" });
+                yield return new Example("Export all the existing contacts returned by a fetch query to the contacts.xml file",
+                    new ExportToolOptions { File = "Contacts.xml", ConnectionName = "DEV", ConfigFile="ContactsQuery.xml" });
             }
         }
     }
