@@ -8,7 +8,9 @@
 Name | Description
 --- | ---
 {{#Options}}
--{{ShortName}}, --{{LongName}} | {{HelpText}}
+{{^Hidden}}
+-{{ShortName}}, --{{LongName}} | {{#Required}}Required. {{/Required}}{{HelpText}}
+{{/Hidden}}
 {{/Options}}
 
 {{#Examples.length}}
@@ -17,7 +19,7 @@ Name | Description
 {{#Examples}}
 {{HelpText}}
 ```
-{{ApplicationAlias}} {{#Values}}{{^IsDefault}} --{{OptionLongName}} {{ParamValue}}{{/IsDefault}}{{/Values}}
+{{ApplicationAlias}} {{Name}}{{#Values}}{{^IsDefault}} --{{OptionLongName}} {{ParamValue}}{{/IsDefault}}{{/Values}}
 ```
 {{/Examples}}
 {{/Examples.length}}

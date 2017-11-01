@@ -35,6 +35,8 @@ namespace DocGenerator
             public string HelpText { get; set; }
             public string Summary { get; set; }
             public string Remarks { get; set; }
+            public bool Hidden { get; set; }
+            public bool Required { get; set; }
         }
 
         class CommandExample
@@ -80,10 +82,9 @@ namespace DocGenerator
 
                 foreach (var commandOption in optionAttrs)
                 {
-                    if (!commandOption.OptionAttribute.Hidden)
-                    {
-                        commandInfo.Options.Add(new CommandOption() { ShortName=commandOption.OptionAttribute.ShortName, LongName=commandOption.OptionAttribute.LongName, HelpText=commandOption.OptionAttribute.HelpText });
-                    }
+                    commandInfo.Options.Add(new CommandOption() { ShortName=commandOption.OptionAttribute.ShortName, LongName=commandOption.OptionAttribute.LongName,
+                                                                   HelpText=commandOption.OptionAttribute.HelpText, Hidden=commandOption.OptionAttribute.Hidden,
+                                                                    Required=commandOption.OptionAttribute.Required});
                 }
 
                 var usageProperties = optionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UsageAttribute)) != null).ToList();
@@ -104,7 +105,6 @@ namespace DocGenerator
                         foreach (var optionAttr in optionAttrs)
                         {
                             // get the property vaue
-                            //System.Diagnostics.Debugger.Break();
                             var propValue = optionAttr.Property.GetMethod.Invoke(example.Sample, null);
                             if (propValue != null)
                             {
