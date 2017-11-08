@@ -5,11 +5,16 @@
 
 ## Options
 
-Name | Description
---- | ---
 {{#Options}}
 {{^Hidden}}
--{{ShortName}}, --{{LongName}} | {{#Required}}Required. {{/Required}}{{HelpText}}
+### -{{ShortName}}, --{{LongName}}
+{{#Required}}Required. {{/Required}}{{HelpText}}
+
+{{Remarks}}
+
+{{#Example}}
+{{&Example}}
+{{/Example}}
 {{/Hidden}}
 {{/Options}}
 
@@ -19,7 +24,7 @@ Name | Description
 {{#Examples}}
 {{HelpText}}
 ```
-{{ApplicationAlias}} {{Name}}{{#Values}}{{^IsDefault}} --{{OptionLongName}} {{ParamValue}}{{/IsDefault}}{{/Values}}
+{{ApplicationAlias}} {{Name}}{{#Values}}{{^IsDefault}} --{{OptionLongName}} {{&ParamValue}}{{/IsDefault}}{{/Values}}
 ```
 {{/Examples}}
 {{/Examples.length}}

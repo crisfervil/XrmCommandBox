@@ -6,6 +6,10 @@ using System.Text;
 using CommandLine;
 using Newtonsoft.Json;
 using CommandLine.Text;
+using System.IO;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace DocGenerator
 {
@@ -35,6 +39,7 @@ namespace DocGenerator
             public string HelpText { get; set; }
             public string Summary { get; set; }
             public string Remarks { get; set; }
+            public string Example { get; set; }
             public bool Hidden { get; set; }
             public bool Required { get; set; }
         }
@@ -57,9 +62,17 @@ namespace DocGenerator
         {
 
             // the first parameter contains the assembly with the command options
-            var assemblyPath = System.IO.Path.GetFullPath(args[0]);
-            var outputPath = args.Length>1? System.IO.Path.GetFullPath(args[1]) : "doc.json";
+            var assemblyPath = Path.GetFullPath(args[0]);
+            var outputPath = args.Length>1? Path.GetFullPath(args[1]) : "doc.json";
             Console.WriteLine(assemblyPath);
+
+            // try to load the documentation xml
+            XDocument xmlDoc = null;
+            var xmlDocFile = Path.ChangeExtension(assemblyPath, "xml");
+            if (File.Exists(xmlDocFile))
+            {
+                xmlDoc = XDocument.Load(xmlDocFile,LoadOptions.PreserveWhitespace);
+            }
 
             var assembly =  Assembly.LoadFile(assemblyPath);
 
@@ -82,9 +95,35 @@ namespace DocGenerator
 
                 foreach (var commandOption in optionAttrs)
                 {
-                    commandInfo.Options.Add(new CommandOption() { ShortName=commandOption.OptionAttribute.ShortName, LongName=commandOption.OptionAttribute.LongName,
-                                                                   HelpText=commandOption.OptionAttribute.HelpText, Hidden=commandOption.OptionAttribute.Hidden,
-                                                                    Required=commandOption.OptionAttribute.Required});
+
+                    var newCommandOption = new CommandOption()
+                    {
+                        ShortName = commandOption.OptionAttribute.ShortName,
+                        LongName = commandOption.OptionAttribute.LongName,
+                        HelpText = commandOption.OptionAttribute.HelpText,
+                        Hidden = commandOption.OptionAttribute.Hidden,
+                        Required = commandOption.OptionAttribute.Required
+                    };
+
+                    // add xml info
+                    if(xmlDoc != null)
+                    {
+                        var docXPathRemarksSelector = $"doc/members/member[@name='P:{commandOption.Property.DeclaringType.FullName}.{commandOption.Property.Name}']/remarks";
+                        var remarksNode = xmlDoc.XPathSelectElement(docXPathRemarksSelector);
+                        if (remarksNode != null)
+                        {
+                            newCommandOption.Remarks = String.Concat(remarksNode.Nodes());
+                        }
+
+                        var docXPathExampleSelector = $"doc/members/member[@name='P:{commandOption.Property.DeclaringType.FullName}.{commandOption.Property.Name}']/example";
+                        var exampleNode = xmlDoc.XPathSelectElement(docXPathExampleSelector);
+                        if (exampleNode != null)
+                        {
+                            newCommandOption.Example = String.Concat(exampleNode.Nodes());
+                        }
+                    }
+
+                    commandInfo.Options.Add(newCommandOption);
                 }
 
                 var usageProperties = optionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UsageAttribute)) != null).ToList();
@@ -119,7 +158,7 @@ namespace DocGenerator
                 doc.Commands.Add(commandInfo);
             }
 
-            System.IO.File.WriteAllText(outputPath, JsonConvert.SerializeObject(doc, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore }), Encoding.Default);
+            File.WriteAllText(outputPath, JsonConvert.SerializeObject(doc, Newtonsoft.Json.Formatting.Indented, new JsonSerializerSettings() { NullValueHandling=NullValueHandling.Ignore }), Encoding.Default);
         }
     }
 }
