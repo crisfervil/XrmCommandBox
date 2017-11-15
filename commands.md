@@ -1,3 +1,31 @@
+# wr-sync
+
+Synchronizes Web Resoources with local directories
+
+## Options
+
+### -w, --watch
+Initiates the command in watch mode
+
+
+
+### -c, --connection
+Required. Connection string, or name of a connection string to use
+
+
+
+### -f, --config-file
+Xml file containing the command options
+
+
+
+### -l, --log-level
+Sets the current logging output. Can be Debug, Info, Error
+
+
+
+
+
 # associate
 
 Imports N to N relationshipts to CRM
@@ -12,7 +40,7 @@ The input file should contain a data table named as the intersect entity name, w
 
 The intersect entity name for the relationship between Accounts and Leads is accountsleads, so the input xml should be:
             
-``` xml
+            ``` xml
             <datatable name="accountsleads">
                 <row>
                     <accountid>A1E29A4E-78CE-4164-BC26-A93D8B449F87</accountid>
@@ -21,7 +49,7 @@ The intersect entity name for the relationship between Accounts and Leads is acc
                     <leadid1.name>contoso lead</leadid1.name>
                 </row>
             </datatable>
-```
+            ```
             
 ### -e, --continue-on-error
 Continue if there&#39;s an error while processing the command
