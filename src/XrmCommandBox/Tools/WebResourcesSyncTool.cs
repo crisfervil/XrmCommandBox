@@ -3,6 +3,7 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +19,8 @@ namespace XrmCommandBox.Tools
         private readonly IOrganizationService _crmService;
         private readonly ILog _log = LogManager.GetLogger(typeof(ImportTool));
 
-        private List<string> _filesToUpdate = new List<string>();
+        private ConcurrentQueue<string> _filesToUpdate = new ConcurrentQueue<string>();
+        private ConcurrentQueue<Guid> _webResourcesToPublish = new ConcurrentQueue<Guid>();
 
         public WebResourcesSyncTool(IOrganizationService service)
         {
@@ -57,39 +59,54 @@ namespace XrmCommandBox.Tools
             _log.Info($"Done!");
         }
 
-
         private void UpdateFiles()
         {
-            var updatedWebResources = new List<Guid>();
-            foreach (var fileToUpdate in _filesToUpdate)
+            while(!_filesToUpdate.IsEmpty)
             {
-                var webResourceName = fileToUpdate.Substring(Environment.CurrentDirectory.Length+1);
-                webResourceName = webResourceName.Replace("\\","/");
-                _log.Info($"Updating {webResourceName}...");
-
-                var webresourceId = GetId(webResourceName);
-                if (webresourceId.HasValue)
+                string fileToUpdate = null;
+                if(_filesToUpdate.TryDequeue(out fileToUpdate))
                 {
-                    Update(webresourceId.Value, webResourceName, fileToUpdate);
-                    updatedWebResources.Add(webresourceId.Value);
-                }
-                else
-                {
-                    _log.Info($"{webResourceName} doesn't exist in the environment");
+                    UpdateWebResource(fileToUpdate);
                 }
             }
 
-            if (updatedWebResources.Count > 0) {
+            if (!_webResourcesToPublish.IsEmpty) {
                 _log.Info("Publishing customizations...");
-                PublishAllCustomizations(updatedWebResources);
+                PublishWebResources();
                 _log.Info("Done. Waiting for more changes....");
             }
-
-            _filesToUpdate.Clear();
         }
 
-        private void PublishAllCustomizations(IEnumerable<Guid> webResourcesIds)
+        private void UpdateWebResource(string fileToUpdate)
         {
+            var webResourceName = fileToUpdate.Substring(Environment.CurrentDirectory.Length + 1);
+            webResourceName = webResourceName.Replace("\\", "/");
+            _log.Info($"Updating {webResourceName}...");
+
+            var webresourceId = GetId(webResourceName);
+            if (webresourceId.HasValue)
+            {
+                Update(webresourceId.Value, webResourceName, fileToUpdate);
+                _webResourcesToPublish.Enqueue(webresourceId.Value); // add this to the publish queue
+            }
+            else
+            {
+                _log.Info($"{webResourceName} doesn't exist in the environment");
+            }
+        }
+
+        private void PublishWebResources()
+        {
+
+            var webResourcesIds = new List<Guid>();
+            while (!_webResourcesToPublish.IsEmpty)
+            {
+                Guid webResourceId=Guid.Empty;
+                if(_webResourcesToPublish.TryDequeue(out webResourceId))
+                {
+                    webResourcesIds.Add(webResourceId);
+                }
+            }
 
             var webResourcesXml = webResourcesIds.Select(x => $"<webresource>{{{x}}}</webresource>").ToList();
 
@@ -136,9 +153,8 @@ namespace XrmCommandBox.Tools
             _log.Debug($"Change detected: {e.ChangeType} : {e.FullPath}");
             if (!_filesToUpdate.Contains(e.FullPath))
             {
-                _filesToUpdate.Add(e.FullPath);
+                _filesToUpdate.Enqueue(e.FullPath);
             }
         }
-
     }
 }
