@@ -19,8 +19,36 @@ namespace XrmCommandBox.Tools
         private readonly IOrganizationService _crmService;
         private readonly ILog _log = LogManager.GetLogger(typeof(ImportTool));
 
-        private ConcurrentQueue<string> _filesToUpdate = new ConcurrentQueue<string>();
-        private ConcurrentQueue<Guid> _webResourcesToPublish = new ConcurrentQueue<Guid>();
+        private readonly ConcurrentQueue<string> _filesToUpdate = new ConcurrentQueue<string>();
+        private readonly ConcurrentQueue<Guid> _webResourcesToPublish = new ConcurrentQueue<Guid>();
+
+        enum WebResourceTypes
+        {
+            WebPage=1,
+            ICO=10,
+            StyleSheetCSS=2,
+            Script=3,
+            Data=4,
+            PNG=5,
+            JPG=6,
+            GIF=7,
+            Silverlight=8,
+            StyleSheetXSL=9
+        }
+
+        private readonly Dictionary<string, WebResourceTypes> _extensionMappings = 
+            new Dictionary<string, WebResourceTypes> { { ".htm", WebResourceTypes.WebPage},
+                                                       { ".html", WebResourceTypes.WebPage},
+                                                       { ".ico", WebResourceTypes.ICO},
+                                                       { ".css", WebResourceTypes.StyleSheetCSS},
+                                                       { ".js", WebResourceTypes.Script},
+                                                       { ".xml", WebResourceTypes.Data},
+                                                       { ".png", WebResourceTypes.PNG},
+                                                       { ".jpg", WebResourceTypes.JPG},
+                                                       { ".jpeg", WebResourceTypes.JPG},
+                                                       { ".gif", WebResourceTypes.GIF},
+                                                       { ".xbap", WebResourceTypes.Silverlight},
+                                                       { ".xsl", WebResourceTypes.StyleSheetXSL}};
 
         public WebResourcesSyncTool(IOrganizationService service)
         {
@@ -66,7 +94,7 @@ namespace XrmCommandBox.Tools
                 string fileToUpdate = null;
                 if(_filesToUpdate.TryDequeue(out fileToUpdate))
                 {
-                    UpdateWebResource(fileToUpdate);
+                    UpdateCreateWebResource(fileToUpdate);
                 }
             }
 
@@ -77,22 +105,50 @@ namespace XrmCommandBox.Tools
             }
         }
 
-        private void UpdateWebResource(string fileToUpdate)
+        private void UpdateCreateWebResource(string fullFilePath)
         {
-            var webResourceName = fileToUpdate.Substring(Environment.CurrentDirectory.Length + 1);
-            webResourceName = webResourceName.Replace("\\", "/");
-            _log.Info($"Updating {webResourceName}...");
+            var isFile = File.Exists(fullFilePath);
 
-            var webresourceId = GetId(webResourceName);
-            if (webresourceId.HasValue)
+            if (isFile)
             {
-                Update(webresourceId.Value, webResourceName, fileToUpdate);
+                var webResourceName = fullFilePath.Substring(Environment.CurrentDirectory.Length + 1);
+                webResourceName = webResourceName.Replace("\\", "/");
+
+                var webresourceId = GetId(webResourceName);
+                if (webresourceId.HasValue)
+                {
+                    Update(webresourceId.Value, webResourceName, fullFilePath);
+                }
+                else
+                {
+                    webresourceId = Create(webResourceName, fullFilePath);
+                }
+
                 _webResourcesToPublish.Enqueue(webresourceId.Value); // add this to the publish queue
+                _log.Info("Done!");
             }
             else
             {
-                _log.Info($"{webResourceName} doesn't exist in the environment");
+                _log.Debug($"{fullFilePath} is not an existing File");
             }
+        }
+
+        private Guid Create(string webResourceName, string filePath)
+        {
+            var extension = Path.GetExtension(filePath);
+            int webResourceType = (int)_extensionMappings[extension];
+
+            var content = GetContent(filePath);
+
+            var webResource = new Entity("webresource");
+            webResource["name"] = webResourceName;
+            webResource["displayname"] = webResourceName;
+            webResource["content"] = content;
+            webResource["webresourcetype"] = new OptionSetValue(webResourceType);
+
+            _log.Info($"Creating {webResourceName} type {_extensionMappings[extension]}({webResourceType})...");
+            var id = _crmService.Create(webResource);
+            return id;
         }
 
         private void PublishWebResources()
@@ -121,12 +177,11 @@ namespace XrmCommandBox.Tools
 
         private void Update(Guid webResourceId, string webResourceName, string filePath)
         {
+            _log.Info($"Updating Web Resource {webResourceName}...");
             var content = GetContent(filePath);
             var webResource = new Entity("webresource", webResourceId);
             webResource["content"] = content;
-            _log.Debug($"Updating {webResourceName}:{webResourceId}");
             _crmService.Update(webResource);
-            _log.Debug("done");
         }
 
         private object GetContent(string filePath)
