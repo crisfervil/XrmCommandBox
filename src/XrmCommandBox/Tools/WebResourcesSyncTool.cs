@@ -63,28 +63,84 @@ namespace XrmCommandBox.Tools
 
             if (options.Watch)
             {
-
-                FileSystemWatcher watcher = new FileSystemWatcher
-                {
-                    NotifyFilter = NotifyFilters.LastWrite,
-                    Path = Environment.CurrentDirectory,
-                    IncludeSubdirectories = true,
-                    EnableRaisingEvents = true
-                };
-                watcher.Changed += File_Changed;
-
-                _log.Info("Waiting for changes....");
-                _log.Info("Ctrl + C to end the program");
-
-                while (true)
-                {
-                    UpdateFiles();
-                    System.Threading.Thread.Sleep(1000);
-                }
-
+                RunInWatchMode();
             }
+            else
+            {
+                DownloadWebResources(options.NamePrefixes);
+            }
+
             sw.Stop();
             _log.Info($"Done!");
+        }
+
+        private void DownloadWebResources(IEnumerable<string> namePrefixes)
+        {
+            // Get all the web resources in the environment
+            _log.Info("Downloading web resources...");
+            var webResources = GetWebResources(namePrefixes);
+            _log.Info($"{webResources.Entities.Count} files found!");
+            Save(webResources, Environment.CurrentDirectory);
+        }
+
+        private void Save(EntityCollection webResources, string basePath)
+        {
+            foreach (var webResource in webResources.Entities)
+            {
+                // get the content
+                var content = (string)webResource["content"];
+                var webResourceName = (string)webResource["name"];
+                var binaryContent = Convert.FromBase64String(content);
+                var filePath = Path.Combine(basePath, webResourceName);
+                _log.Info($"Saving {filePath}...");
+            }--
+        }
+
+        private EntityCollection GetWebResources(IEnumerable<string> namePrefixes)
+        {
+            var qry = new QueryExpression("webresource") { ColumnSet= new ColumnSet("name","content") };
+            var isNotCustomizableCondition = new ConditionExpression() { AttributeName = "iscustomizable", Operator = ConditionOperator.Equal };
+            isNotCustomizableCondition.Values.Add(true);
+            qry.Criteria.AddCondition(isNotCustomizableCondition);
+
+
+            // add name prefixes filter
+            var namePrefixesFilter = new FilterExpression() { FilterOperator = LogicalOperator.Or };
+            foreach (var namePrefix in namePrefixes)
+            {
+                var namePrefixFilter = new ConditionExpression() { AttributeName="name", Operator=ConditionOperator.BeginsWith };
+                namePrefixFilter.Values.Add(namePrefix);
+                namePrefixesFilter.AddCondition(namePrefixFilter);
+            }
+
+            if (namePrefixesFilter.Conditions.Count > 0)
+            {
+                qry.Criteria.AddFilter(namePrefixesFilter);
+            }
+
+            var webResources = _crmService.RetrieveMultiple(qry);
+            return webResources;
+        }
+
+        private void RunInWatchMode()
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Path = Environment.CurrentDirectory,
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true
+            };
+            watcher.Changed += File_Changed;
+
+            _log.Info("Waiting for changes....");
+            _log.Info("Ctrl + C to end the program");
+
+            while (true)
+            {
+                UpdateFiles();
+                System.Threading.Thread.Sleep(1000);
+            }
         }
 
         private void UpdateFiles()

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using System.Collections.Generic;
 
 namespace XrmCommandBox.Tools
 {
@@ -15,5 +16,7 @@ namespace XrmCommandBox.Tools
         [Option('w', "watch", HelpText = "Initiates the command in watch mode")]
         public bool Watch { get; set; }
 
+        [Option('n', "name-filters", HelpText = "Only the web resources beggining with thesee filters are going to be included")]
+        public IEnumerable<string> NamePrefixes { get; set; }
     }
 }
