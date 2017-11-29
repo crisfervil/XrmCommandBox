@@ -92,8 +92,15 @@ namespace XrmCommandBox.Tools
                 var webResourceName = (string)webResource["name"];
                 var binaryContent = Convert.FromBase64String(content);
                 var filePath = Path.Combine(basePath, webResourceName);
+                var folderPath = Path.GetDirectoryName(filePath);
                 _log.Info($"Saving {filePath}...");
-            }--
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath); // make sure the folder structure exists
+                }
+
+                File.WriteAllBytes(filePath, binaryContent);
+            }
         }
 
         private EntityCollection GetWebResources(IEnumerable<string> namePrefixes)

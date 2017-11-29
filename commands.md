@@ -9,6 +9,11 @@ Initiates the command in watch mode
 
 
 
+### -n, --name-filters
+Only the web resources beggining with thesee filters are going to be included
+
+
+
 ### -c, --connection
 Required. Connection string, or name of a connection string to use
 
