@@ -49,6 +49,8 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="LogLevels.cs" />
+    <Compile Include="Tools\MetadataExportToolOptions.cs" />
+    <Compile Include="Tools\MetadataExportTool.cs" />
     <Compile Include="Tools\WebResourcesSyncToolOptions.cs" />
     <Compile Include="Tools\WebResourcesSyncTool.cs" />
     <Compile Include="Tools\AssociateToolOptions.cs" />
@@ -120,6 +122,9 @@
     <Reference Include="Microsoft.Xrm.Tooling.Connector, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CrmSdk.XrmTooling.CoreAssembly.8.2.0.5\lib\net452\Microsoft.Xrm.Tooling.Connector.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
