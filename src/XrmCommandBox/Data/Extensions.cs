@@ -136,20 +136,26 @@ namespace XrmCommandBox.Data
                 foreach (var recordAttr in recordData.Attributes)
                 {
                     record.Add(recordAttr.Key, Convert(recordAttr.Value));
-                    AddAdditionalValues(recordAttr.Key, record, recordAttr.Value);
+                    AddAdditionalValues(recordData, recordAttr.Key, record, recordAttr.Value);
                 }
                 data.Add(record);
             }
             return data;
         }
 
-        private static void AddAdditionalValues(string attrName, Dictionary<string, object> record, object value)
+        private static void AddAdditionalValues(Entity entityRecord, string attrName, Dictionary<string, object> record, object value)
         {
             var erValue = value as EntityReference;
             if (erValue != null)
             {
                 record.Add($"{attrName}.name", erValue.Name);
                 record.Add($"{attrName}.type", erValue.LogicalName);
+            }
+
+            var optionsetValue = value as OptionSetValue;
+            if (optionsetValue != null)
+            {
+                record.Add($"{attrName}.name", entityRecord.FormattedValues[attrName]);
             }
         }
 
