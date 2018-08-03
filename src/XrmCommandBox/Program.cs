@@ -25,7 +25,7 @@ namespace XrmCommandBox
             {
                 // handle debugging
                 if (Array.IndexOf(args, "--debug-brk") != -1)
-                    Debugger.Break();
+                    Debugger.Launch();
 
                 // Configure Debug Listeners
                 Debug.Listeners.AddRange(new TraceListener[] {new TextWriterTraceListener(Console.Out)});
