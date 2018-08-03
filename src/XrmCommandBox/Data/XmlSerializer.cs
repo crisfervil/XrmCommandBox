@@ -10,6 +10,8 @@ namespace XrmCommandBox.Data
 
         public void Serialize(DataTable data, string fileName)
         {
+            fileName = Path.Combine(System.Environment.CurrentDirectory, fileName);
+            EnsurePathExists(fileName);
             using (var ts = File.CreateText(fileName))
             {
                 Serialize(data, ts);
@@ -79,6 +81,12 @@ namespace XrmCommandBox.Data
             }
 
             return dataTable;
+        }
+
+        private void EnsurePathExists(string file)
+        {
+            var dirName = System.IO.Path.GetDirectoryName(file);
+            if (!System.IO.Directory.Exists(dirName)) System.IO.Directory.CreateDirectory(dirName);
         }
 
         private void ReadRows(XmlReader reader, DataTable dataTable)
