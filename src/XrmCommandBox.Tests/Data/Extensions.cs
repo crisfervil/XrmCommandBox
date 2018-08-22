@@ -17,11 +17,14 @@ namespace XrmCommandBox.Tests.Data
             var entity1 = new Entity("myEntity1");
             entity1["attr1"] = "Value1";
             entity1["attr2"] = new EntityReference("myEntity2", referenceGuid1) {Name = "My test value"};
+            entity1.FormattedValues["statecode"] = "state1";
             data.Entities.Add(entity1);
 
             var entity2 = new Entity("myEntity1");
             entity2["attr1"] = new OptionSetValue(12);
             entity2["attr2"] = new Money(16.55m);
+            entity2.FormattedValues["statecode"] = "state1";
+            entity2.FormattedValues["attr1"] = "option1";
             data.Entities.Add(entity2);
 
             var dt = data.AsDataTable();

@@ -23,10 +23,12 @@ namespace XrmCommandBox.Tests.Tools
             var account1 = new Entity("account");
             account1.Id = Guid.NewGuid();
             account1["name"] = "Account1";
+            account1.FormattedValues["statecode"] = "state1";
 
             var account2 = new Entity("account");
             account2.Id = Guid.NewGuid();
             account2["name"] = "Account2";
+            account2.FormattedValues["statecode"] = "state1";
 
             var accounts = new List<Entity> {account1, account2};
             context.Initialize(accounts);
