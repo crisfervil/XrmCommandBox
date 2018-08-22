@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XrmCommandBox</id>
+    <version>$version$</version>
+    <title>XrmCommandBox - Command Line Tool for Dynamics 365</title>
+    <authors>Cristhian Fernandez</authors>
+    <owners>Cristhian Fernandez</owners>
+    <projectUrl>https://github.com/crisfervil/xrmcommandbox</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Pickles is an ...</description>
+    <summary>Command Line Tool for Dynamics 365</summary>
+    <copyright>Copyright © Cristhian Fernandez</copyright>
+  </metadata>
+  <files>
+    <file src="bin\Release\*.dll" target="tools" />
+    <file src="bin\Release\*.exe" target="tools" />
+    <file src="bin\Release\*.config" target="tools" />
+  </files>
+</package>
