@@ -1,3 +1,42 @@
+# metadata-export
+
+Metadata Export tool for dynamics 365
+
+## Options
+
+### -f, --file
+File name where to export the data to
+
+
+
+### -e, --entity
+Name of the entity which metadata you want to export
+
+
+
+### -c, --connection
+Required. Connection string, or name of a connection string to use
+
+
+
+### -f, --config-file
+Xml file containing the command options
+
+
+
+### -l, --log-level
+Sets the current logging output. Can be Debug, Info, Error
+
+
+
+
+
+## Examples
+Exports the Account metadata to the accounts.json file
+```
+xrm metadata-export --file AccountLeads.xml --entity account --connection Url=http://myCrmServer/myorg
+```
+
 # wr-sync
 
 Synchronizes Web Resoources with local directories
