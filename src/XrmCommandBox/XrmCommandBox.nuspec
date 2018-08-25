@@ -11,13 +11,11 @@
     <description>Command Line Tool for Dynamics 365. Documentation in project site</description>
     <summary>Command Line Tool for Dynamics 365</summary>
     <copyright>Copyright 2018 © Cristhian Fernandez</copyright>
-    <developmentDependency>True</developmentDependency>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
     <file src="bin\Release\*.dll" target="tools" />
     <file src="bin\Release\*.exe" target="tools" />
     <file src="bin\Release\*.config" target="tools" />
   </files>
-  <dependencies>
-  </dependencies>
 </package>
