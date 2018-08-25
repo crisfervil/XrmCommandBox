@@ -2,7 +2,7 @@
 
 # XrmCommandBox Overview
 
-Command line tool for Dynamics CRM. Because the command line is cool again!
+Command line tool for Dynamics 365. Because the command line is cool again!
 
 
 # How to use it
@@ -25,6 +25,17 @@ To view a list of available options for each command type the command and --help
 ```console
 xrm command --help
 ``` 
+
+You can add it to your project as a nuget package too
+```console
+PM > Install-Package XrmCommandBox
+```
+
+Then, it will be available in the following directory, related to your project
+
+..\packages\XrmCommandBox.X.X.X\tools\xrm.exe
+
+(Replace X.X.X by the version of XrmToolboxInstalled)
 
 ## Available Commands
 
