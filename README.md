@@ -33,9 +33,11 @@ PM > Install-Package XrmCommandBox
 
 Then, it will be available in the following directory, related to your project
 
+```
 ..\packages\XrmCommandBox.X.X.X\tools\xrm.exe
+```
 
-(Replace X.X.X by the version of XrmToolboxInstalled)
+(Replace X.X.X by the version of XrmToolbox Installed)
 
 ## Available Commands
 
