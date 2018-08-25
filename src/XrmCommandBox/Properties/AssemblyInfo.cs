@@ -8,9 +8,9 @@ using log4net.Config;
 [assembly: AssemblyTitle("Xrm Command Box")]
 [assembly: AssemblyDescription("Command Tools to interact with Dynamics 365")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("crisfervil")]
+[assembly: AssemblyCompany("Cristhian Fernandez")]
 [assembly: AssemblyProduct("Xrm Command Box")]
-[assembly: AssemblyCopyright("Copyright © crisfervil 2017")]
+[assembly: AssemblyCopyright("Copyright © Cristhian Fernandez 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
