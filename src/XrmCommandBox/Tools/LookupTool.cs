@@ -35,8 +35,6 @@ namespace XrmCommandBox.Tools
             var dataTable = serializer.Deserialize(options.File);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
-
-
             foreach (var record in dataTable)
             {
                 try
