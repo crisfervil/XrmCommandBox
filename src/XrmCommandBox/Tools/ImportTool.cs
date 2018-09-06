@@ -56,6 +56,7 @@ namespace XrmCommandBox.Tools
                         // the record exists, so update it
                         _log.Info($"Updating record: {recordId}...");
                         entityRecord[metadata.PrimaryIdAttribute] = recordId.Value;
+						entityRecord.Id = recordId.Value;
                         _crmService.Update(entityRecord);
                         _log.Info("Record updated successfully");
                         updatedCount++;
