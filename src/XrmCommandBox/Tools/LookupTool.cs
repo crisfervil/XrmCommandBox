@@ -20,90 +20,97 @@ namespace XrmCommandBox.Tools
             _crmService = service;
         }
 
-        public void Run(LookupToolOptions options)
+		public void Run(LookupToolOptions options, DataTable dataTable)
+		{
+			var sw = Stopwatch.StartNew();
+			int errorsCount = 0, recordCount = 0, progress = 0;
+			var serializer = new DataTableSerializer();
+
+			_log.Info("Running Lookup Tool...");
+
+			_log.Debug("Querying metadata...");
+			var metadata = _crmService.GetMetadata(options.EntityName);
+
+			foreach (var record in dataTable)
+			{
+				try
+				{
+					recordCount++;
+					progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
+					_log.Info($"Looking Up {dataTable.Name} record {recordCount} of {dataTable.Count} ({progress}%)...");
+
+					if (record.ContainsKey(options.Column)) // if the column is empty, we don't perform the lookup
+					{
+						// create query to run against crm
+
+						var conditionsStr = GetConditionsString(options, metadata, record);
+						var qry = GetQuery(options, metadata, record);
+
+						_log.Debug("Executing query...");
+						var foundRecords = _crmService.RetrieveMultiple(qry);
+
+						string errorMsg = null;
+
+						if (foundRecords.Entities.Count == 0)
+						{
+							errorMsg = $"No {foundRecords.EntityName} record found with {conditionsStr}";
+						}
+						else if (foundRecords.Entities.Count > 1)
+						{
+							errorMsg = $"{foundRecords.Entities.Count} {foundRecords.EntityName} records found with {conditionsStr}";
+						}
+						else
+						{
+							var recordId = foundRecords.Entities[0].Id;
+							record[options.Column] = recordId;
+							_log.Info($"{foundRecords.EntityName} record found: {recordId}");
+						}
+
+						// handle errors in a log friendly way
+						if (errorMsg != null)
+						{
+							if (options.ContinueOnError)
+							{
+								errorsCount++;
+								_log.Error(errorMsg);
+							}
+							else
+							{
+								throw new Exception(errorMsg);
+							}
+						}
+					}
+					else
+					{
+						_log.Info($"Column {options.Column} empty. Skipping");
+					}
+
+				}
+				catch (Exception ex)
+				{
+					errorsCount++;
+					_log.Error(ex);
+					if (!options.ContinueOnError) throw;
+				}
+			}
+
+			sw.Stop();
+			_log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
+		}
+
+		public void Run(LookupToolOptions options)
         {
-            var sw = Stopwatch.StartNew();
-            int errorsCount = 0, recordCount = 0, progress=0;
             var serializer = new DataTableSerializer();
-
-            _log.Info("Running Lookup Tool...");
-
-            _log.Debug("Querying metadata...");
-            var metadata = _crmService.GetMetadata(options.EntityName);
 
             _log.Info($"{options.File} file...");
             var dataTable = serializer.Deserialize(options.File);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
-            foreach (var record in dataTable)
-            {
-                try
-                {
-                    recordCount++;
-                    progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
-                    _log.Info($"Looking Up {dataTable.Name} record {recordCount} of {dataTable.Count} ({progress}%)...");
-
-                    if (record.ContainsKey(options.Column)) // if the column is empty, we don't perform the lookup
-                    {
-                        // create query to run against crm
-
-                        var conditionsStr = GetConditionsString(options,metadata,record);
-                        var qry = GetQuery(options, metadata, record);
-
-                        _log.Debug("Executing query...");
-                        var foundRecords = _crmService.RetrieveMultiple(qry);
-
-                        string errorMsg = null;
-
-                        if (foundRecords.Entities.Count == 0)
-                        {
-                            errorMsg = $"No {foundRecords.EntityName} record found with {conditionsStr}";
-                        }
-                        else if (foundRecords.Entities.Count > 1)
-                        {
-                            errorMsg = $"{foundRecords.Entities.Count} {foundRecords.EntityName} records found with {conditionsStr}";
-                        }
-                        else
-                        {
-                            var recordId = foundRecords.Entities[0].Id;
-                            record[options.Column] = recordId;
-                            _log.Info($"{foundRecords.EntityName} record found: {recordId}");
-                        }
-
-                        // handle errors in a log friendly way
-                        if (errorMsg != null)
-                        {
-                            if (options.ContinueOnError)
-                            {
-                                errorsCount++;
-                                _log.Error(errorMsg);
-                            }
-                            else
-                            {
-                                throw new Exception(errorMsg);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _log.Info($"Column {options.Column} empty. Skipping");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    errorsCount++;
-                    _log.Error(ex);
-                    if (!options.ContinueOnError) throw;
-                }
-            }
+			Run(options, dataTable);
 
             _log.Info("Saving file...");
 
             serializer.Serialize(dataTable, options.File);
-
-            sw.Stop();
-            _log.Info($"Done! Looked Up column {options.Column} in {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. {errorsCount} errors");
         }
 
         private QueryBase GetQuery(LookupToolOptions options, EntityMetadata metadata, Dictionary<string, object> record)

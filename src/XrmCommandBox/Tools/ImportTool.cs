@@ -32,6 +32,10 @@ namespace XrmCommandBox.Tools
             var dataTable = serializer.Deserialize(options.File);
             _log.Info($"{dataTable.Count} {dataTable.Name} records read");
 
+			// Process Lookups
+			_log.Debug("Resolving Lookups...");
+			ProcessLookups(dataTable, options);
+
             _log.Debug("Querying metadata...");
             var metadata = _crmService.GetMetadata(dataTable.Name);
 
@@ -82,7 +86,17 @@ namespace XrmCommandBox.Tools
             _log.Info($"Done! Processed {recordCount} {dataTable.Name} records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. Created: {createdCount}. Updated: {updatedCount}. Errors: {errorsCount}");
         }
 
-        private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
+		private void ProcessLookups(DataTable dataTable, ImportToolOptions options)
+		{
+			var lookupTool = new LookupTool(_crmService);
+
+			foreach (var lookupOptions in options?.Lookups)
+			{
+				lookupTool.Run(lookupOptions, dataTable);
+			}
+		}
+
+		private Guid? GetRecordId(string entityName, Entity entityRecord, IList<string> matchAttributes, EntityMetadata entityMetadata)
         {
             Guid? recordGuid = null;
 
