@@ -33,8 +33,11 @@ namespace XrmCommandBox.Tools
             _log.Info($"{dataTable.Count} '{dataTable.Name}' records read");
 
 			// Process Lookups
-			_log.Debug("Resolving Lookups...");
-			ProcessLookups(dataTable, options);
+			if(options.Lookups != null)
+			{
+				_log.Debug("Resolving Lookups...");
+				ProcessLookups(dataTable, options);
+			}
 
 			dataTable.Name = !string.IsNullOrEmpty(options.EntityName) ? options.EntityName : dataTable.Name;
 			if (string.IsNullOrEmpty(dataTable.Name)) throw new Exception("Entity name not prvided. Set the Entity Name parameter option or set the table name in the input file");
