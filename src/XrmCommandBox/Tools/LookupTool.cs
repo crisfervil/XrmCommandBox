@@ -103,7 +103,7 @@ namespace XrmCommandBox.Tools
             var serializer = new DataTableSerializer();
 
             _log.Info($"{options.File} file...");
-            var dataTable = serializer.Deserialize(options.File);
+            var dataTable = serializer.Deserialize(options.File, options.FileOptions);
             _log.Info($"Read {dataTable.Count} {dataTable.Name} records");
 
 			Run(options, dataTable);

@@ -44,7 +44,7 @@ namespace XrmCommandBox.IntegrationTests
 
             // Check that a file named account.xml was created and its readable
             var ser = new DataTableSerializer();
-            var dt = ser.Deserialize(serializedFileName);
+            var dt = ser.Deserialize(serializedFileName, "");
 
             Assert.AreEqual("account", dt.Name);
 
@@ -78,7 +78,7 @@ namespace XrmCommandBox.IntegrationTests
 
             // Check that a file named account.xml was created and its readable
             var ser = new DataTableSerializer();
-            var dt = ser.Deserialize(serializedFileName);
+            var dt = ser.Deserialize(serializedFileName, "");
 
             var xml = new XmlDocument();
             xml.Load(serializedFileName);

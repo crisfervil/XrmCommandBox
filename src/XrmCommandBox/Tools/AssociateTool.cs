@@ -32,7 +32,7 @@ namespace XrmCommandBox.Tools
             _log.Info("Running Associate Tool...");
 
             _log.Info($"Reading {options.File} file...");
-            var dataTable = serializer.Deserialize(options.File);
+            var dataTable = serializer.Deserialize(options.File, options.FileOptions);
 
             // TODO: allow to specify this in the tool options
             var relationshipIntersectEntityName = dataTable.Name;

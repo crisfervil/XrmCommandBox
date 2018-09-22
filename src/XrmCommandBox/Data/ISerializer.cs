@@ -4,6 +4,6 @@
     {
         string Extension { get; }
         void Serialize(DataTable data, string fileName);
-        DataTable Deserialize(string fileName);
+        DataTable Deserialize(string fileName, string fileOptions);
     }
 }

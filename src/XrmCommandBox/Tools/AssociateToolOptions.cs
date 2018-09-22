@@ -29,7 +29,11 @@ namespace XrmCommandBox.Tools
         [Option('e', "continue-on-error", HelpText = "Continue if there's an error while processing the command")]
         public bool ContinueOnError { get; set; }
 
-        [Usage(ApplicationAlias = "xrm")]
+		[Option('o', "file-options", HelpText = "Options regarding the data file")]
+		public string FileOptions { get; set; }
+
+
+		[Usage(ApplicationAlias = "xrm")]
         public static IEnumerable<Example> Examples
         {
             get

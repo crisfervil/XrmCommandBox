@@ -20,6 +20,9 @@ namespace XrmCommandBox.Tools
         [Option('m', "match-attributes", HelpText = "Attributes used to know if the record exists. Default is id attribute")]
         public IEnumerable<string> MatchAttributes { get; set; }
 
+		[Option('n', "entity", HelpText = "Name of the entity where to load the data")]
+		public string EntityName { get; set; }
+
 		public IEnumerable<LookupToolOptions> Lookups { get; set; }
 	}
 }

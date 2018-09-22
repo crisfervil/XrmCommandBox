@@ -19,7 +19,7 @@ namespace XrmCommandBox.Data
             }
         }
 
-        public DataTable Deserialize(string fileName)
+        public DataTable Deserialize(string fileName, string fileOptions)
         {
             DataTable dataTable;
 

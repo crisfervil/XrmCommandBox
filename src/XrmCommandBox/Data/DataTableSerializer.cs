@@ -16,11 +16,11 @@ namespace XrmCommandBox.Data
             serializer.Serialize(data, fileName);
         }
 
-        public DataTable Deserialize(string fileName)
+        public DataTable Deserialize(string fileName, string fileOptions)
         {
             var extension = Path.GetExtension(fileName);
             var serializer = GetSerializer(extension);
-            var data = serializer.Deserialize(fileName);
+            var data = serializer.Deserialize(fileName, fileOptions);
             return data;
         }
 

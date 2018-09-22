@@ -29,14 +29,17 @@ namespace XrmCommandBox.Tools
             _log.Info("Running Import Tool...");
 
             _log.Info($"Reading {options.File} file...");
-            var dataTable = serializer.Deserialize(options.File);
-            _log.Info($"{dataTable.Count} {dataTable.Name} records read");
+            var dataTable = serializer.Deserialize(options.File, options.FileOptions);
+            _log.Info($"{dataTable.Count} '{dataTable.Name}' records read");
 
 			// Process Lookups
 			_log.Debug("Resolving Lookups...");
 			ProcessLookups(dataTable, options);
 
-            _log.Debug("Querying metadata...");
+			dataTable.Name = !string.IsNullOrEmpty(options.EntityName) ? options.EntityName : dataTable.Name;
+			if (string.IsNullOrEmpty(dataTable.Name)) throw new Exception("Entity name not prvided. Set the Entity Name parameter option or set the table name in the input file");
+
+            _log.Debug($"Querying metadata of entity {dataTable.Name}...");
             var metadata = _crmService.GetMetadata(dataTable.Name);
 
             _log.Info("Processing records...");
