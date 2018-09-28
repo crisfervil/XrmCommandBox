@@ -26,6 +26,11 @@ namespace XrmCommandBox
 						{
 							optionProperty.SetValue(options, configNode.InnerXml);
 						}
+						else if (optionProperty.PropertyType == typeof(bool))
+						{
+							bool boolValue = string.Compare(configNode.InnerXml,"true",true) == 0 ? true : false ;
+							optionProperty.SetValue(options, boolValue);
+						}
 						else if (optionProperty.PropertyType.IsGenericType && optionProperty.PropertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
 						{
 							var enumerableType = optionProperty.PropertyType.GetGenericArguments()?[0];
