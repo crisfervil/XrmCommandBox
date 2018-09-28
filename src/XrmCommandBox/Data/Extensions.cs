@@ -87,7 +87,7 @@ namespace XrmCommandBox.Data
                     var decimalValue = strAttrValue != null ? decimal.Parse(strAttrValue) : (decimal) attrValue;
                     retVal = decimalValue;
                 }
-                else if (attrMetadata.AttributeType == AttributeTypeCode.String)
+                else if (attrMetadata.AttributeType == AttributeTypeCode.String || attrMetadata.AttributeType == AttributeTypeCode.Memo)
                 {
                     var strValue = (string)attrValue;
                     retVal = strValue;
