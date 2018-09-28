@@ -31,13 +31,17 @@ namespace XrmCommandBox.Tools
 
             _log.Info("Running Associate Tool...");
 
-            _log.Info($"Reading {options.File} file...");
+			var optionsMsgStr = string.IsNullOrEmpty(options.FileOptions) ? "" : $"({options.FileOptions}) ";
+			_log.Info($"Reading {options.File} {optionsMsgStr}file...");
             var dataTable = serializer.Deserialize(options.File, options.FileOptions);
 
-            // TODO: allow to specify this in the tool options
+			if (dataTable == null) throw new Exception("Unexpected error reading data table");
+
+			dataTable.Name = !string.IsNullOrEmpty(options.EntityName) ? options.EntityName : dataTable.Name;
+			if (string.IsNullOrEmpty(dataTable.Name)) throw new Exception("Entity name not prvided. Set the Entity Name parameter option or set the table name in the input file");
             var relationshipIntersectEntityName = dataTable.Name;
 
-            _log.Info($"{dataTable.Count} {dataTable.Name} n:n relationships read");
+			_log.Info($"{dataTable.Count} {dataTable.Name} n:n relationships read");
 
             _log.Debug("Querying metadata...");
             var metadata = _crmService.GetMetadata(dataTable.Name, EntityFilters.Attributes | EntityFilters.Entity | EntityFilters.Relationships);
@@ -61,7 +65,14 @@ namespace XrmCommandBox.Tools
             var moniker1AttrName = relationshipMetadata.Entity1IntersectAttribute;
             var moniker2AttrName = relationshipMetadata.Entity2IntersectAttribute;
 
-            foreach (var relationshipRecord in dataTable)
+			// Process Lookups
+			if (options.Lookups != null)
+			{
+				_log.Debug("Resolving Lookups...");
+				ProcessLookups(dataTable, options);
+			}
+
+			foreach (var relationshipRecord in dataTable)
             {
                 try
                 {
@@ -69,8 +80,8 @@ namespace XrmCommandBox.Tools
                     progress = (int)Math.Round(((decimal)recordCount / dataTable.Count) * 100); // calculate the progress percentage
                     _log.Info($"Record {recordCount} of {dataTable.Count} : ({progress}%)");
 
-                    var moniker1Guid = Guid.Parse((string)relationshipRecord[moniker1AttrName]);
-                    var moniker2Guid = Guid.Parse((string)relationshipRecord[moniker2AttrName]);
+                    var moniker1Guid = Guid.Parse(relationshipRecord[moniker1AttrName]?.ToString());
+                    var moniker2Guid = Guid.Parse(relationshipRecord[moniker2AttrName]?.ToString());
 
                     _log.Debug($"{moniker1Guid} : {moniker2Guid}");
 
@@ -93,9 +104,11 @@ namespace XrmCommandBox.Tools
                     }
                     else
                     {
-                        throw;
-                    }
-                }
+						errorsCount++;
+						_log.Error(ex);
+						if (!options.ContinueOnError) throw;
+					}
+				}
                 catch (Exception ex)
                 {
                     errorsCount++;
@@ -108,5 +121,14 @@ namespace XrmCommandBox.Tools
             _log.Info($"Done! Processed {recordCount} {relationshipMetadata.SchemaName} relationship records in {sw.Elapsed.TotalSeconds.ToString("0.00")} seconds. Created: {createdCount}. Errors: {errorsCount}");
         }
 
-    }
+		private void ProcessLookups(DataTable dataTable, AssociateToolOptions options)
+		{
+			var lookupTool = new LookupTool(_crmService);
+
+			foreach (var lookupOptions in options?.Lookups)
+			{
+				lookupTool.Run(lookupOptions, dataTable);
+			}
+		}
+	}
 }

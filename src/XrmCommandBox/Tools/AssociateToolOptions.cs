@@ -32,6 +32,10 @@ namespace XrmCommandBox.Tools
 		[Option('o', "file-options", HelpText = "Options regarding the data file")]
 		public string FileOptions { get; set; }
 
+		[Option('n', "entity", HelpText = "Name of the entity where to load the data")]
+		public string EntityName { get; set; }
+
+		public IEnumerable<LookupToolOptions> Lookups { get; set; }
 
 		[Usage(ApplicationAlias = "xrm")]
         public static IEnumerable<Example> Examples
