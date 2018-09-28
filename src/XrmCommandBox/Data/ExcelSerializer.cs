@@ -62,7 +62,7 @@ namespace XrmCommandBox.Data
 					for (var i=0; i< columnIndexes.Count; i++)
 					{
 						var colName = columnIndexes[i];
-						var colValue = reader.GetValue(i);
+						var colValue = reader.GetValue(i)?.ToString();
 						if (colValue != null)
 						{
 							dataRow.Add(colName, colValue);
