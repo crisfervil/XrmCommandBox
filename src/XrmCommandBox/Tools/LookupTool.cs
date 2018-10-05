@@ -166,7 +166,19 @@ namespace XrmCommandBox.Tools
                 var attributeValueStr = attributeValue as string;
                 filterValue = attributeValueStr != null ? int.Parse(attributeValueStr) : (int)attributeValue;
             }
-            else if (attrMetadata.AttributeType == AttributeTypeCode.String || attrMetadata.AttributeType == AttributeTypeCode.Memo)
+			else if (attrMetadata.AttributeType == AttributeTypeCode.Lookup)
+			{
+				var attributeValueStr = attributeValue?.ToString();
+				var attributeValueGuid = Guid.Parse(attributeValueStr);
+				filterValue = attributeValueGuid;
+			}
+			else if (attrMetadata.AttributeType == AttributeTypeCode.Picklist)
+			{
+				var attributeValueStr = attributeValue as string;
+				var attrValueInt = attributeValueStr != null ? int.Parse(attributeValueStr) : (int)attributeValue;
+				filterValue = attrValueInt;
+			}
+			else if (attrMetadata.AttributeType == AttributeTypeCode.String || attrMetadata.AttributeType == AttributeTypeCode.Memo)
             {
                 var attributeValueStr = attributeValue as string;
                 filterValue = attributeValueStr;
