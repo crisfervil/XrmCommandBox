@@ -43,6 +43,7 @@
     <Compile Include="CommonOptions.cs" />
     <Compile Include="CommonOptionsExtensions.cs" />
     <Compile Include="ConnectionBuilder.cs" />
+    <Compile Include="Data\DataSetSerializer.cs" />
     <Compile Include="Data\DataTable.cs" />
     <Compile Include="Data\DataTableSerializer.cs" />
     <Compile Include="Data\ExcelSerializer.cs" />
@@ -50,6 +51,12 @@
     <Compile Include="Data\ISerializer.cs" />
     <Compile Include="Data\XmlSerializer.cs" />
     <Compile Include="LogLevels.cs" />
+    <Compile Include="Tools\Common\Utilities.cs" />
+    <Compile Include="Tools\DataLoader\ColumnMappingOptions.cs" />
+    <Compile Include="Tools\DataLoader\TableMappingOptions.cs" />
+    <Compile Include="Tools\DataLoader\DataLoaderTool.cs" />
+    <Compile Include="Tools\DataLoader\DataLoaderToolOptions.cs" />
+    <Compile Include="Tools\DataLoader\Extensions.cs" />
     <Compile Include="Tools\MetadataExportToolOptions.cs" />
     <Compile Include="Tools\MetadataExportTool.cs" />
     <Compile Include="Tools\WebResourcesSyncToolOptions.cs" />
