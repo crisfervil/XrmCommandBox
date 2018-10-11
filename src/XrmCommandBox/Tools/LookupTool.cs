@@ -20,7 +20,7 @@ namespace XrmCommandBox.Tools
             _crmService = service;
         }
 
-		public void Run(LookupToolOptions options, DataTable dataTable)
+		internal void Run(LookupToolOptions options, DataTable dataTable)
 		{
 			var sw = Stopwatch.StartNew();
 			int errorsCount = 0, recordCount = 0, progress = 0;
