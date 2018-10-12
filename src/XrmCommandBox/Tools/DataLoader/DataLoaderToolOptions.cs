@@ -4,7 +4,7 @@ using CommandLine;
 
 namespace XrmCommandBox.Tools.DataLoader
 {
-    [Verb("import", HelpText = "Imports data to Dynamics")]
+    [Verb("data-load", HelpText = "Imports data to Dynamics")]
     [Handler(typeof(DataLoaderTool))]
     public class DataLoaderToolOptions : CrmCommonOptions
     {
